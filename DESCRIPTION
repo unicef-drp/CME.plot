@@ -1,15 +1,28 @@
 Package: CME.plot
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Make Plots for Child Mortality Estimation
+Version: 1.1.0
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Yang",
+           family = "Liu",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "lyhello@gmail.com",
+           comment = c(ORCID = "0000-0001-6557-6439"))
+Description: Plotting functions for UNICEF child mortality estimation (CME). 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Depends: 
+    R (>= 3.5.0),
+Imports: 
+    CME.assistant,
+    here,
+    data.table (>= 1.12.0),
+    dplyr,
+    RColorBrewer,
+    reshape2,
+    readxl
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
