@@ -4,7 +4,12 @@
 \alias{obtain.matched.cqt}
 \title{Obtain cqt from runname2, match to runname1 by iso order and year range}
 \usage{
-obtain.matched.cqt(output.dir1 = NULL, output.dir2 = NULL, runname1, runname2)
+obtain.matched.cqt(
+  output.dir1 = NULL,
+  output.dir2 = NULL,
+  runname1 = NULL,
+  runname2 = NULL
+)
 }
 \arguments{
 \item{output.dir1}{the output directory including runname folder, where to

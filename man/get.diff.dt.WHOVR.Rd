@@ -2,17 +2,15 @@
 % Please edit documentation in R/mark_new_series.R
 \name{get.diff.dt.WHOVR}
 \alias{get.diff.dt.WHOVR}
-\title{Compare the WHO VR
-Compare dt_new vs. dt_old}
+\title{Compare the WHO VR dt_new vs. dt_old}
 \usage{
-get.diff.dt.WHOVR(dt_new = NULL, dt_old = NULL)
+get.diff.dt.WHOVR()
 }
-\arguments{
-\item{dt_new}{The new dataset, dt object}
-
-\item{dt_old}{The old dataset, dt object}
+\value{
+list of dt1 (the comparison dataset for debugging) and iso_newVR (the
+  vector of country isos with different WHO VR)
 }
 \description{
-Compare the WHO VR
-Compare dt_new vs. dt_old
+dir_dt_new_VR and dir_dt_old_VR can be loaded by
+\code{\link{find.dir.for.VR.comparison}}
 }

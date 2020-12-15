@@ -12,7 +12,7 @@ get.new.series.mark.entry(dt_cme, new_entry_date, show_WHO_VR_by_value = TRUE)
 
 \item{new_entry_date}{must supply, cannot be NULL, format is checked, accept yyyy-mm-dd and yyyy-mm}
 
-\item{show_WHO_VR_by_value}{default to TRUE: highlight WHO VR difference too}
+\item{show_WHO_VR_by_value}{default to TRUE: highlight WHO VR difference by comparing values}
 }
 \description{
 Create `new_entry` column in the dataset `dt_cme`

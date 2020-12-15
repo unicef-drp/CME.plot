@@ -2,13 +2,19 @@
 % Please edit documentation in R/savePlotResults_202001.R
 \name{savePlotResults}
 \alias{savePlotResults}
-\title{Major plotting function, based on the original `PlotResults` function}
+\title{Major function to save CME plots}
 \usage{
 savePlotResults(
-  runname = NULL,
   filename = NULL,
   After_CC = FALSE,
+  runname = NULL,
+  runname2 = NULL,
+  runname3 = NULL,
+  runname4 = NULL,
   output.dir = NULL,
+  output.dir2 = NULL,
+  output.dir3 = NULL,
+  output.dir4 = NULL,
   fig.dir = NULL,
   year.start = NULL,
   year.end = last.year(),
@@ -17,25 +23,26 @@ savePlotResults(
   main.plot = TRUE,
   zoom = TRUE,
   add.legend = TRUE,
-  save_cqt_copy = FALSE,
   res.cqt1 = NULL,
   res.cqt2 = NULL,
   res.cqt3 = NULL,
   res.cqt4 = NULL,
   res_ex.cqt = NULL,
+  save_cqt_copy = FALSE,
   legend1 = "Draft UN IGME 2020",
   legend2 = NULL,
   legend3 = NULL,
   legend4 = NULL,
   legend_ex = NULL,
-  wpp_and_completeihme = NULL,
+  wpp.cqt = NULL,
+  ihme.cqt = NULL,
   legend_WPP = "WPP 2019",
   legend_IHME = "IHME GBD 2018",
   ylab = NULL,
   new_entry_date = NULL,
   pdf.or.png = "pdf",
   separate.plots.by.country = FALSE,
-  new.cname.df = new_cnames,
+  new.cname.df = CME.assistant::new_cnames,
   n.countries = NULL,
   iso.subset.c = NULL,
   sort_the_isos = TRUE,
@@ -50,15 +57,33 @@ savePlotResults(
 )
 }
 \arguments{
-\item{runname}{used to look for `output.dir` if `output.dir` is NULL, if
-`output.dir` is supplied (recommended), it is a label that will be combined
-into the filename}
+\item{filename}{extra label in the front of the output file if supplied}
 
-\item{filename}{extra label in the front}
+\item{After_CC}{suppress the rules to create filenames automatically, adding
+a "Results" in the front for CC profiles}
 
-\item{After_CC}{suppress the rules to create filenames automatically}
+\item{runname}{used to look for `res.cqt`. If `output.dir` is NULL, it will
+make the `output.dir` from runname if `getwd()` can point correctly to the
+IGME "Code" folder. If `output.dir` is supplied (recommended), `runname` is
+used as a label in the filename for Data and Results-only plots}
 
-\item{output.dir}{The model output folder, where to read mcmc.meta.rda}
+\item{runname2}{used to look for `res.cqt2` if `output.dir2` is NULL. It will
+be used as legend if legend is not supplied}
+
+\item{runname3}{used to look for `res.cqt3` if `output.dir3` is NULL. It will
+be used as legend if legend is not supplied}
+
+\item{runname4}{used to look for `res.cqt4` if `output.dir4` is NULL. It will
+be used as legend if legend is not supplied}
+
+\item{output.dir}{the MCMC output folder: where to read `mcmc.meta.rda` and
+`res.cqt1`}
+
+\item{output.dir2}{if supplied and valid, will use it to locate `res.cqt2`}
+
+\item{output.dir3}{if supplied and valid, will use it to locate `res.cqt3`}
+
+\item{output.dir4}{if supplied and valid, will use it to locate `res.cqt4`}
 
 \item{fig.dir}{where to save the figures}
 
@@ -70,38 +95,40 @@ into the filename}
 
 \item{zoom.year.end}{default to `last.year()`}
 
-\item{main.plot}{kept from original function, used to determine the right
-size of the plot}
+\item{main.plot}{default to TRUE, used to determine the right size of the
+plot}
 
-\item{zoom}{kept from original function, used to determine the right
-size of the plot}
+\item{zoom}{default to TRUE, used to determine the right size of the
+plot}
 
-\item{add.legend}{kept from original function, used to determine the right
-size of the plot}
+\item{add.legend}{default to TRUE, used to determine the right size of the
+plot}
 
-\item{save_cqt_copy}{save the plotted cqt}
-
-\item{res.cqt1}{the first series}
+\item{res.cqt1}{the cqt file for first series, instead of supplying
+output.dir and runname, we can also input the cqt object directly}
 
 \item{res.cqt2}{the second series, years adjusted in the function, default to
 a green line}
 
 \item{res.cqt3}{the third series, years adjusted in the function, default to
-a brown line}
+a brown (sienna) line}
 
 \item{res.cqt4}{the fourth series, years adjusted in the function, default to
 a dark-red line}
 
-\item{res_ex.cqt}{the expected series}
+\item{res_ex.cqt}{the expected series for NMR and sex-specific plots}
+
+\item{save_cqt_copy}{logical, if TRUE will save the `res.cqt.rds` plotted
+into a folder created as `cqt_backup`}
 
 \item{legend1}{the legend for the main series (legendfull), has default
-value. `legend1` is used as switch to show the 1st estimate to plot imr
-method in legend: input `legend1 = mcmc.meta$data.all$imrmethod.c` to plot
-5-14 legend: use `legend1 =
-get.special.isos(mcmc.meta)$special_legend_vector`}
+value. It can be used as switch to hide the estimate by setting it
+as NULL. To plot imr method in legend: input \code{legend1 =
+mcmc.meta$data.all$imrmethod.c}, to plot 5-14 legend: use \code{legend1 =
+get.special.isos(mcmc.meta)$special_legend_vector}}
 
-\item{legend2}{show legend for cqt2,  used as a switch for showing cqt for
-gender-specific plot}
+\item{legend2}{show legend for cqt2, can be used as a switch for showing cqt
+for gender-specific plot, if}
 
 \item{legend3}{show legend for cqt3}
 
@@ -109,66 +136,83 @@ gender-specific plot}
 
 \item{legend_ex}{show legend for (NMR) expected cqt}
 
-\item{wpp_and_completeihme}{a list of two elements: wpp.cqt and ihme.cqt}
+\item{wpp.cqt}{a green line for WPP series}
 
-\item{legend_WPP}{default to "WPP 2019"}
+\item{ihme.cqt}{a blue line for IHME series}
 
-\item{legend_IHME}{default to "IHME GBD 2018"}
+\item{legend_WPP}{default WPP legend}
 
-\item{ylab}{default to NULL}
+\item{legend_IHME}{default IHME legend}
 
-\item{new_entry_date}{provide "YYYY-MM-DD", the series after which will be
-highlighted in red as new series in the output}
+\item{ylab}{default to NULL, value supplied by mcmc.meta}
+
+\item{new_entry_date}{provide a date as "YYYY-MM". The series after this date
+will be highlighted as new series in red in plots}
 
 \item{pdf.or.png}{save results as "pdf" or "png"}
 
-\item{separate.plots.by.country}{seperate pdf by country? Ignored for png}
+\item{separate.plots.by.country}{separate "pdf" by country? Ignored for "png"}
 
-\item{new.cname.df}{the new df for country names, contains ISO and new
-country names}
+\item{new.cname.df}{the dataset of official country names, contains ISO and
+new country names, default to CME.assistant::new_cnames}
 
-\item{n.countries}{select countries to plot using a vector of numbers, e.g.
-1:10, ignored if it is HIV moved plot, please use `iso.subset.c` for that}
+\item{n.countries}{select a subset of countries to plot using an numeric
+vector, e.g. 1:10. Ignored if it is HIV-removed plot, please use
+`iso.subset.c` to subset countries for HIV-removed plot}
 
-\item{iso.subset.c}{select countries to plot using a vector of ISOs, If both
-`n.countries` and `iso.subset.c` are NULL, plots all countries available in
-the meta data. If both are supplied, plots what is shared}
+\item{iso.subset.c}{select a subset of countries to plot using a vector of
+ISO3Code, If both `n.countries` and `iso.subset.c` are NULL, will plot all
+countries available in the meta data. If both are supplied, will plot
+countries commonly selected}
 
-\item{sort_the_isos}{if FALSE will just follow the order, won't resort}
+\item{sort_the_isos}{default to TRUE, if FALSE will just make plot following
+the order of `iso.subset.c`. This is useful in case that a specific order
+of the output is needed}
 
-\item{NMR_metafile}{produced by `nmr_transformdata_Yuhan.R`, the transformed
-mcmc.meta file, if supply this no need for NMR_scale}
+\item{NMR_metafile}{NMR mcmc.meta object produced and saved by
+\code{\link{transformdataforNMR}}. For NMR plot, either supply only the
+`NMR_metafile` (preferred), or the `output.dir` together with `NMR_scale`
+(so we know to read `mcmc.meta.nmr.rda` or `mcmc.meta.nmr.ratio.rda`). In
+short, supply either `NMR_metafile` or `output.dir` + `NMR_scale`}
 
-\item{NMR_scale}{"NMR" or "ratio" for NMR/U5MR, need this only if use
-output.dir}
+\item{NMR_scale}{default to NULL. Only needed to supply as "NMR" or "ratio"
+for NMR plots if using `output.dir`, which contains `mcmc.meta.nmr.rda` and
+`mcmc.meta.nmr.ratio.rda`}
 
-\item{HIV_removed}{Make HIV removed plot for HIV-countries or not}
+\item{HIV_removed}{default to FALSE, set as TRUE for HIV-removed plot for
+HIV-countries}
 
-\item{output.dir.for.hivremoved.cqt}{will search in output.dir
-automatically, this is a back up option}
+\item{output.dir.for.hivremoved.cqt}{default to NULL. If provided will search
+in it for `res.hivremoved.cqt.Lw.rda` instead of searching in output.dir by
+default}
 
-\item{gender}{input to `get.mcmc.meta.dir`for sex-specific plot, accepts
-("m", "f", "ratio")}
+\item{gender}{input to internal function \code{\link{get.mcmc.meta.dir}} for
+sex-specific plot, accepts "m", "f", or "ratio"}
 
-\item{gender_ind}{input to `get.mcmc.meta.dir` for sex-specific plot, accepts
-either "Q5", "Q1", "Q4" or "q5", "q1", "q4"}
+\item{gender_ind}{input to internal function \code{\link{get.mcmc.meta.dir}}
+for sex-specific plot, accepts either "Q5", "Q1", "Q4" or "q5", "q1", "q4"}
 
-\item{pooling_weight}{default to "0.5"}
+\item{pooling_weight}{default to "0.5", sometimes we need to show a different
+weight, for example, for 5-24 estimates}
 
-\item{...}{more arguments not listed here but could still be passed into
-`PlotDataAndEstimates2020`}
+\item{...}{more arguments not listed here but can still be passed into the
+function `PlotDataAndEstimates2020`}
 }
 \value{
-a list of runname (so you can reload the plot easier), time_spent,
-  debugging information if there is an error
+a list of related information: runname, time_spent, debugging
+  information if there is an error
 }
 \description{
-Using option `pdf.or.png` to saves plots as png or pdf (one file or seperate
-`separate.plots.by.country`) calls (wraps) the plotting function
-\code{PlotDataAndEstimates2020} If error occurs, debugging information is
-returned. Select countries to plot using either `n.countries` (a vector like
-3:5) or `iso.subset.c` (a vector of isos). The name of the output file is
-generated as `filename`+`runname`+ autogenerated string (Results, Data,.etc)
-depending on how many series to plot. Set `AfterCC` as `TRUE` will force the
-output to be named "Results"
+`savePlotResults` saves plots as png or pdf files by setting `pdf.or.png`. It
+saves results as one file or separately by setting
+`separate.plots.by.country`. It calls the plotting function
+\code{PlotDataAndEstimates2020}. Plot a subset of countries using
+either `n.countries` (a numeric vector) or `iso.subset.c` (a vector of
+ISO3Code). The name of the output file saved is auto-generated as
+`filename`+`runname` auto-generated part (Results/Data/Results Comparison +
+legends of series) depending on how many series will be plot. Set `AfterCC`
+to `TRUE` will force the output to be named "Results" instead of
+"Comparison". The function combined the old `PlotResults` and
+`PlotComparison` function. If error occurs, debugging information is
+returned.
 }

@@ -24,7 +24,7 @@ my_fig_dir <- "fig/"
 output.dir.CC <- file.path(dir_IGME_out_folder, runname_CC) # 2020 CC on dropbox
 output.dir <- file.path(dir_IGME_out_folder, runname) # 2020 on dropbox
 # output.dir <- file.path(getwd(), "output", runname) # 2020 local, used when we need to make a temp. adjustment using the dataset directly
-output.dir.19 <- file.path(dir_IGME_out_folder, runname_19) # put in the same folder
+output.dir.19 <- file.path(dir_IGME_out_folder, runname_19)
 
 load(file.path(output.dir, "mcmc.meta.rda"))
 load(file.path(output.dir, "res.cqt.Lw.rda"))
@@ -142,14 +142,13 @@ p <- savePlotResults(runname = runname,
 )
 
 # 1.4. WPP IHME ---------------------------------------------------------
-# wpp_and_completeihme <- list(wpp.cqt = get.wpp.cqt(), ihme.cqt = get.ihme.cqt())
-wpp_and_completeihme <- list(wpp.cqt = u5mr.wpp.cqt.2019, ihme.cqt = u5mr.ihme.cqt.2017)
 p <- savePlotResults(runname = runname,
                      new_entry_date = last.October(),
                      output.dir = output.dir,
                      pdf.or.png = png_or_pdf0,
                      # wpp only has estimates
-                     wpp_and_completeihme = wpp_and_completeihme,
+                     wpp.cqt = u5mr.wpp.cqt.2019,
+                     ihme.cqt = u5mr.ihme.cqt.2017,
                      fig.dir = "fig",
                      # col.ihme = "white" # if want to hide CI for IHME
                      n.countries = n_c
@@ -163,8 +162,8 @@ p <- savePlotResults(runname = runname,
                      legend2 = "UN IGME 2019",
                      output.dir = output.dir,
                      pdf.or.png = png_or_pdf0,
-                     # wpp only has estimates
-                     wpp_and_completeihme = wpp_and_completeihme,
+                     wpp.cqt = u5mr.wpp.cqt.2019,
+                     ihme.cqt = u5mr.ihme.cqt.2017,
                      fig.dir = my_fig_dir,
                      # col.ihme = "white" # if want to hide CI for IHME
                      n.countries = n_c,
@@ -284,12 +283,12 @@ p <- savePlotResults(runname = runname_IMR,
 #                                    gender0 = "both",
 #                                    iso_order = u5mr.iso.c))
 
-wpp_and_completeihme_imr <- list(wpp.cqt = imr.wpp.cqt.2019, ihme.cqt = imr.ihme.cqt.2019)
 p <- savePlotResults(runname = runname_IMR,
                      new_entry_date = last.October(),
                      output.dir = output.dir.IMR,
                      pdf.or.png = png_or_pdf0,
-                     wpp_and_completeihme = wpp_and_completeihme_imr,
+                     wpp.cqt = imr.wpp.cqt.2019,
+                     ihme.cqt = imr.ihme.cqt.2019,
                      # legend_WPP = NULL,
                      # legend_IHME = NULL,
                      fig.dir = my_fig_dir,
@@ -304,7 +303,8 @@ p <- savePlotResults(runname = runname_IMR,
                      output.dir = output.dir.IMR,
                      pdf.or.png = png_or_pdf0,
                      # wpp only has estimates
-                     wpp_and_completeihme = wpp_and_completeihme,
+                     wpp.cqt = imr.wpp.cqt.2019,
+                     ihme.cqt = imr.ihme.cqt.2019,
                      fig.dir = my_fig_dir,
                      # col.ihme = "white" # if want to hide CI for IHME
                      n.countries = n_c
@@ -468,10 +468,9 @@ p <- savePlotResults(runname = runname.NMR,
 #                                                      iso_order = resl_rate$iso))
 # But since `identical(resl_rate$iso, mcmc.meta$data.all$iso.c)`, without
 # suppling iso_order is also fine, it just uses the default
-wpp_and_completeihme_nmr <- list(wpp.cqt = NULL, ihme.cqt = nmr.ihme.cqt.2017)
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
-                     wpp_and_completeihme = wpp_and_completeihme_nmr,
+                     ihme.cqt = nmr.ihme.cqt.2017,
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "NMR",
                      fig.dir = my_fig_dir,
@@ -483,7 +482,7 @@ p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
                      res.cqt2 = cqt_2019_rate,
                      legend2 = "UN IGME 2019",
-                     wpp_and_completeihme = wpp_and_completeihme_nmr,
+                     ihme.cqt = nmr.ihme.cqt.2017,
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "NMR",
                      fig.dir = my_fig_dir,
@@ -497,7 +496,7 @@ p <- savePlotResults(runname = runname.NMR,
                      res_ex.cqt = cqt_rate_expected,
                      legend2 = "UN IGME 2019",
                      res.cqt2 = cqt_2019_rate,
-                     wpp_and_completeihme = wpp_and_completeihme_nmr,
+                     ihme.cqt = nmr.ihme.cqt.2017,
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "NMR",
                      fig.dir = my_fig_dir,
@@ -740,14 +739,12 @@ wpp_f <- read.wpp.v3(dir_wpp_female)
 wpp_m <- read.wpp.v3(dir_wpp_male)
 #
 save.all <- function(ind0, gender0){
-  wpp_and_completeihme <- list(wpp.cqt = get.sex.wpp.cqt(ind0, gender0),
-                               ihme.cqt = get.sex.ihme.cqt(ind_name = ind0, gender0 = gender0))
   p <- savePlotResults(
-    # runname = "vs_IHMEGBD2018_vs_WPP2019",
     output.dir = output_dir_gender,
     pdf.or.png = png_or_pdf0,
     fig.dir = file.path(my_fig_dir, "Compared to IHME and WPP and 2019"),
-    wpp_and_completeihme = wpp_and_completeihme,
+    wpp.cqt = get.sex.wpp.cqt(ind0, gender0),
+    ihme.cqt = get.sex.ihme.cqt(ind_name = ind0, gender0 = gender0),
     new_entry_date = last.October(),
     gender = gender0, #
     gender_ind = ind0, # takes either U5MR or Q5, case-insensitive
@@ -758,15 +755,13 @@ p <- save.all("Q5", "f")
 p_list <- invisible(Map(save.all, ind0 = c("Q5", "Q5", "Q1", "Q1"), gender0 = c("f", "m","f", "m")))
 
 save.all <- function(ind0, gender0){
-  wpp_and_completeihme <- list(wpp.cqt = get.sex.wpp.cqt(ind0, gender0),
-                               ihme.cqt = get.sex.ihme.cqt(ind_name = ind0, gender0 = gender0))
   p <- savePlotResults(
-    # runname = "vs_IGME2019_vs_IHMEGBD2018_vs_WPP2019",
     legend2 = "UN IGME 2019",
     output.dir = output_dir_gender,
     pdf.or.png = png_or_pdf0,
     fig.dir = file.path(my_fig_dir, "Compared to IHME and WPP and 2019"),
-    wpp_and_completeihme = wpp_and_completeihme,
+    wpp.cqt = get.sex.wpp.cqt(ind0, gender0),
+    ihme.cqt = get.sex.ihme.cqt(ind_name = ind0, gender0 = gender0),
     new_entry_date = last.October(),
     gender = gender0, #
     gender_ind = ind0, # takes either U5MR or Q5, case-insensitive
@@ -780,16 +775,14 @@ p_list <- invisible(Map(save.all, ind0 = c("Q5", "Q5", "Q1", "Q1"), gender0 = c(
 # Female U5MR and IMR comparison plots with the expected rate (dashed line), Draft UN IGME 2020, UN IGME 2019 and GBD IGME 2018
 
 save.all <- function(ind0, gender0){
-  wpp_and_completeihme <- list(wpp.cqt = get.sex.wpp.cqt(ind0, gender0),
-                               ihme.cqt = get.sex.ihme.cqt(ind_name = ind0, gender0 = gender0))
   p <- savePlotResults(
-    # runname = "vs_Expected_vs_IGME2019_vs_IHMEGBD2018_WPP",
     legend_ex = "Expected",
     legend2 = "UN IGME 2019",
     output.dir = output_dir_gender,
     pdf.or.png = png_or_pdf0,
     fig.dir = file.path(my_fig_dir, "Compared to Expected and 2019 and IHME and WPP"),
-    wpp_and_completeihme = wpp_and_completeihme,
+    wpp.cqt = get.sex.wpp.cqt(ind0, gender0),
+    ihme.cqt = get.sex.ihme.cqt(ind_name = ind0, gender0 = gender0),
     new_entry_date = last.October(),
     gender = gender0, #
     gender_ind = ind0, # takes either U5MR or Q5, case-insensitive

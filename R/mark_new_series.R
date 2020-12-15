@@ -1,6 +1,6 @@
 # functions used to mark new entered series for U5MR, IMR, 5-14 datasets
 # 2020.02
-# UNICEF (YL)
+# UNICEF
 
 
 #' Get last October e.g. "2019-10-01" in 2020
@@ -95,7 +95,7 @@ IsDate <- function(mydate, date.format = "%Y-%m-%d") {
 #'
 #' @param dt_cme cme dt object
 #' @param new_entry_date must supply, cannot be NULL, format is checked, accept yyyy-mm-dd and yyyy-mm
-#' @param show_WHO_VR_by_value default to TRUE: highlight WHO VR difference too
+#' @param show_WHO_VR_by_value default to TRUE: highlight WHO VR difference by comparing values
 get.new.series.mark.entry <- function(dt_cme,
                                       new_entry_date,
                                       show_WHO_VR_by_value = TRUE
@@ -210,17 +210,58 @@ mark.new.series <- function(mcmc.meta, new.sourceID.i, HIV_removed = FALSE){
 
 
 # For WHO VR --------------------------------------------------------------
-#' Compare the WHO VR
-#' Compare dt_new vs. dt_old
+
+
+#' Find the directories to the dt_new and dt_old to compare WHO VR to find out
+#' the countries (ISO3Code) new series for highlighting new series, by default
+#' will picl the latest file from this and last year's IGME Input folders
 #'
-#' @param dt_new The new dataset, dt object
-#' @param dt_old The old dataset, dt object
-get.diff.dt.WHOVR <- function(
-  dt_new = NULL,
-  dt_old = NULL
+#' @param IGME_year_new Year to look for the IGME `Input` dir
+#' @param IGME_year_old Year to look for the IGME `Input` dir
+#' @param filename_new if NULL will use the latest file judging by
+#'   \code{CME.assistant::get.dir_U5MR}
+#' @param filename_old if NULL will use the latest file judging by
+#'   \code{CME.assistant::get.dir_U5MR}
+#'
+#' @return NULL
+#' @export find.dir.for.VR.comparison
+#' @examples
+#' \dontrun{
+#' find.dir.for.VR.comparison(IGME_year_new = 2020, IGME_year_old = 2019,
+#' filename_old = "data_U5MR_20191018.csv")
+#' }
+find.dir.for.VR.comparison <- function(
+  IGME_year_new = floor(this.year()), # Year to look for the IGME `Input` dir
+  IGME_year_old = floor(last.year()),
+  filename_new = NULL,
+  filename_old = NULL # e.g. "data_U5MR_20191018.csv"
 ){
-  if(is.null(dt_new)) dt_new <- fread(CME.assistant::get.dir_U5MR(dir_IGME = get.IGMEinput.dir(2020)))
-  if(is.null(dt_old)) dt_old <- fread(file.path(CME.assistant::get.IGMEinput.dir(2019), "data_U5MR_20191018.csv"))
+ if(is.null(filename_new)){
+   dir_dt_new_VR <- CME.assistant::get.dir_U5MR(dir_IGME = CME.assistant::get.IGMEinput.dir(IGME_year_new))
+ } else {
+   dir_dt_new_VR <- file.path(CME.assistant::get.IGMEinput.dir(IGME_year_new), filename_new)
+ }
+  if(is.null(filename_old)){
+    dir_dt_old_VR <- CME.assistant::get.dir_U5MR(dir_IGME = CME.assistant::get.IGMEinput.dir(IGME_year_old))
+  } else {
+    dir_dt_old_VR <- file.path(CME.assistant::get.IGMEinput.dir(IGME_year_old), filename_old)
+  }
+  return(list(dir_dt_new_VR = dir_dt_new_VR, dir_dt_old_VR = dir_dt_old_VR))
+}
+
+#' Compare the WHO VR dt_new vs. dt_old
+#'
+#' dir_dt_new_VR and dir_dt_old_VR can be loaded by
+#' \code{\link{find.dir.for.VR.comparison}}
+#' @return list of dt1 (the comparison dataset for debugging) and iso_newVR (the
+#'   vector of country isos with different WHO VR)
+get.diff.dt.WHOVR <- function(
+){
+  default_dir <- find.dir.for.VR.comparison(IGME_year_new = 2020, IGME_year_old = 2019, filename_old = "data_U5MR_20191018.csv")
+  if(!exists("dir_dt_new_VR")) dir_dt_new_VR <- default_dir$dir_dt_new_VR
+  if(!exists("dir_dt_old_VR")) dir_dt_old_VR <- default_dir$dir_dt_old_VR
+  dt_new <- fread(dir_dt_new_VR)
+  dt_old <- fread(dir_dt_old_VR)
 
   subset.dt <- function(dt_new){
     dt_new_2 <- dt_new[grepl("WHO", Series.Name) & Visible == 1]

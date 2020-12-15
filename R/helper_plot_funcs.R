@@ -153,8 +153,8 @@ get.res.cqt.rda.diffname <- function(output.dir, name_only = FALSE){
 obtain.matched.cqt <- function(
   output.dir1 = NULL,
   output.dir2 = NULL,
-  runname1,
-  runname2
+  runname1 = NULL,
+  runname2 = NULL
 ){
   if (is.null(output.dir1)) output.dir1 <- file.path(getwd(), "output", runname1)
   if(!dir.exists(output.dir1)) stop("Check if dir exists: ", output.dir1)
