@@ -4,22 +4,13 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of CME.plot is to ...
+CME.plot has wrapped plotting functions into a package. 
 
 ## Installation
 
-You can install the released version of CME.plot from [CRAN](https://CRAN.R-project.org) with:
+You can install the developing version from Github:
 
 ``` r
-install.packages("CME.plot")
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(CME.plot)
-## basic example code
+devtools::install_github("unicef-drp/CME.plot")
 ```
 
