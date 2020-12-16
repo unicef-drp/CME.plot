@@ -184,7 +184,9 @@ obtain.matched.cqt <- function(
   return(resfinal.cqt2)
 }
 
-#' Limit the years of the 3rd dimension (year) of cqt
+#' Limit the 3rd dimension (year) of NMR cqt
+#'
+#' Set what's beyond year_end as NA since the NMR cqt goes to 2030.5
 #'
 #' @param res.cqt a 3-dimentional cqt array
 #' @param year_start year_start

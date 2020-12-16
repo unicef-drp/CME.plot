@@ -67,14 +67,12 @@ dtmethodu5mr[Method.IMR=="Sahel", Method.IMR:= "Sahel equation"]
 #                      fig.dir = my_fig_dir
 # )
 # After CC compared to CC
-res.cqt.CC <- obtain.matched.cqt(output.dir1 = output.dir,
-                                 output.dir2 = output.dir.CC)
 dim(res.cqt.CC) # 195,3,78 --- filter to just one country
 p <- savePlotResults(runname = "U5MR_Total_AfterCC",
                      After_CC = TRUE,
                      output.dir = output.dir,
+                     output.dir2 = output.dir.CC,
                      res.cqt1 = res.cqt.AggFinal,
-                     res.cqt2 = res.cqt.CC,
                      legend1 = "UN IGME 2020",
                      legend2 = "Country consultation",
                      fig.dir = "fig2020AfterCC/",
@@ -113,12 +111,10 @@ output.dir.IMR.CC <- file.path(dir_IGME_out_folder, runname_IMR_CC) # 2020 CC on
 # assign.my.fig.dir(subfolder = runname)
 # my_fig_dir
 
-res.cqt.IMR.CC <- obtain.matched.cqt(output.dir1 = output.dir.IMR,
-                                   output.dir2 = output.dir.IMR.CC)
 p <- savePlotResults(runname = "IMR_Total_AfterCC",
                      After_CC = TRUE,
                      output.dir = output.dir.IMR,
-                     res.cqt2 = res.cqt.IMR.CC,
+                     output.dir2 = output.dir.IMR.CC,
                      legend1 = "UN IGME 2020",
                      legend2 = "Country consultation",
                      fig.dir = "fig2020AfterCC/",
@@ -416,17 +412,15 @@ output.dir.20 <- file.path(Sys.getenv("USERPROFILE"), "/Dropbox/IGME 5-14/2020 R
 load(file.path(output.dir.20, "mcmc.meta.rda"))
 special_isos_5_14 <- get.special.isos(mcmc.meta)$special_isos
 dtmethodu5mr[ISO.Code%in%special_isos_5_14, Method.5_14:= "Derived from U5MR"]
-# preCC cqt
-res.cqt.preCC <- obtain.matched.cqt(output.dir1 = output.dir.20,
-                                    output.dir2 = output.dir.20CC)
+
 # 1.1.-Results
 p <- savePlotResults(runname = "MR5-14_AfterCC",
                      After_CC = TRUE,
                      output.dir = output.dir.20,
+                     output.dir2 = output.dir.20CC,
                      year.start = 1990,
                      legend1 = "UN IGME 2020",
                      legend2 = "Country consultation",
-                     res.cqt2 = res.cqt.preCC,
                      ylab = "10q5",
                      pdf.or.png = png_or_pdf0,
                      fig.dir = "fig2020AfterCC",
@@ -461,15 +455,13 @@ load(file.path(output.dir.20, "mcmc.meta.rda"))
 special_isos_15_24 <- get.special.isos(mcmc.meta)$special_isos
 dtmethodu5mr[ISO.Code%in%special_isos_15_24, Method.15_24:= "Derived from U5MR"]
 
-res.cqt.preCC15_24 <- obtain.matched.cqt(output.dir1 = output.dir.20,
-                                         output.dir2 = output.dir.20CC)
 p <- savePlotResults(runname = "MR15-24_AfterCC",
                      After_CC = TRUE,
                      output.dir = output.dir.20,
+                     output.dir2 = output.dir.20CC,
                      year.start = 1990,
                      legend1 = "UN IGME 2020",
                      legend2 = "Country consultation",
-                     res.cqt2 = res.cqt.preCC15_24,
                      ylab = "10q15",
                      pooling_weight = "0.8", ## !!
                      pdf.or.png = png_or_pdf0,

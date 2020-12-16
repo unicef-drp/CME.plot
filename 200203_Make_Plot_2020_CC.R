@@ -7,7 +7,7 @@ library("CME.assistant")
 library("CME.plot")
 
 # how many countries to save, set `NULL` for all
-n_c  <-  NULL # for trial
+n_c  <-  1:10 # for trial
 png_or_pdf0 <- "pdf" # set for the whole markdown (md) document, pdf is much faster to create
 
 dir_IGME_out_folder <- CME.assistant::get.IGMEoutput.dir(2020)
@@ -46,17 +46,13 @@ p <- savePlotResults(runname = "test",
                      output.dir = output.dir,
                      pdf.or.png = "pdf",
                      fig.dir = "fig/",
-                     n.countries = c(1)
-                     # n.countries = c(1, 21, 22, 26, 77, 81, 126, 182, 185, 191)
-                     # n.countries = NULL
+                     n.countries = c(57)
 )
 
 # after CC compared to CC ----
-res.cqt.CC <- obtain.matched.cqt(output.dir1 = output.dir,
-                                 output.dir2 = output.dir.CC)
 p <- savePlotResults(runname = runname,
                      output.dir = output.dir,
-                     res.cqt2 = res.cqt.CC,
+                     output.dir2 = output.dir.CC,
                      legend1 = "UN IGME 2020 ",
                      legend2 = "UN IGME 2020 CC",
                      fig.dir = "fig/",
@@ -91,7 +87,7 @@ p <- savePlotResults(runname = runname,
 )
 p$time_spent
 
-# 1.1.HIV removed results for HIV countries -----------------------------------
+# 1.1.HIV-removed results for HIV countries -----------------------------------
 # I did not find `res.hivremoved.cqt.Lw.rda` in "GR20190311_all" so I just used this for now.
 p <- savePlotResults(runname = runname,
                      new_entry_date = last.October(),
@@ -102,7 +98,7 @@ p <- savePlotResults(runname = runname,
                      n.countries = n_c
 )
 
-# compared to 2019
+# compared to 2019 (in this case, it is easier to supply res.cqt2 directly)
 load(file.path(dir_IGME_out_folder, "IGME2019/res.hivremoved.cqt.Lw.rda"))
 hivremoved.cqt.2019 <- res.hivremoved.cqt.Lw$`0.5`
 p <- savePlotResults(runname = runname,
@@ -129,13 +125,11 @@ p <- savePlotResults(runname = runname,
 
 
 # 1.3.Compared to last year ----------------------------------------------
-cqt_last_year <- obtain.matched.cqt(runname1 = runname,
-                                    runname2 = runname_19)
 p <- savePlotResults(runname = runname,
                      new_entry_date = last.October(),
                      output.dir = output.dir,
+                     output.dir2 = output.dir.19,
                      pdf.or.png = png_or_pdf0,
-                     res.cqt2 = cqt_last_year,
                      legend2 = "UN IGME 2019",
                      fig.dir = my_fig_dir,
                      n.countries = n_c
@@ -181,7 +175,7 @@ output.dir.IMR.19 <- file.path(dir_IGME_out_folder, runname_IMR_19) # 2019 on dr
 load(file.path(output.dir.IMR, "mcmc.meta.rda"))
 mcmc.meta$data.all$imrmethod.c
 dtmethodimr <- data.table(ISO.Code = mcmc.meta$data.all$iso.c, Method.IMR = mcmc.meta$data.all$imrmethod.c)
-fwrite(dtmethodimr, "ModelMethod/dtmethodimr.csv")
+# fwrite(dtmethodimr, "ModelMethod/dtmethodimr.csv")
 
 PlotDataAndEstimates2020(
   data = NULL,
@@ -260,15 +254,11 @@ p <- savePlotResults(runname = runname_IMR,
 )
 
 # 3. Compared to last year
-cqt_last_year <- obtain.matched.cqt(runname1 = runname_IMR,
-                                    runname2 = runname_IMR_19,
-                                    output.dir1 = output.dir.IMR,
-                                    output.dir2 = output.dir.IMR.19)
 p <- savePlotResults(runname = runname_IMR,
                      new_entry_date = last.October(),
                      output.dir = output.dir.IMR,
+                     output.dir2 = output.dir.IMR.19,
                      pdf.or.png = png_or_pdf0,
-                     res.cqt2 = cqt_last_year,
                      legend2 = "UN IGME 2019",
                      fig.dir = my_fig_dir,
                      n.countries = n_c
@@ -288,7 +278,7 @@ p <- savePlotResults(runname = runname_IMR,
                      output.dir = output.dir.IMR,
                      pdf.or.png = png_or_pdf0,
                      wpp.cqt = imr.wpp.cqt.2019,
-                     ihme.cqt = imr.ihme.cqt.2019,
+                     ihme.cqt = imr.ihme.cqt.2017,
                      # legend_WPP = NULL,
                      # legend_IHME = NULL,
                      fig.dir = my_fig_dir,
@@ -304,7 +294,7 @@ p <- savePlotResults(runname = runname_IMR,
                      pdf.or.png = png_or_pdf0,
                      # wpp only has estimates
                      wpp.cqt = imr.wpp.cqt.2019,
-                     ihme.cqt = imr.ihme.cqt.2019,
+                     ihme.cqt = imr.ihme.cqt.2017,
                      fig.dir = my_fig_dir,
                      # col.ihme = "white" # if want to hide CI for IHME
                      n.countries = n_c
@@ -414,16 +404,9 @@ p <- savePlotResults(runname = runname.NMR,
 
 
 # 3.2 Compared to expected  -------------------------------------------
-cqt_rate_expected <- set.cqt.year.limit(resl_rate$res_ex.cqt, year_end = last.year())
-cqt_2019_rate <- set.cqt.year.limit(resl_rate$res2.cqt, year_end = last.year())
-
-cqt_ratio_expected <- set.cqt.year.limit(resl_ratio$res_ex.cqt, year_end = last.year())
-cqt_2019_ratio <- set.cqt.year.limit(resl_ratio$res2.cqt, year_end = last.year())
-
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
-                     res_ex.cqt = cqt_rate_expected,
-                     legend_ex = "Expected",
+                     legend_ex = "Expected", # turn on the expected series
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "NMR",
                      fig.dir = my_fig_dir,
@@ -431,7 +414,6 @@ p <- savePlotResults(runname = runname.NMR,
 )
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
-                     res_ex.cqt = cqt_ratio_expected,
                      legend_ex = "Expected",
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "ratio",
@@ -442,8 +424,7 @@ p <- savePlotResults(runname = runname.NMR,
 # 3.2 compared to last year --------------------------------------------------
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
-                     res.cqt3 = cqt_2019_rate,
-                     legend3 = "UN IGME 2019",
+                     legend2 = "UN IGME 2019",
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "NMR",
                      fig.dir = my_fig_dir,
@@ -453,7 +434,6 @@ p <- savePlotResults(runname = runname.NMR,
 
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
-                     res.cqt2 = cqt_2019_ratio,
                      legend2 = "UN IGME 2019",
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "ratio",
@@ -463,11 +443,6 @@ p <- savePlotResults(runname = runname.NMR,
 
 
 # 3.3 Compared to IHME --------------------------------------------------------
-# wpp_and_completeihme <- list(wpp.cqt = NULL, # don't have WPP
-#                              ihme.cqt = get.ihme.cqt(ind_name = "NMR",
-#                                                      iso_order = resl_rate$iso))
-# But since `identical(resl_rate$iso, mcmc.meta$data.all$iso.c)`, without
-# suppling iso_order is also fine, it just uses the default
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
                      ihme.cqt = nmr.ihme.cqt.2017,
@@ -480,7 +455,6 @@ p <- savePlotResults(runname = runname.NMR,
 # all three series together
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
-                     res.cqt2 = cqt_2019_rate,
                      legend2 = "UN IGME 2019",
                      ihme.cqt = nmr.ihme.cqt.2017,
                      pdf.or.png = png_or_pdf0,
@@ -492,10 +466,8 @@ p <- savePlotResults(runname = runname.NMR,
 # all four series + expected
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
-                     legend_ex = "Expected",
-                     res_ex.cqt = cqt_rate_expected,
                      legend2 = "UN IGME 2019",
-                     res.cqt2 = cqt_2019_rate,
+                     legend_ex = "Expected",
                      ihme.cqt = nmr.ihme.cqt.2017,
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "NMR",
@@ -506,10 +478,8 @@ p <- savePlotResults(runname = runname.NMR,
 # Ratio:
 p <- savePlotResults(runname = runname.NMR,
                      output.dir = output_dir_nmr,
-                     legend_ex = "Expected",
-                     res_ex.cqt = cqt_ratio_expected,
                      legend2 = "UN IGME 2019",
-                     res.cqt2 = cqt_2019_ratio,
+                     legend_ex = "Expected",
                      pdf.or.png = png_or_pdf0,
                      NMR_scale = "ratio",
                      fig.dir = my_fig_dir,

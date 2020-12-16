@@ -219,25 +219,27 @@ savePlotResults <- function(
         res.cqt <- res.cqt1
       } else {
         res.cqt.Lw <- get.res.cqt.rda.diffname(output.dir)
-        message("res.cqt.Lw file used: ", get.res.cqt.rda.diffname(output.dir, name_only = TRUE))
         res.cqt <- res.cqt.Lw[[as.character(pooling_weight)]] #
+        if(!HIV_removed)message("res.cqt.Lw file used: ", get.res.cqt.rda.diffname(output.dir, name_only = TRUE))
       }
-      # YL 1/29 HIV-removed, load from specific output.dir if provided
+      # YL 1/29 HIV-removed, can load from a specific `output.dir.for.hivremoved.cqt` if supplied
       if(HIV_removed){
         if(!is.null(output.dir.for.hivremoved.cqt)){
             if(file.exists(file.path(output.dir.for.hivremoved.cqt,
                                       "res.hivremoved.cqt.Lw.rda"))){
               load(file.path(output.dir.for.hivremoved.cqt, "res.hivremoved.cqt.Lw.rda"))
             } else {
-              warning("Cannot load the `output.dir.for.hivremoved.cqt`")
+              warning("Cannot find and load the `res.hivremoved.cqt.Lw.rda`")
             }
 
           } else if (file.exists(file.path(output.dir, "res.hivremoved.cqt.Lw.rda"))) {
             load(file.path(output.dir, "res.hivremoved.cqt.Lw.rda"))
           } else (
-            stop("Please double check, cannot load the hivremoved.cqt.")
+            stop("Please check if `res.hivremoved.cqt.Lw.rda` is in the output directory.")
           )
         res.cqt <- res.hivremoved.cqt.Lw[[as.character(pooling_weight)]]
+        message("res.cqt.Lw file used: res.hivremoved.cqt.Lw.rda")
+
       }
 
       dimnames(res.cqt)[[3]] <- year.t
