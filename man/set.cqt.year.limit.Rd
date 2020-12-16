@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_plot_funcs.R
 \name{set.cqt.year.limit}
 \alias{set.cqt.year.limit}
-\title{Limit the years of the 3rd dimension (year) of cqt}
+\title{Limit the 3rd dimension (year) of NMR cqt}
 \usage{
 set.cqt.year.limit(res.cqt = NULL, year_start = NULL, year_end = last.year())
 }
@@ -14,5 +14,5 @@ set.cqt.year.limit(res.cqt = NULL, year_start = NULL, year_end = last.year())
 \item{year_end}{year_end}
 }
 \description{
-Limit the years of the 3rd dimension (year) of cqt
+Set what's beyond year_end as NA since the NMR cqt goes to 2030.5
 }

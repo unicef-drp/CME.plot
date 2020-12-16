@@ -459,6 +459,49 @@ remove.specific.series.15_24 <- function(
   return(mcmc.meta)
 }
 
+#' make res.cqt from results.csv
+#'
+#' read results.csv and mcmc.meta files in the output dir and make
+#' res.cqt.Lw.rda
+#'
+#'
+#' @param output_dir output.dir
+#' @param mcmc.meta_filename file name to read, default to "mcmc.meta.rda"
+#' @param results_filename file name to read, default to "results.csva"
+#' @param res.cqt_filename file name to read, default to "res.cqt.Lw.rda"
+#' @return res.cqt.Lw
+#' @export get.cqt.from.results
+#'
+get.cqt.from.results <- function(
+  output_dir,
+  mcmc.meta_filename = "mcmc.meta.rda",
+  results_filename = "results.csv",
+  res.cqt_filename = "res.cqt.Lw.rda"
+){
+  load(file.path(output_dir, mcmc.meta_filename))
+  iso_order <- mcmc.meta$data.all$iso.c
+  load(file.path(output_dir, "year.t.rda"))
+  years <- year.t
+  dt <- fread(file.path(output_dir, results_filename))
+  vars_wanted <- c("ISO.Code", "Quantile", paste0("X", years))
+  dt_long <- melt(dt[,..vars_wanted], measure.vars = paste0("X", years), variable.factor = FALSE)
+  dt_long[, years:=as.numeric(sub("X", "", variable))]
+  dt_long <- dt_long[order(match(ISO.Code, rep(iso_order, each = length(years))))]
+  setorder(dt_long, years, Quantile) # set the right order is the key to produce right array
+  # Now the order is by t (year), q, and c (iso)
+  cqt <- array(data = dt_long[, value],
+               dim = c(length(iso_order),
+                       3,
+                       length(years)),
+               dimnames = list(c = iso_order,
+                               q = c(0.05, 0.5, 0.95),
+                               t = years))
+  res.cqt.Lw <- list()
+  res.cqt.Lw[["0.5"]] <- cqt
+  return(res.cqt.Lw)
+}
+
+
 #' Check cqt file vs. results.csv
 #'
 #' Return the difference if there is any
