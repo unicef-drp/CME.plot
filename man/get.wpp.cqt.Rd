@@ -2,26 +2,26 @@
 % Please edit documentation in R/read_wpp_and_ihme_202001.R
 \name{get.wpp.cqt}
 \alias{get.wpp.cqt}
-\title{Function to get wpp.cqt for all indicators (total, sex-specific)}
+\title{Function to get `wpp.cqt` for all indicators for total sex}
 \usage{
 get.wpp.cqt(
   wpp_dt = NULL,
   dir_wpp_Q5 = dir_wpp_Q5,
   dir_wpp_IMR = dir_wpp_IMR,
-  ind_name = "U5MR",
+  ind = "U5MR",
   iso_order = u5mr.iso.c,
   new_cnames0 = new_cnames
 )
 }
 \arguments{
-\item{wpp_dt}{wpp dt, if supply, ignore dir_wpp. Used for obtaining
+\item{wpp_dt}{WPP dt, if supply, ignore dir_wpp. Used for obtaining
 sex-specific WPP}
 
 \item{dir_wpp_Q5}{dir to WPP U5MR}
 
 \item{dir_wpp_IMR}{dir to WPP IMR}
 
-\item{ind_name}{name of the indicator: Q5, Q1, or U5MR, IMR}
+\item{ind}{name of the indicator: Q5, Q1, or U5MR, IMR}
 
 \item{iso_order}{the iso order from mcmc.meta that we want to match}
 
@@ -31,5 +31,5 @@ sex-specific WPP}
 wpp.cqt
 }
 \description{
-Function to get wpp.cqt for all indicators (total, sex-specific)
+Function to get `wpp.cqt` for all indicators for total sex
 }

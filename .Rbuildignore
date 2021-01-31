@@ -1,3 +1,5 @@
 ^CME\.plot\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^data-raw$
+^fig$

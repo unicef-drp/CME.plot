@@ -2,7 +2,6 @@
 # For gender-specific
 
 #' Prepare data file and results for sex-specific plot
-#' @importFrom dplyr left_join
 #' @param dt_gender the datast for plotting
 #' @param new_entry_date to mark new entries, supply a date like "2020-06"
 #' @param indicator full indicator, use `get.match` to get it
@@ -49,7 +48,8 @@ transformdataSexSpecific <- function(
     crisisadjfile1=read.csv(crisisadjfile,stringsAsFactors = F,header=T)[,2:3]
     crisisadjfile1$crisisornot=1
     colnames(crisisadjfile1)[1:2]=c("Country.Code","Reference.Date")
-    d = dplyr::left_join(dd, crisisadjfile1, by = c("Country.Code", "Reference.Date"))
+    d = merge(dd, crisisadjfile1, by = c("Country.Code", "Reference.Date"), all.x = TRUE)
+    # d1 = dplyr::left_join(dd, crisisadjfile1, by = c("Country.Code", "Reference.Date"))
     d$crisisornot=ifelse(is.na(d$crisisornot),0,1)
     d$Inclusion.U5MR=ifelse(d$crisisornot==1,0,d$Inclusion.U5MR)
     d$Inclusion.Gender=ifelse(d$crisisornot==1,0,d$Inclusion.Gender)

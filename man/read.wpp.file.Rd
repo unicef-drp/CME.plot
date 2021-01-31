@@ -4,12 +4,12 @@
 \alias{read.wpp.file}
 \title{Read WPP xlsx files}
 \usage{
-read.wpp.file(dir_wpp, ind_name)
+read.wpp.file(dir_wpp, ind)
 }
 \arguments{
 \item{dir_wpp}{dir to WPP files}
 
-\item{ind_name}{Q5, IMR}
+\item{ind}{Q5, IMR}
 }
 \description{
 read from xlsx files: WPP2019_MORT_F01_2_Q5_BOTH_SEXES.xlsx, WPP2019_MORT_F01_1_IMR_BOTH_SEXES.xlsx

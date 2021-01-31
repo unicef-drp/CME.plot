@@ -17,9 +17,9 @@ savePlotResults(
   output.dir4 = NULL,
   fig.dir = NULL,
   year.start = NULL,
-  year.end = last.year(),
+  year.end = 2020,
   zoom.year.start = 1990,
-  zoom.year.end = this.year(),
+  zoom.year.end = 2020,
   main.plot = TRUE,
   zoom = TRUE,
   add.legend = TRUE,
@@ -29,7 +29,7 @@ savePlotResults(
   res.cqt4 = NULL,
   res_ex.cqt = NULL,
   save_cqt_copy = FALSE,
-  legend1 = "Draft UN IGME 2020",
+  legend1 = "UN IGME 2020",
   legend2 = NULL,
   legend3 = NULL,
   legend4 = NULL,
@@ -37,7 +37,7 @@ savePlotResults(
   wpp.cqt = NULL,
   ihme.cqt = NULL,
   legend_WPP = "WPP 2019",
-  legend_IHME = "IHME GBD 2018",
+  legend_IHME = "IHME GBD 2019",
   ylab = NULL,
   new_entry_date = NULL,
   pdf.or.png = "pdf",
@@ -53,6 +53,7 @@ savePlotResults(
   gender = NULL,
   gender_ind = NULL,
   pooling_weight = "0.5",
+  return_info = FALSE,
   ...
 )
 }
@@ -194,6 +195,8 @@ for sex-specific plot, accepts either "Q5", "Q1", "Q4" or "q5", "q1", "q4"}
 
 \item{pooling_weight}{default to "0.5", sometimes we need to show a different
 weight, for example, for 5-24 estimates}
+
+\item{return_info}{logical, default to FALSE, if TRUE will return runtime}
 
 \item{...}{more arguments not listed here but can still be passed into the
 function `PlotDataAndEstimates2020`}

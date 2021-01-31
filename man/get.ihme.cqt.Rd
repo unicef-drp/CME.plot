@@ -2,31 +2,16 @@
 % Please edit documentation in R/read_wpp_and_ihme_202001.R
 \name{get.ihme.cqt}
 \alias{get.ihme.cqt}
-\title{Get IHME cqt file for plotting}
+\title{get cqt from organized subsetted ihme data}
 \usage{
-get.ihme.cqt(
-  dir_IHME0 = dir_IHME,
-  iso_order = u5mr.iso.c,
-  new_cnames0 = new_cnames,
-  ind_name = "U5MR"
-)
+get.ihme.cqt(ihme, iso_order)
 }
 \arguments{
-\item{dir_IHME0}{IHME file directory}
+\item{ihme}{the ihme dataset, with 5 columns: location_id, year, lower, mean,
+upper}
 
-\item{iso_order}{the iso order we want}
-
-\item{new_cnames0}{the new country name list}
-
-\item{ind_name}{indicator name}
-}
-\value{
-ihme.cqt
+\item{iso_order}{the desired iso order}
 }
 \description{
-Using the "IHME 5q0 Mortality_estimates 2018 latest version.xlsx"
-in which U5MR has lower and upper
-}
-\details{
-NMR doesn't have lower and upper
+get cqt from organized subsetted ihme data
 }

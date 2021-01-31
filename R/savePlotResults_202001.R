@@ -112,6 +112,7 @@
 #'   weight, for example, for 5-24 estimates
 #' @param save_cqt_copy logical, if TRUE will save the `res.cqt.rds` plotted
 #'   into a folder created as `cqt_backup`
+#' @param return_info logical, default to FALSE, if TRUE will return runtime
 #' @param ...  more arguments not listed here but can still be passed into the
 #'   function `PlotDataAndEstimates2020`
 #'
@@ -133,9 +134,9 @@ savePlotResults <- function(
   output.dir4 = NULL,
   fig.dir = NULL,    # directory to store plots. If \code{NULL}, defaults to folder \code{fig} in current working directory. Will create directory if doesn't exist
   year.start = NULL, # start year of estimates to plot. If \code{NULL}, earliest year of estimates available is used.
-  year.end = last.year(),   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
+  year.end = 2020,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
   zoom.year.start = 1990,
-  zoom.year.end = this.year(),
+  zoom.year.end = 2020,
   main.plot = TRUE,  # include main plot?
   zoom = TRUE,       # include zoom plot?
   add.legend = TRUE, # show legend?
@@ -145,7 +146,7 @@ savePlotResults <- function(
   res.cqt4 = NULL,       # a dark-red line, years adjusted in function
   res_ex.cqt = NULL,     # the expected series, years adjusted in function
   save_cqt_copy = FALSE, # if TRUE save a copy of res.cqt1 for checking
-  legend1 = "Draft UN IGME 2020", # a switch for showing main estimates (set NULL for data plot): red line
+  legend1 = "UN IGME 2020", # a switch for showing main estimates (set NULL for data plot): red line
   legend2 = NULL, # used as a switch for showing cqt2: green line
   legend3 = NULL, # used as a switch for showing cqt3: sienna line: `scales::show_col("sienna2")`
   legend4 = NULL, # used as a switch for showing cqt4: dark red line: `scales::show_col("#c7202e")`
@@ -153,7 +154,7 @@ savePlotResults <- function(
   wpp.cqt = NULL,  # green line
   ihme.cqt = NULL, # blue line
   legend_WPP = "WPP 2019",
-  legend_IHME = "IHME GBD 2018",
+  legend_IHME = "IHME GBD 2019",
   ylab = NULL,
   new_entry_date = NULL,
   pdf.or.png = "pdf",  # "pdf" or "png"
@@ -171,6 +172,7 @@ savePlotResults <- function(
   gender = NULL,
   gender_ind = NULL,
   pooling_weight = "0.5", # sometimes for 5-24 need a different weight
+  return_info = FALSE, # return info on runtime. etc
   ... # allowing more options passed to `PlotDataAndEstimates2020`
 ) {
   # set directory
@@ -255,21 +257,30 @@ savePlotResults <- function(
         if(is.null(legend2)) legend2 <- runname2
         if(is.null(output.dir2)) output.dir2 <- file.path(getwd(), "output", runname2)
       }
-      if(!is.null(output.dir2)) res.cqt2 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir2)
+      if(!is.null(output.dir2)){
+        check.rda.exist(output.dir2)
+        res.cqt2 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir2)
+      }
 
       # runname 3
       if(!is.null(runname3)){
         if(is.null(legend3)) legend3 <- runname3
         if(is.null(output.dir3)) output.dir3 <- file.path(getwd(), "output", runname3)
       }
-      if(!is.null(output.dir3)) res.cqt3 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir3)
+      if(!is.null(output.dir3)){
+        check.rda.exist(output.dir3)
+        res.cqt3 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir3)
+      }
 
       # runname4
       if(!is.null(runname4)){
         if(is.null(legend4)) legend4 <- runname4
         if(is.null(output.dir4)) output.dir4 <- file.path(getwd(), "output", runname4)
       }
-      if(!is.null(output.dir4)) res.cqt4 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir4)
+      if(!is.null(output.dir4)){
+        check.rda.exist(output.dir4)
+        res.cqt4 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir4)
+      }
 
 
     } else {
@@ -597,9 +608,14 @@ savePlotResults <- function(
                 failed_c = C[failed],
                 failed_iso = failed_isos))
   } else {
-    return(list(filename = filename, fig.dir = fig.dir,
-                iso.c = iso.c, C = C, iso.subset.c = iso.subset.c,
-                time_spent = time_spent))
+    if(return_info){
+      return(list(filename = filename, fig.dir = fig.dir,
+                  iso.c = iso.c, C = C, iso.subset.c = iso.subset.c,
+                  time_spent = time_spent))
+    }else{
+      return(invisible())
+    }
+
   }
 
   # started at 19/12/23 YL

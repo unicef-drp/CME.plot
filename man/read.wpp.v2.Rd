@@ -11,9 +11,6 @@ read.wpp.v2(dir_wpp_Q5, dir_wpp_IMR)
 
 \item{dir_wpp_IMR}{dir to "WPP2019_MORT_F01_1_IMR_BOTH_SEXES.xlsx"}
 }
-\value{
-read.wpp.v2
-}
 \description{
 Read the two WPP xlsx files for U5MR and IMR into one dataset
 }

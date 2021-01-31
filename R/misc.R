@@ -87,6 +87,15 @@ if(getRversion()>= "2.15.1"){
                            "wpp_m",
                            "x_n",
                            "year",
-                           "year.t"
+                           "year.t",
+                           "IHME_codebook",
+                           "Location_ID",
+                           "dir_IHME_2017",
+                           "dir_IHME_2019",
+                           "ihme_2017_sex_Q5Q1_noCI",
+                           "ihme_2019",
+                           "location_id",
+                           "wpp_2019_cqt_by_sex"
+
                            ))
 }

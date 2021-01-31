@@ -2,15 +2,20 @@
 % Please edit documentation in R/read_wpp_and_ihme_202001.R
 \name{get.sex.wpp.cqt}
 \alias{get.sex.wpp.cqt}
-\title{Get sex-specific wpp cqt}
+\title{Get sex-specific wpp cqt using prepared data `wpp_2019_cqt_by_sex`}
 \usage{
-get.sex.wpp.cqt(ind0, gender)
+get.sex.wpp.cqt(ind0, sex0, year = 2019)
 }
 \arguments{
 \item{ind0}{indicator}
 
-\item{gender}{"f" or "m"}
+\item{sex0}{"f" or "m"}
+
+\item{year}{default to 2019}
+}
+\value{
+a wpp_cqt file
 }
 \description{
-Get sex-specific wpp cqt
+Get sex-specific wpp cqt using prepared data `wpp_2019_cqt_by_sex`
 }

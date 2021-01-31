@@ -253,6 +253,10 @@ find.dir.for.VR.comparison <- function(
 #'
 #' dir_dt_new_VR and dir_dt_old_VR can be loaded by
 #' \code{\link{find.dir.for.VR.comparison}}
+#'
+#' Supply `dir_dt_new_VR` or/and `dir_dt_old_VR` in the global environment to
+#' overwrite the default selection
+#'
 #' @return list of dt1 (the comparison dataset for debugging) and iso_newVR (the
 #'   vector of country isos with different WHO VR)
 get.diff.dt.WHOVR <- function(

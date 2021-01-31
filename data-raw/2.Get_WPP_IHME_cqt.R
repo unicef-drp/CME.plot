@@ -1,0 +1,111 @@
+library("CME.assistant")
+devtools::load_all()
+# "2020 Round Estimation/Code/output/"
+dir_IGME_out_folder <- CME.assistant::get.IGMEoutput.dir(2020)
+
+# load file paths
+load.more.file.paths <- function(){
+  #
+  # year range: 1950 ~ 2017, collected in year 2019
+  dir_IHME_2017  <<- file.path(dir_IGME_out_folder, "IHME/GBD 2017", "IHME_5q0_Mortality_estimates_2018.xlsx")
+  # dir_IHME_sex contains U5MR, IMR, NMR for both sex too. But there is no UI
+  dir_IHME_sex   <<- file.path(dir_IGME_out_folder, "IHME/GBD 2017", "IHME_ProbabilityOfDeath_estimates_200130.csv")
+  # year range: 1950 ~ 2019, collected in Oct. 2020
+  dir_IHME_2019  <<- file.path(dir_IGME_out_folder, "IHME", "GBD2019_Under5_estimates.xlsx")
+
+  dir_wpp_Q5     <<- file.path(dir_IGME_out_folder, "WPP2019", "WPP2019_MORT_F01_2_Q5_BOTH_SEXES.xlsx")
+  dir_wpp_IMR    <<- file.path(dir_IGME_out_folder, "WPP2019", "WPP2019_MORT_F01_1_IMR_BOTH_SEXES.xlsx")
+  dir_wpp_female <<- file.path(dir_IGME_out_folder, "WPP2019", "WPP2019_MORT_F17_3_ABRIDGED_LIFE_TABLE_FEMALE.xlsx")
+  dir_wpp_male   <<- file.path(dir_IGME_out_folder, "WPP2019", "WPP2019_MORT_F17_2_ABRIDGED_LIFE_TABLE_MALE.xlsx")
+
+  check.file.exist <- function(file0){
+    if(!file.exists(file0)) warning("Check if these required files exist: ", file0)
+  }
+  sapply(c(dir_IHME_2017, dir_IHME_sex,
+           dir_wpp_Q5, dir_wpp_IMR, dir_wpp_female, dir_wpp_male), check.file.exist)
+  return(invisible())
+}
+load.more.file.paths()
+
+
+# WPP 2019 ----------------------------------------------------------------
+# WPP has no CI, only estimates
+# U5MR
+u5mr.wpp.cqt.2019 <- get.wpp.cqt(dir_wpp_Q5 = dir_wpp_Q5,
+                                 dir_wpp_IMR = dir_wpp_IMR,
+                                 ind = "U5MR",
+                                 iso_order = u5mr.iso.c)
+# IMR
+imr.wpp.cqt.2019 <-  get.wpp.cqt(dir_wpp_Q5 = dir_wpp_Q5,
+                                 dir_wpp_IMR = dir_wpp_IMR,
+                                 ind = "IMR")
+# usethis::use_data(u5mr.wpp.cqt.2019)
+# usethis::use_data(imr.wpp.cqt.2019)
+
+# sex-specific
+dir_wpp_female <- file.path("data-raw/WPP2019", "WPP2019_MORT_F17_3_ABRIDGED_LIFE_TABLE_FEMALE.xlsx")
+dir_wpp_male <- file.path("data-raw/WPP2019", "WPP2019_MORT_F17_2_ABRIDGED_LIFE_TABLE_MALE.xlsx")
+dir_IHME_sex <- file.path("data-raw/IHME2018", "IHME_ProbabilityOfDeath_estimates_200130.csv")
+wpp_f_2019 <- read.wpp.v3(dir_wpp_female) # this is cleaned dataset with 4 columns: UNCode, year, IMR, U5MR
+wpp_m_2019 <- read.wpp.v3(dir_wpp_male)
+wpp_f_2019[, sex:= "f"]
+wpp_m_2019[, sex:= "m"]
+wpp_2019_cqt_by_sex <- rbind(wpp_f_2019, wpp_m_2019)
+# usethis::use_data(wpp_2019_cqt_by_sex) # only save one data file for all sex-specific
+
+# for example
+# get sex-specific WPP 2019
+Q5_f_wpp.cqt <- get.sex.wpp.cqt(ind0 = "Q5", sex0 = "f")
+
+# IHME 2017 ---------------------------------------------------------------
+ihme_2017_sex_Q5Q1_noCI <- get_dt_IHME_2017_by_sex(dir_IHME0 = dir_IHME_sex)
+# usethis::use_data(ihme_2017_sex_Q5Q1_noCI)
+# this dt contains:
+# sex      IMR  U5MR
+# both    12716 12716
+# f       12716 12716
+# m       12716 12716
+
+u5mr.ihme.cqt.2017 <- get.ihme.cqt.2017(dir_IHME0 = dir_IHME_2017,
+                                        ind = "U5MR")
+imr.ihme.cqt.2017 <- get.sex.ihme.cqt.2017(ind = "IMR", sex = "both")
+# NMR (IHME only, mean only)
+nmr.ihme.cqt.2017 <- get.ihme.cqt.2017(dir_IHME0 = dir_IHME_2017,
+                                       ind = "NMR")
+# usethis::use_data(u5mr.ihme.cqt.2017)
+# usethis::use_data(imr.ihme.cqt.2017)
+# usethis::use_data(nmr.ihme.cqt.2017)
+
+# Sex-specific ---- save only one data for the sex-specific WPP or IHMR, a
+# function is called to read a specific sex and indicator combination
+
+# get sex-specific IHME 2017
+Q5_f_ihme.cqt <- get.sex.ihme.cqt.2017(ind0 = "U5MR", sex0 = "f")
+
+
+# IHME 2019 ---------------------------------------------------------------
+
+
+ihme_2019 <- rbindlist(lapply(c("U5MR", "IMR", "NMR", "CMR"), get_dt_IHME_2019,
+                              dir_IHME0 = dir_IHME_2019))
+# usethis::use_data(ihme_2019)
+# no lower and upper for NMR
+# columns:
+# location_id year    sex      lower       mean     upper     ind
+# 1:        6 1950    m      164.317411 192.210113 224.53277  U5MR
+# ...
+# sex      CMR   IMR   NMR  U5MR
+# both    13650 13650 13650 13650
+# f       13650 13650     0 13650
+# m       13650 13650     0 13650
+
+u5mr.ihme.cqt.2019 <- get.ihme.cqt.2019(ind0 = "U5MR", sex0 = "both")
+imr.ihme.cqt.2019  <- get.ihme.cqt.2019(ind0 = "IMR",  sex0 = "both")
+nmr.ihme.cqt.2019  <- get.ihme.cqt.2019(ind0 = "NMR",  sex0 = "both")
+# usethis::use_data(u5mr.ihme.cqt.2019)
+# usethis::use_data(imr.ihme.cqt.2019)
+# usethis::use_data(nmr.ihme.cqt.2019)
+
+# Sex-specific: call by using this function
+# for example
+Q5_f_ihme.cqt <- get.ihme.cqt.2019(ind0 = "U5MR", sex0 = "f")

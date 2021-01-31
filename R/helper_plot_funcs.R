@@ -178,7 +178,7 @@ obtain.matched.cqt <- function(
 
   resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
   resfinal.cqt2[, , is.element(year.t1, year.t2)] <-
-   res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1)]
+    res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1)]
   dimnames(resfinal.cqt2)[[3]] <- year.t1
 
   return(resfinal.cqt2)
@@ -284,6 +284,7 @@ get.gender.cqt.grid <- function(){
 #' @param gender0 gender0
 #' @param get_expected get expected file or not
 #' @param resultsfile results file
+#' @export
 get.gender.cqt <- function(ind0, gender0, get_expected = FALSE, resultsfile = NULL){
   if(!is.null(resultsfile)) {
     load(resultsfile)

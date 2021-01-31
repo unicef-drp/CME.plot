@@ -2,8 +2,8 @@
 % Please edit documentation in R/read_wpp_and_ihme_202001.R
 \name{get.match.IHME}
 \alias{get.match.IHME}
-\title{Revise IHME country names
-Internal function}
+\title{Not needed anymore:
+Revise IHME country names, match to `OfficialName` (not `CountryName`)}
 \usage{
 get.match.IHME(ihme_country)
 }
@@ -11,6 +11,6 @@ get.match.IHME(ihme_country)
 \item{ihme_country}{ihme$country}
 }
 \description{
-Revise IHME country names
-Internal function
+Not needed anymore:
+Revise IHME country names, match to `OfficialName` (not `CountryName`)
 }
