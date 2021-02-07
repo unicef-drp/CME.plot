@@ -1,6 +1,6 @@
 # `CME.plot` simple examples
-
-dir_IGME_out_folder <- CME.assistant::get.IGMEoutput.dir(2020)
+library(CME.plot)
+dir_IGME_out_folder <- get.IGMEoutput.dir(2020)
 runname <- "GR20200214_all"
 runname_19 <- "IGME2019"
 output.dir <- file.path(dir_IGME_out_folder, runname) # 2020 on dropbox
@@ -21,16 +21,16 @@ review.date.of.dataentry(output.dir = output.dir)
 new_dirs <- find.dir.for.VR.comparison(IGME_year_new = 2020, IGME_year_old = 2019,
                                        filename_new = NULL, filename_old = NULL)
 # supply in the global environment to overwrite:
-# if `dir_dt_new_VR` is supplied, it will be used as the new file to compare VR
+# if `dir_new_data_U5MR` is supplied, it will be used as the new file to compare VR
 # used in function `get.diff.dt.WHOVR`
-dir_dt_new_VR <- new_dirs$dir_dt_new_VR
-dir_dt_old_VR <- new_dirs$dir_dt_old_VR
+dir_new_data_U5MR <- new_dirs$dir_new_data_U5MR
+dir_old_data_U5MR <- new_dirs$dir_old_data_U5MR
 
 # minimum results/data plot:
 p <- savePlotResults(runname = "GR20200214",
                      output.dir = output.dir,
                      legend1 = NULL,
-                     # new_entry_date = "2020-01",
+                     new_entry_date = "2020-01",
                      n.countries = 1:10)
 
 

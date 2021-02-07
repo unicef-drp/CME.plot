@@ -1,6 +1,6 @@
 Package: CME.plot
 Title: Make Plots for Child Mortality Estimation
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: 
     person(given = "Yang",
            family = "Liu",
@@ -13,14 +13,11 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 Depends: 
-    R (>= 3.5.0),
+    R (>= 3.0.0),
 Imports: 
-    CME.assistant,
-    here,
-    data.table (>= 1.12.0),
-    dplyr,
     RColorBrewer,
     reshape2,
+    data.table (>= 1.12.0),
     readxl
 Suggests: 
     knitr,

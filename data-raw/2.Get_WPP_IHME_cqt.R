@@ -1,7 +1,9 @@
-library("CME.assistant")
+# functions to make IHME and WPP cqt files
+
+
 devtools::load_all()
 # "2020 Round Estimation/Code/output/"
-dir_IGME_out_folder <- CME.assistant::get.IGMEoutput.dir(2020)
+dir_IGME_out_folder <- get.IGMEoutput.dir(2020)
 
 # load file paths
 load.more.file.paths <- function(){
