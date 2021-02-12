@@ -156,10 +156,17 @@ get.new.series <- function(output.dir, new_entry_date = NULL, dir_IGME = NULL){
           dt_cme[new_entry == 1,.N], " out of ", dt_cme[,.N], " entries; which is ",
           dt_cme[new_entry == 1, uniqueN(IGME_Key)], " out of ", dt_cme[,uniqueN(IGME_Key)], " unique series.")
 
+  # **** Suppressing HIV (MM-adjusted) countries ****
   # For the HIV countries, remove those just MM adjusted (since they have a new date)
+  # Limited this suppressing to `Series.Type` contains Direct, since only Direct series got MM-adjusted
   iso_hiv <- dt_cme[To.be.adjusted==TRUE, unique(Country.Code)]
-  new_hiv_key <- dt_cme[new_entry==1 & To.be.adjusted==1, unique(IGME_Key)] # the TRUE new
-  dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key%in% new_hiv_key, new_entry := 0]
+  # the TRUE new MM-adjusted series:
+  new_hiv_key <- dt_cme[new_entry==1 & To.be.adjusted==1, unique(IGME_Key)]
+  # suppress these IGME_Key series:
+  dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key%in% new_hiv_key &
+           grepl("Direct", Series.Type), unique(IGME_Key)]
+  dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key%in% new_hiv_key &
+           grepl("Direct", Series.Type), new_entry := 0]
   #
   new.sourceID.i <- get.new.sourceID.i(dt_cme)
   return(new.sourceID.i)
@@ -263,7 +270,7 @@ find.dir.for.VR.comparison <- function(
 #'   vector of country isos with different WHO VR)
 get.diff.dt.WHOVR <- function(
 ){
-  default_dir <- find.dir.for.VR.comparison(IGME_year_new = 2020, IGME_year_old = 2019, filename_old = "data_U5MR_20191018.csv")
+  default_dir <- find.dir.for.VR.comparison()
   if(!exists("dir_new_data_U5MR")) dir_new_data_U5MR <- default_dir$dir_new_data_U5MR
   if(!exists("dir_old_data_U5MR")) dir_old_data_U5MR <- default_dir$dir_old_data_U5MR
   if(is.null(dir_new_data_U5MR)|is.null(dir_old_data_U5MR))
@@ -315,3 +322,47 @@ get.diff.dt.WHOVR <- function(
   return(list(dt1 = dt1, iso_newVR = iso_newVR))
 }
 
+
+
+# copy code ---------------------------------------------------------------
+
+#' Copy R folder to Dropbox allowing direct loading the code without loading the
+#' library. All paths are absolute paths.
+#'
+#' @export copy_code_to_dropbox
+#' @return invisible()
+#'
+copy_code_to_dropbox <- function(){
+
+  username <- Sys.getenv("USERNAME")
+  # revise the destination folders accordingly
+  dir_of_destinations <- list(
+    "Localcopy" = file.path("C:/Users/", username, "/Dropbox/UNICEF_Work_Project/2021_Code/R"),
+    "U5" = file.path("C:/Users/", username, "/Dropbox/UN IGME Data/2021 Round Estimation/Code/R/"),
+    "NMR" = file.path("C:/Users/", username, "/Dropbox/NMR/code/functions/")
+  )
+  if(!any(sapply(dir_of_destinations, dir.exists)))stop("Check if file path exists")
+  # The rest won't change ---------------------------------------------------
+
+  # Code
+  # CME_code_source <- file.path("C:/Users/", username, "/Dropbox/UNICEF Work/CME Plots/R")
+  CME_code_source <- file.path("C:/Users/", username, "/Dropbox/UNICEF_Work_Project/CME.plot/R")
+  files_in_folder <- list.files(CME_code_source, full.names = TRUE)
+
+  # limit to files end with ".R" and the .txt file
+  R_sources <- c(grep(".R", files_in_folder, value = TRUE, fixed = TRUE),
+                 grep(".txt", files_in_folder, value = TRUE, fixed = TRUE))
+
+  #' copy source files to designated folders
+  #' could copy to multiple destinations as well
+  copy.paste.script <- function(dir0){
+    dir0 <- file.path(dir0, "CME.plot") # /"CME Plots Code"/
+    unlink(dir0, recursive = TRUE)
+    dir.create(dir0, recursive = TRUE)
+    invisible(lapply(R_sources, file.copy, to = dir0, overwrite = TRUE))
+  }
+  suppressWarnings({
+    invisible(lapply(dir_of_destinations, copy.paste.script))
+  })
+  return(invisible())
+}

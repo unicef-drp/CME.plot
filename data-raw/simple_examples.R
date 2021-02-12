@@ -33,18 +33,6 @@ p <- savePlotResults(runname = "GR20200214",
                      new_entry_date = "2020-01",
                      n.countries = 1:10)
 
-
-# compare IHME 2019 to 2017
-p <- savePlotResults(runname = "GR20200214",
-                     output.dir = output.dir,
-                     legend2 = "IHME GBD 2017",
-                     res.cqt2 = u5mr.ihme.cqt.2017,
-                     legend_IHME = "IHME GBD 2019",
-                     ihme.cqt = u5mr.ihme.cqt.2019
-                     )
-
-
-
 # minimum comparison plot:
 # supply either runname or legend
 p <- savePlotResults(runname = "GR20200214",
