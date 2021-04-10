@@ -140,7 +140,7 @@ transformdataSexSpecific <- function(
     isonumber=match(iso_with_data,iso)
     isonodatanumber=match(iso_no_data,iso)
   } else {
-    iso_no_data=NULL
+    iso_no_data=NULL # usually iso_no_data = "FSM"
   }
 
 

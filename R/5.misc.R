@@ -62,7 +62,6 @@ if(getRversion()>= "2.15.1"){
                            "name.c",
                            "new_cnames",
                            "new_entry",
-                           "new_iso_order",
                            "p",
                            "pcnt",
                            "qxn",

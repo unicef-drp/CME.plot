@@ -13,6 +13,9 @@ review.date.of.dataentry(output.dir, dir_IGME = NULL, dir_file = NULL)
 
 \item{dir_file}{if the file directory is provided, use it directly, this is the most prioritizing}
 }
+\value{
+a list of two elements: a table and a vector of new series
+}
 \description{
 Review the entry date, output a table by year
 }

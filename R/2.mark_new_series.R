@@ -36,8 +36,12 @@ get.cmeinfo.dir <- function(output.dir, dir_IGME){
 #' @param output.dir if provided, will by default use "data_CMEInfo.csv" in the output.dir
 #' @param dir_IGME if provided, will search dir_IGME for the specific CMEinfo file recorded in mcmc.meta
 #' @param dir_file if the file directory is provided, use it directly, this is the most prioritizing
+#'
+#' @return a list of two elements: a table and a vector of new series
 #' @export review.date.of.dataentry
-review.date.of.dataentry <- function(output.dir, dir_IGME = NULL, dir_file = NULL){
+#'
+review.date.of.dataentry <- function(output.dir, dir_IGME = NULL, dir_file = NULL
+                                     ){
   if(!is.null(dir_file)) {
     dir_cmeinfo <- dir_file
   } else {
@@ -59,7 +63,7 @@ review.date.of.dataentry <- function(output.dir, dir_IGME = NULL, dir_file = NUL
   dt_cme <- fread(dir_cmeinfo)
   dt_cme[, Date.Of.Data.Added2:= as.Date(paste0(sub("-", "", Date.Of.Data.Added), "01"), format = "%Y%m%d")]
   message("A table showing the number of rows by `Date.Of.Data.Added`: ")
-  table(dt_cme$Date.Of.Data.Added2, useNA = "ifany")
+  return(table(dt_cme$Date.Of.Data.Added2, useNA = "ifany"))
 }
 
 #' Create sourceID to match U5MR and IMR `mcmc.meta` array
@@ -167,7 +171,7 @@ get.new.series <- function(output.dir, new_entry_date = NULL, dir_IGME = NULL){
            grepl("Direct", Series.Type), unique(IGME_Key)]
   dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key%in% new_hiv_key &
            grepl("Direct", Series.Type), new_entry := 0]
-  #
+  # create source id
   new.sourceID.i <- get.new.sourceID.i(dt_cme)
   return(new.sourceID.i)
 }
@@ -338,7 +342,8 @@ copy_code_to_dropbox <- function(){
   # revise the destination folders accordingly
   dir_of_destinations <- list(
     "Localcopy" = file.path("C:/Users/", username, "/Dropbox/UNICEF_Work_Project/2021_Code/R"),
-    "U5" = file.path("C:/Users/", username, "/Dropbox/UN IGME Data/2021 Round Estimation/Code/R/"),
+    "IGME2020" = file.path("C:/Users/", username, "/Dropbox/UN IGME Data/2020 Round Estimation/Code/R/"),
+    "IGME2021" = file.path("C:/Users/", username, "/Dropbox/UN IGME Data/2021 Round Estimation/Code/R/"),
     "NMR" = file.path("C:/Users/", username, "/Dropbox/NMR/code/functions/")
   )
   if(!any(sapply(dir_of_destinations, dir.exists)))stop("Check if file path exists")

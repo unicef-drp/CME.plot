@@ -3,3 +3,7 @@
 ^LICENSE\.md$
 ^data-raw$
 ^fig$
+^output$
+^9\.2_plots_for_all_indicators_afterCC\.R$
+^9\.1_plots_for_all_indicators_beforeCC\.R$
+^9\.0_data_plots_for_all_indicators\.R$

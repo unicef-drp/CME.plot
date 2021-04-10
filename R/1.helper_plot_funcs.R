@@ -2,6 +2,83 @@
 # 2019/12
 # helper functions
 
+
+
+#' Create IGME_Key column
+#'
+#' Extra strings like "Preliminary" or "MM/NN adjusted" are removed in the
+#' created `IGME_Key` column
+#'
+#' @param dt0 dataset
+#'
+#' @return dt0 dataset with added column `IGME_Key`
+#' @export create.IGME.key
+create.IGME.key <- function(dt0){
+  strings_to_remove <- " \\(Adjusted\\)| \\(MM adjusted\\)| \\(NN adjusted\\)| \\(Preliminary\\)| \\(preliminary\\)"
+
+  # the process to create IGME_Key
+  if ("Country.Code"%in%colnames(dt0)&is.character(dt0$Country.Code)) {
+    dt0[, Code:= Country.Code]
+  } else if ("Country.ISO"%in%colnames(dt0)&is.character(dt0$Country.ISO)) {
+    dt0[, Code:= Country.ISO]
+  } else {stop("Check Country.Code and Country.ISO")}
+  # Some SVR like South Africa has year associated with it
+  dt0[Series.Category %in% c("VR", "SVR"), IGME_Key := paste0(Code, "-", Series.Category)]
+  dt0[Series.Type %in% c("Life Table"), IGME_Key := paste0(Code, "-", Series.Type)]
+  # dt0[Series.Type %in% c("Life Table"), ]
+  dt0[!Series.Category %in% c("VR", "SVR", "Life Table"), IGME_Key := paste0(Code, "-", Series.Year, "-", Series.Name)]
+  dt0[Series.Category %in% c("SVR") & Country.Name == "South Africa", IGME_Key := paste0(Code, "-", Series.Year, "-", Series.Category)]
+  dt0[, IGME_Key := gsub(strings_to_remove, "", IGME_Key)]
+
+  # add direct/indirect?
+  dt0[grepl("Direct", Series.Type), IGME_Key := paste0(IGME_Key, "-Direct")]
+  dt0[grepl("Indirect", Series.Type), IGME_Key := paste0(IGME_Key, "-Indirect")]
+
+  dt0[, Code:=NULL]
+  return(dt0)
+}
+
+
+#' A label function to replace values by a given list in a variable
+#'
+#' You can provide a __new_list__ to define the values you wish to change in
+#' this variable. Values not revised in the given list will be kept
+#'
+#' @param x a element or a vector
+#' @param new_list if you supply a new list the function will use instead of the
+#'   default_labels
+#' @param no_line_break to remove linebreak from the string
+#' @export get.match
+#' @return an updated vector as character
+get.match <- function(x,
+                      new_list = NULL,
+                      no_line_break = FALSE){
+  if(is.null(new_list)){
+    labs <- default_label
+  } else {
+    if(is.list(new_list)){
+      labs <- new_list
+    } else {
+      message("new_list must be a list. Still use the default list.")
+      labs <- default_label
+    }
+  }
+  if(!is.character(x)){
+    message("Coerse input into character.")
+    x <- as.character(x)
+  }
+  out <- rep(NA, length(x))
+  for (i in 1:length(x)){
+    if (is.null(labs[[ x[i] ]])){
+      out[i] <- x[i]
+    }else{
+      out[i] <- labs[[ x[i] ]]
+    }
+  }
+  return(if(no_line_break)gsub("\n", "", out) else out)
+}
+
+
 #' Get directory to gender mcmc file
 #'
 #' Internal function used by \code{\link{savePlotResults}}
@@ -245,6 +322,21 @@ fix.entries.dt_gender <- function(dt_gender){
   setorder(dt_gender, Country.Name, -End.date.of.Survey, Series.Name, Series.Type,-Reference.Date, - Inclusion.Gender)
 
   if(dt_gender[Country.Code=="LUX" & Indicator%like%"Under-five" & Visible == 1,][Series.Name=="WHO Good Vital Registration Data 2018 version",.N]>0) warning("Check LUX")
+
+  # numeric columns
+  col_num <- c(
+    "Country.ISO"             ,"Start.date.of.Survey" ,   "End.date.of.Survey"     , "Average.date.of.Survey" ,
+    "Series.Quantity"         ,"Interval"             ,   "Reference.Date"         , "Sex.Ratio"              ,
+    "Sex.Ratio.SE"            ,"Male"                 ,   "Male.SE"                , "Female"                 ,
+     "Female.SE"              , "Both.Sexes"          ,    "Both.Sexes.SE"         ,  "Inclusion.U5MR"         ,
+     "Exclusion.External.Info", "Exclusion.Old.Data"  ,    "Exclusion.Total.U5MR"  ,  "Visible"                ,
+     "agecat.i"               , "Inclusion.Gender"    ,    "Q1.i"                  ,  "Q4.i"                   ,
+     "Q5.i"                   , "Check.not.old"       ,    "int_n"                 ,  "diff_MSR" ,
+     "count_s"                , "count_m"
+  )
+  dt_gender <- dt_gender[, (col_num):= lapply(.SD, function(x)as.numeric(as.character(x))), .SDcols = col_num]
+
+  if(!"IGME_Key" %in% colnames(dt_gender))  dt_gender <- create.IGME.key(dt_gender)
   return(dt_gender)
 }
 

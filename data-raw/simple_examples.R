@@ -33,6 +33,15 @@ p <- savePlotResults(runname = "GR20200214",
                      new_entry_date = "2020-01",
                      n.countries = 1:10)
 
+# sort iso order
+savePlotResults(runname = "test",
+                output.dir = output.dir,
+                pdf.or.png = "pdf",
+                fig.dir = "fig2020",
+                iso.subset.c = c("CAF", "CIV", "AFG"),
+                sort_the_isos = FALSE
+)
+
 # minimum comparison plot:
 # supply either runname or legend
 p <- savePlotResults(runname = "GR20200214",

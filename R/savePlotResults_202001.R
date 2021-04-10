@@ -392,7 +392,7 @@ savePlotResults <- function(
       iso.c.1 <- iso.c.1[iso.c.1%in%iso.subset.c]
     }
     # if sort_the_isos, will follow the order, otherwise use the given order of the isos
-    C <- if(sort_the_isos) which(iso.c%in%iso.c.1) else match(new_iso_order, iso.c)
+    C <- if(sort_the_isos) which(iso.c%in%iso.c.1) else match(iso.subset.c, iso.c)
     return(C) # since required by `PlotDataAndEstimates2020`
   }
   C <- subset.iso() # this capital C is a vector of numbers e.g. c(1,10,150)
@@ -402,13 +402,12 @@ savePlotResults <- function(
   if(is.data.frame(new.cname.df)) {
     mcmc.meta$data.all$name.c <- update.name.c(new.cname.df, mcmc.meta)
     if (HIV_removed) mcmc.meta$data.hivremoved.all$name.c <- update.name.c(new.cname.df, mcmc.meta)
-
   }
 
   # set cqt ------------------------------------------------------------
   # save a copy of the cqt plotted 2020.05
   if(save_cqt_copy){
-    if(!dir.exists("figData/cqt_backup")) dir.create("figData/cqt_backup", recursive = TRUE)
+    if(!dir.exists("output/figDataTemp/cqt_backup")) dir.create("output/figDataTemp/cqt_backup", recursive = TRUE)
     dt_cqt <- reshape2::melt(res.cqt)
     colnames(dt_cqt) <- c("ISO.Code", "Quantile", "Year", "Value")
     ylab0 <- if(is.null(ylab)) indicator.type else ylab
@@ -416,10 +415,10 @@ savePlotResults <- function(
     dt_cqt$ind_short <- ylab0
     if(is.null(gender)){
       dt_cqt$Sex <- "Total"
-      saveRDS(dt_cqt, file = file.path("figData/cqt_backup", paste0("copy_of_res.cqt_", ylab0, ".rds")))
+      saveRDS(dt_cqt, file = file.path("output/figDataTemp/cqt_backup", paste0("copy_of_res.cqt_", ylab0, ".rds")))
     } else {
       dt_cqt$Sex <- gender_title
-      saveRDS(dt_cqt, file = file.path("figData/cqt_backup", paste0("copy_of_res.cqt_", gender_title, "_", ylab0, ".rds")))
+      saveRDS(dt_cqt, file = file.path("output/figDataTemp/cqt_backup", paste0("copy_of_res.cqt_", gender_title, "_", ylab0, ".rds")))
     }
   }
 
