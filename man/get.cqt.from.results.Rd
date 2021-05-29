@@ -8,7 +8,7 @@ get.cqt.from.results(
   output_dir,
   mcmc.meta_filename = "mcmc.meta.rda",
   results_filename = "results.csv",
-  res.cqt_filename = "res.cqt.Lw.rda"
+  return_dt_long = FALSE
 )
 }
 \arguments{
@@ -16,9 +16,10 @@ get.cqt.from.results(
 
 \item{mcmc.meta_filename}{file name to read, default to "mcmc.meta.rda"}
 
-\item{results_filename}{file name to read, default to "results.csva"}
+\item{results_filename}{file name to read, default to "results.csv"}
 
-\item{res.cqt_filename}{file name to read, default to "res.cqt.Lw.rda"}
+\item{return_dt_long}{default to FALSE, if TRUE, returns the long-format
+results file}
 }
 \value{
 res.cqt.Lw

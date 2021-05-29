@@ -56,7 +56,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
   col.CI = "#FF000025", ##<< Optional: Colour for CIs, default is light #c7202e # change JR, 24 Sep 2013: from FF000032
   col.val = "#00FF0032", ##<< Optional: Colour for CIs.tr, default is lighter than lightgreen. # change JR, 24 Sep 2013: from #00FF0050
   col.un = "#0000FF32", ##<< Optional: Colour for CIs.iid.cqt, default is light purple
-  col.CI_ex = "lightblue1",
+  col.CI_ex = "#BFEFFF80", ## be sure to use transparent color for lightblue1
   col.CI2 = "#00FF0032", #"#A020F032", ##<< Optional: Colour for yet another set of CIs?
   col.CI3 = "#FFA50010", # "#FFA50032", ##<< Optional: Colour for another set of CIs?
   col.CI4 = "#0000FF32", ##<< Optional: Colour for yet one more set of CIs? light purple

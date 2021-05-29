@@ -27,7 +27,7 @@ dir_new_data_U5MR <- new_dirs$dir_new_data_U5MR
 dir_old_data_U5MR <- new_dirs$dir_old_data_U5MR
 
 # minimum results/data plot:
-p <- savePlotResults(runname = "GR20200214",
+savePlotResults(runname = "GR20200214",
                      output.dir = output.dir,
                      legend1 = NULL,
                      new_entry_date = "2020-01",
@@ -44,7 +44,7 @@ savePlotResults(runname = "test",
 
 # minimum comparison plot:
 # supply either runname or legend
-p <- savePlotResults(runname = "GR20200214",
+savePlotResults(runname = "GR20200214",
                      legend2 = "UN IGME 2019_2",
                      legend3 = "UN IGME 2019_3",
                      legend4 = "UN IGME 2019_4",
@@ -54,7 +54,7 @@ p <- savePlotResults(runname = "GR20200214",
                      output.dir4 = output.dir.19,
                      n.countries = 1:5)
 
-p <- savePlotResults(runname = "GR20200214",
+savePlotResults(runname = "GR20200214",
                      runname2 = "UN IGME 2019_2",
                      runname3 = "UN IGME 2019_3",
                      runname4 = "UN IGME 2019_4",
@@ -65,7 +65,7 @@ p <- savePlotResults(runname = "GR20200214",
                      n.countries = 1:5)
 
 # show wpp and ihme lines:
-p <- savePlotResults(runname = "GR20200214",
+savePlotResults(runname = "GR20200214",
                      filename = "mytest",
                      output.dir = output.dir,
                      fig.dir = "fig",
@@ -75,7 +75,7 @@ p <- savePlotResults(runname = "GR20200214",
 )
 
 # show all lines:
-p <- savePlotResults(runname = "GR20200214",
+savePlotResults(runname = "GR20200214",
                      filename = "mytest",
                      # new_entry_date = "2020-01",
                      output.dir = output.dir,

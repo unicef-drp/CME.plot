@@ -95,7 +95,9 @@ if(getRversion()>= "2.15.1"){
                            "ihme_2019",
                            "location_id",
                            "wpp_2019_cqt_by_sex",
-                           "dir_IGME"
+                           "dir_IGME",
+                           "Code", "Country.ISO" ,
+                           "Series.Category", "default_label"
 
                            ))
 }

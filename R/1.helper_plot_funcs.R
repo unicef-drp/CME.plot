@@ -29,6 +29,8 @@ create.IGME.key <- function(dt0){
   dt0[!Series.Category %in% c("VR", "SVR", "Life Table"), IGME_Key := paste0(Code, "-", Series.Year, "-", Series.Name)]
   dt0[Series.Category %in% c("SVR") & Country.Name == "South Africa", IGME_Key := paste0(Code, "-", Series.Year, "-", Series.Category)]
   dt0[, IGME_Key := gsub(strings_to_remove, "", IGME_Key)]
+  # remove blank
+  dt0[, IGME_Key := trimws(IGME_Key)]
 
   # add direct/indirect?
   dt0[grepl("Direct", Series.Type), IGME_Key := paste0(IGME_Key, "-Direct")]
@@ -331,8 +333,7 @@ fix.entries.dt_gender <- function(dt_gender){
      "Female.SE"              , "Both.Sexes"          ,    "Both.Sexes.SE"         ,  "Inclusion.U5MR"         ,
      "Exclusion.External.Info", "Exclusion.Old.Data"  ,    "Exclusion.Total.U5MR"  ,  "Visible"                ,
      "agecat.i"               , "Inclusion.Gender"    ,    "Q1.i"                  ,  "Q4.i"                   ,
-     "Q5.i"                   , "Check.not.old"       ,    "int_n"                 ,  "diff_MSR" ,
-     "count_s"                , "count_m"
+     "Q5.i"
   )
   dt_gender <- dt_gender[, (col_num):= lapply(.SD, function(x)as.numeric(as.character(x))), .SDcols = col_num]
 
@@ -560,8 +561,10 @@ remove.specific.series.15_24 <- function(
 #'
 #' @param output_dir output.dir
 #' @param mcmc.meta_filename file name to read, default to "mcmc.meta.rda"
-#' @param results_filename file name to read, default to "results.csva"
-#' @param res.cqt_filename file name to read, default to "res.cqt.Lw.rda"
+#' @param results_filename file name to read, default to "results.csv"
+#' @param return_dt_long default to FALSE, if TRUE, returns the long-format
+#'   results file
+#'
 #' @return res.cqt.Lw
 #' @export get.cqt.from.results
 #'
@@ -569,7 +572,7 @@ get.cqt.from.results <- function(
   output_dir,
   mcmc.meta_filename = "mcmc.meta.rda",
   results_filename = "results.csv",
-  res.cqt_filename = "res.cqt.Lw.rda"
+  return_dt_long = FALSE
 ){
   load(file.path(output_dir, mcmc.meta_filename))
   iso_order <- mcmc.meta$data.all$iso.c
@@ -581,6 +584,9 @@ get.cqt.from.results <- function(
   dt_long[, years:=as.numeric(sub("X", "", variable))]
   dt_long <- dt_long[order(match(ISO.Code, rep(iso_order, each = length(years))))]
   setorder(dt_long, years, Quantile) # set the right order is the key to produce right array
+  if(return_dt_long)
+    return(dt_long
+    )
   # Now the order is by t (year), q, and c (iso)
   cqt <- array(data = dt_long[, value],
                dim = c(length(iso_order),

@@ -429,7 +429,7 @@ savePlotResults <- function(
   res.cqt4 <- set.cqt.year.limit(res.cqt4, year_start = year.start, year_end = year.end)
   res_ex.cqt <- set.cqt.year.limit(res_ex.cqt, year_start = year.start, year_end = year.end)
 
-  # if to hide the estimate line (legend as an extra switch)
+  # if to hide the estimate line (legend as an extra switch to turn on/off series)
   if(is.null(legend1)) res.cqt <- NULL
   if(is.null(legend2)) res.cqt2 <- NULL
   if(is.null(legend3)) res.cqt3 <- NULL

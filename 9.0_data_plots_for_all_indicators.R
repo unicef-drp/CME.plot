@@ -1,5 +1,4 @@
 # data plot for all
-
 run.on.server <- FALSE # Indicate if run is on the server
 username <- Sys.getenv("USERPROFILE")
 workdir <- file.path(username, "/Dropbox/UN IGME Data/2020 Round Estimation/Code") # Give work directory file path if not running things on server
@@ -14,7 +13,11 @@ if (run.on.server) {
 source(file.path(package.dir, "R/loadlibrariesandcodes.R"))
 LoadLibrariesAndCodes(run.on.server = run.on.server, package.dir = package.dir)
 
+# just want png for specific country?
+iso_given <- "HND"
+pdf.or.png <- "png"
 
+fig.dir <- file.path(username, "/Dropbox/UNICEF_Work_Project/2021_Code_Data_Quality/fig")
 
 # U5MR and IMR --------------------------------------------------------------------
 dir_IGME_out_folder <- get.IGMEoutput.dir(2021)
@@ -44,9 +47,11 @@ dt_CME <- fread(file.path(output.dir.U5MR, "data_CMEInfo.csv"))
 dt_CME[, Date.Of.Data.Added2:= as.Date(paste0(sub("-", "", Date.Of.Data.Added), "01"), format = "%Y%m%d")]
 review.date.of.dataentry(output.dir.U5MR)
 isos_new_series <- dt_CME[Date.Of.Data.Added2>="2020-10-01" , unique(Country.Code)]
+if(!is.null(iso_given)) isos_new_series <- iso_given
 
-pdf.or.png <- "png"
+
 savePlotResults(runname = runname.U5MR,  # which will be used in the pdf file name
+                fig.dir = fig.dir,
                 # filename = "New_Census",
                 iso.subset.c = isos_new_series,
                 output.dir = output.dir.U5MR, # where the mcmc.meta.rda (required) sits
@@ -59,7 +64,11 @@ savePlotResults(runname = runname.U5MR,  # which will be used in the pdf file na
 dt_CME_IMR <- fread(file.path(output.dir.IMR, "data_CMEInfo.csv"))
 dt_CME_IMR[, Date.Of.Data.Added2:= as.Date(paste0(sub("-", "", Date.Of.Data.Added), "01"), format = "%Y%m%d")]
 isos_new_series_IMR <- dt_CME_IMR[Date.Of.Data.Added2>="2020-10-01" , unique(Country.Code)]
+if(!is.null(iso_given)) isos_new_series_IMR <- iso_given
+
+
 savePlotResults(runname = runname.IMR,  # which will be used in the pdf file name
+                fig.dir = fig.dir,
                 # filename = "New_Census",
                 iso.subset.c = isos_new_series_IMR,
                 output.dir = output.dir.IMR, # where the mcmc.meta.rda (required) sits
@@ -125,8 +134,11 @@ meta_file <- transformdataforNMR(
 dt_nmr <- fread(get.dir_NMR(y5 = TRUE)) # use either dataset
 dt_nmr[, Date.Of.Data.Added2:= as.Date(paste0(sub("-", "", Date.Of.Data.Added), "01"), format = "%Y%m%d")]
 isos_new_series_nmr <- dt_nmr[Date.Of.Data.Added2>="2020-10-01" , unique(Country.Code)]
+if(!is.null(iso_given)) isos_new_series_nmr <- iso_given
+
 # save data plot, add `new_entry_date` will highlight new entries
 savePlotResults(runname = runname,
+                fig.dir = fig.dir,
                 iso.subset.c = isos_new_series_nmr,
                 legend1 = NULL,
                 NMR_metafile = meta_file,
@@ -144,6 +156,7 @@ meta_file_ratio <- transformdataforNMR(
 )
 # save data plot, add `new_entry_date` will highlight new entries
 savePlotResults(runname = runname,
+                fig.dir = fig.dir,
                 iso.subset.c = isos_new_series_nmr,
                 legend1 = NULL,
                 NMR_metafile = meta_file_ratio,
@@ -223,7 +236,7 @@ invisible(Map(get.resl, ind0 = cqt_files$ind, sex0 = cqt_files$gender))
 list.files(output_dir_gender)
 
 
-# 4.1 Sex-specific-Data --------------------------------------------------
+# Sex-specific-Data --------------------------------------------------
 # data plot
 save.all <- function(ind0, sex0){
   #` save.all helps to save all the combinations provided
@@ -235,6 +248,7 @@ save.all <- function(ind0, sex0){
     gender_ind = ind0, # takes indicators in the forms of either "U5MR" or "Q5"
     gender = sex0, # takes f or m
     iso.subset.c = isos_new_series_sex, # plot only a subset of the countries
+    pdf.or.png = pdf.or.png
   )
 }
 # save.all("Q5", "f")
