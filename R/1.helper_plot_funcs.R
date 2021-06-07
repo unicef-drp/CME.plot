@@ -174,16 +174,30 @@ update.name.c <- function(new.cname.df, mcmc.meta){
 
 #' Get the new official country names from country.info.CME.csv
 #' @importFrom utils read.csv
+#'
+#' @param filename default to "country.info.CME.csv"
 #' @param dir_IGME_input input dir to look for country.info.CME.csv
+#'
 #' @export get.new_cnames
-get.new_cnames <- function(dir_IGME_input){
-  if(file.exists(file.path(dir_IGME_input, "country.info.CME.csv"))){
-    new_cnames <- utils::read.csv(file.path(dir_IGME_input, "country.info.CME.csv") ,
+get.new_cnames <- function(dir_IGME_input, filename = "country.info.CME.csv"){
+  if(file.exists(file.path(dir_IGME_input, filename))){
+    new_cnames <- utils::read.csv(file.path(dir_IGME_input, filename) ,
                            stringsAsFactors = FALSE, header=TRUE)[,c("ISO3Code", "UNCode", "OfficialName")]
     return(new_cnames)
   } else {
-    stop("Check if file exists: ", file.path(dir_IGME_input, "country.info.CME.csv"))
+    stop("Check if file exists: ", file.path(dir_IGME_input, filename))
   }
+}
+
+
+#' Internal function to update new_cnames.rda (official names)
+#' @importFrom usethis use_data
+#' @param country.info.file.name country.info.CME.csv
+#'
+update.data.new_cnames <- function(country.info.file.name = "country.info.CME.197isos.csv"){
+  new_cnames <- get.new_cnames(get.IGMEinput.dir(2021), country.info.file.name)
+  usethis::use_data(new_cnames, overwrite = TRUE)
+  return(invisible())
 }
 
 # Functions for managing array  ------------------------------------------------

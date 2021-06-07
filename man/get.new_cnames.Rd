@@ -4,10 +4,12 @@
 \alias{get.new_cnames}
 \title{Get the new official country names from country.info.CME.csv}
 \usage{
-get.new_cnames(dir_IGME_input)
+get.new_cnames(dir_IGME_input, filename = "country.info.CME.csv")
 }
 \arguments{
 \item{dir_IGME_input}{input dir to look for country.info.CME.csv}
+
+\item{filename}{default to "country.info.CME.csv"}
 }
 \description{
 Get the new official country names from country.info.CME.csv

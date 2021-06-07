@@ -42,7 +42,7 @@ savePlotResults(
   new_entry_date = NULL,
   pdf.or.png = "pdf",
   separate.plots.by.country = FALSE,
-  new.cname.df = CME.assistant::new_cnames,
+  new.cname.df = new_cnames,
   n.countries = NULL,
   iso.subset.c = NULL,
   sort_the_isos = TRUE,
@@ -155,7 +155,7 @@ will be highlighted as new series in red in plots}
 \item{separate.plots.by.country}{separate "pdf" by country? Ignored for "png"}
 
 \item{new.cname.df}{the dataset of official country names, contains ISO and
-new country names, default to CME.assistant::new_cnames}
+new country names, default to new_cnames}
 
 \item{n.countries}{select a subset of countries to plot using an numeric
 vector, e.g. 1:10. Ignored if it is HIV-removed plot, please use

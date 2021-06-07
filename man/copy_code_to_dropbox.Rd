@@ -7,12 +7,6 @@ library. All paths are absolute paths.}
 \usage{
 copy_code_to_dropbox()
 }
-\value{
-invisible()
-
-copy source files to designated folders
-could copy to multiple destinations as well
-}
 \description{
 Copy R folder to Dropbox allowing direct loading the code without loading the
 library. All paths are absolute paths.

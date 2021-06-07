@@ -334,7 +334,7 @@ get.diff.dt.WHOVR <- function(
 #' library. All paths are absolute paths.
 #'
 #' @export copy_code_to_dropbox
-#' @return invisible()
+#' @return NULL
 #'
 copy_code_to_dropbox <- function(){
 
@@ -358,8 +358,9 @@ copy_code_to_dropbox <- function(){
   R_sources <- c(grep(".R", files_in_folder, value = TRUE, fixed = TRUE),
                  grep(".txt", files_in_folder, value = TRUE, fixed = TRUE))
 
-  #' copy source files to designated folders
-  #' could copy to multiple destinations as well
+  # copy source files to designated folders
+
+  # could copy to multiple destinations as well
   copy.paste.script <- function(dir0){
     dir0 <- file.path(dir0, "CME.plot") # /"CME Plots Code"/
     unlink(dir0, recursive = TRUE)
@@ -369,5 +370,50 @@ copy_code_to_dropbox <- function(){
   suppressWarnings({
     invisible(lapply(dir_of_destinations, copy.paste.script))
   })
+  message("Data copied to: \n", paste(dir_of_destinations, collapse = "\n"))
+  return(invisible())
+}
+
+
+#' Copy data to Dropbox allowing direct loading the code without loading the
+#' library. All paths are absolute paths.
+#'
+#' @export copy_data_to_dropbox
+#' @return NULL
+#'
+copy_data_to_dropbox <- function(){
+
+  username <- Sys.getenv("USERNAME")
+  # revise the destination folders accordingly
+  dir_of_destinations <- list(
+    "Localcopy" = file.path("C:/Users/", username, "/Dropbox/UNICEF_Work_Project/2021_Code/output/"),
+    "IGME2020" = file.path("C:/Users/", username, "/Dropbox/UN IGME Data/2020 Round Estimation/Code/output/"),
+    "IGME2021" = file.path("C:/Users/", username, "/Dropbox/UN IGME Data/2021 Round Estimation/Code/output/"),
+    "NMR" = file.path("C:/Users/", username, "/Dropbox/NMR/output/")
+  )
+  if(!any(sapply(dir_of_destinations, dir.exists)))stop("Check if file path exists")
+  # The rest won't change ---------------------------------------------------
+
+  # Code
+  CME_code_source <- file.path("C:/Users/", username, "/Dropbox/UNICEF_Work_Project/CME.plot/data")
+  files_in_folder <- list.files(CME_code_source, full.names = TRUE)
+
+  # limit to files end with ".R" and the .txt file
+  rda_data_files <- c(grep(".rda", files_in_folder, value = TRUE, fixed = TRUE))
+
+  # copy source files to designated folders
+
+  # could copy to multiple destinations as well
+  copy.paste.script <- function(dir0){
+    dir0 <- file.path(dir0, "figData")
+    unlink(dir0, recursive = TRUE)
+    dir.create(dir0, recursive = TRUE)
+    invisible(lapply(rda_data_files, file.copy, to = dir0, overwrite = TRUE))
+  }
+  suppressWarnings({
+    invisible(lapply(dir_of_destinations, copy.paste.script))
+  })
+  message("Data copied to: \n", paste(dir_of_destinations, collapse = "\n"))
+
   return(invisible())
 }

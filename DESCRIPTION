@@ -18,7 +18,8 @@ Imports:
     RColorBrewer,
     reshape2,
     data.table (>= 1.12.0),
-    readxl
+    readxl,
+    usethis
 Suggests: 
     knitr,
     rmarkdown

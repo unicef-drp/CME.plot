@@ -1,48 +1,58 @@
 # data plot for all
-run.on.server <- FALSE # Indicate if run is on the server
+# load code or load library
+# run.on.server <- FALSE # Indicate if run is on the server
 username <- Sys.getenv("USERPROFILE")
-workdir <- file.path(username, "/Dropbox/UN IGME Data/2020 Round Estimation/Code") # Give work directory file path if not running things on server
+# workdir <- file.path(username, "/Dropbox/UN IGME Data/2020 Round Estimation/Code") # Give work directory file path if not running things on server
+#
+# # Define working directory
+# if (run.on.server) {
+#   package.dir <- workdir <- getwd()
+# } else {
+#   package.dir <- workdir
+# }
+#
+# source(file.path(package.dir, "R/loadlibrariesandcodes.R"))
+# LoadLibrariesAndCodes(run.on.server = run.on.server, package.dir = package.dir)
 
-# Define working directory
-if (run.on.server) {
-  package.dir <- workdir <- getwd()
-} else {
-  package.dir <- workdir
-}
-
-source(file.path(package.dir, "R/loadlibrariesandcodes.R"))
-LoadLibrariesAndCodes(run.on.server = run.on.server, package.dir = package.dir)
-
+library("data.table")
+library("CME.plot")
 # just want png for specific country?
-iso_given <- "HND"
+iso_given <- "GUY"
 pdf.or.png <- "png"
 
-fig.dir <- file.path(username, "/Dropbox/UNICEF_Work_Project/2021_Code_Data_Quality/fig")
+# fig.dir <- file.path(username, "/Dropbox/UNICEF_Work_Project/2021_Code_Data_Quality/fig")
+fig.dir <- file.path(get.IGME.dir(2021), "fig")
 
 # U5MR and IMR --------------------------------------------------------------------
 dir_IGME_out_folder <- get.IGMEoutput.dir(2021)
 
-runname.U5MR <- "U5MR_20210409"
-runname.IMR <- "IMR_20210409"
+runname.U5MR <- "U5MR_20210601"
+runname.IMR <- "IMR_20210601"
 
 output.dir.U5MR <- file.path(dir_IGME_out_folder, runname.U5MR) #  where the mcmc.meta.rda is
 output.dir.IMR <- file.path(dir_IGME_out_folder, runname.IMR) #  where the mcmc.meta.rda is
 # to make data plot, set `legend1 = NULL` if there is estimates file (res.cqt.Lw.rda)
-# plot all countries
+
+# plot all countries in pdf
 savePlotResults(runname = runname.U5MR,  # which will be used in the pdf file name
+                fig.dir = fig.dir,
+
                 output.dir = output.dir.U5MR, # where the mcmc.meta.rda (required) sits
                 pdf.or.png = 'pdf',      # pdf or png
                 new_entry_date = "2020-10",
                 legend1 = NULL           # to make data plot, set `legend1 = NULL` if needed
 )
 savePlotResults(runname = runname.IMR,  # which will be used in the pdf file name
+                fig.dir = fig.dir,
+
                 output.dir = output.dir.IMR, # where the mcmc.meta.rda (required) sits
                 pdf.or.png = 'pdf',      # pdf or png
                 new_entry_date = "2020-10",
                 legend1 = NULL           # to make data plot, set `legend1 = NULL` if needed
 )
 
-# plot countries with new series alone
+
+# plot countries with new series in png
 dt_CME <- fread(file.path(output.dir.U5MR, "data_CMEInfo.csv"))
 dt_CME[, Date.Of.Data.Added2:= as.Date(paste0(sub("-", "", Date.Of.Data.Added), "01"), format = "%Y%m%d")]
 review.date.of.dataentry(output.dir.U5MR)
@@ -119,7 +129,7 @@ crisisadjfile <- file.path(Sys.getenv("USERPROFILE"),'Dropbox/NMR/data/reference
 file.exists(crisisadjfile)
 
 # runname is used as label in the filename, first NMR rate then ratio
-runname <- "NMR_20210409"
+runname <- "NMR_20210601"
 
 # NMR
 meta_file <- transformdataforNMR(
@@ -129,6 +139,9 @@ meta_file <- transformdataforNMR(
   scale = "NMR",
   new_entry_date = "2020-10"
 )
+
+
+
 
 # to plot isos with new series
 dt_nmr <- fread(get.dir_NMR(y5 = TRUE)) # use either dataset
@@ -162,6 +175,22 @@ savePlotResults(runname = runname,
                 NMR_metafile = meta_file_ratio,
                 new_entry_date = "2020-10" ,
                 pdf.or.png = pdf.or.png
+)
+
+# to make data plot for all in pdf
+savePlotResults(runname = runname,
+                fig.dir = fig.dir,
+                legend1 = NULL,
+                NMR_metafile = meta_file,
+                new_entry_date = "2020-10",
+                pdf.or.png = "pdf"
+)
+savePlotResults(runname = runname,
+                fig.dir = fig.dir,
+                legend1 = NULL,
+                NMR_metafile = meta_file_ratio,
+                new_entry_date = "2020-10" ,
+                pdf.or.png = "pdf"
 )
 
 
