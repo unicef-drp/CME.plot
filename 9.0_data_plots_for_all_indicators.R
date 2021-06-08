@@ -26,8 +26,8 @@ fig.dir <- file.path(get.IGME.dir(2021), "fig")
 # U5MR and IMR --------------------------------------------------------------------
 dir_IGME_out_folder <- get.IGMEoutput.dir(2021)
 
-runname.U5MR <- "U5MR_20210601"
-runname.IMR <- "IMR_20210601"
+runname.U5MR <- "U5MR_20210607"
+runname.IMR <- "IMR_20210607"
 
 output.dir.U5MR <- file.path(dir_IGME_out_folder, runname.U5MR) #  where the mcmc.meta.rda is
 output.dir.IMR <- file.path(dir_IGME_out_folder, runname.IMR) #  where the mcmc.meta.rda is
@@ -129,7 +129,7 @@ crisisadjfile <- file.path(Sys.getenv("USERPROFILE"),'Dropbox/NMR/data/reference
 file.exists(crisisadjfile)
 
 # runname is used as label in the filename, first NMR rate then ratio
-runname <- "NMR_20210601"
+runname <- "NMR_20210607"
 
 # NMR
 meta_file <- transformdataforNMR(
@@ -139,7 +139,14 @@ meta_file <- transformdataforNMR(
   scale = "NMR",
   new_entry_date = "2020-10"
 )
-
+# Ratio
+meta_file_ratio <- transformdataforNMR(
+  file = filerate,
+  new.cname.df = new_cnames,
+  crisisadjfile = crisisadjfile,
+  scale = "ratio",
+  new_entry_date = "2020-10"
+)
 
 
 
@@ -159,14 +166,7 @@ savePlotResults(runname = runname,
                 pdf.or.png = pdf.or.png
 )
 
-# Ratio
-meta_file_ratio <- transformdataforNMR(
-  file = filerate,
-  new.cname.df = new_cnames,
-  crisisadjfile = crisisadjfile,
-  scale = "ratio",
-  new_entry_date = "2020-10"
-)
+
 # save data plot, add `new_entry_date` will highlight new entries
 savePlotResults(runname = runname,
                 fig.dir = fig.dir,
@@ -180,6 +180,8 @@ savePlotResults(runname = runname,
 # to make data plot for all in pdf
 savePlotResults(runname = runname,
                 fig.dir = fig.dir,
+                iso.subset.c = isos_new_series_nmr,
+
                 legend1 = NULL,
                 NMR_metafile = meta_file,
                 new_entry_date = "2020-10",
@@ -188,6 +190,8 @@ savePlotResults(runname = runname,
 savePlotResults(runname = runname,
                 fig.dir = fig.dir,
                 legend1 = NULL,
+                iso.subset.c = isos_new_series_nmr,
+
                 NMR_metafile = meta_file_ratio,
                 new_entry_date = "2020-10" ,
                 pdf.or.png = "pdf"
