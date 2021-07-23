@@ -134,9 +134,9 @@ savePlotResults <- function(
   output.dir4 = NULL,
   fig.dir = NULL,    # directory to store plots. If \code{NULL}, defaults to folder \code{fig} in current working directory. Will create directory if doesn't exist
   year.start = NULL, # start year of estimates to plot. If \code{NULL}, earliest year of estimates available is used.
-  year.end = 2020,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
+  year.end = 2021,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
   zoom.year.start = 1990,
-  zoom.year.end = 2020,
+  zoom.year.end = 2021,
   main.plot = TRUE,  # include main plot?
   zoom = TRUE,       # include zoom plot?
   add.legend = TRUE, # show legend?

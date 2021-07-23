@@ -288,8 +288,8 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
     # YL: print blank for data plot without data. 1/22/2020
     if(ymax == -Inf) {
       plot(1, ylab = ylab, main = main, xlab = "Year", xlim = c(xmin, xmax), ylim = c(0, 10), type = "n")
-      legend("topright", legend = "There is no data to plot ",
-             cex = ifelse((main.plot+zoom+add.legend)==3, 1.4, 0.9))
+      # legend("topright", legend = "There is no data to plot ",
+      #        cex = ifelse((main.plot+zoom+add.legend)==3, 1.4, 0.9))
       return()
       }
 

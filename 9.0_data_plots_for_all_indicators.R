@@ -17,17 +17,18 @@ username <- Sys.getenv("USERPROFILE")
 library("data.table")
 library("CME.plot")
 # just want png for specific country?
-iso_given <- "GUY"
+# iso_given <- "MCO"
 pdf.or.png <- "png"
 
 # fig.dir <- file.path(username, "/Dropbox/UNICEF_Work_Project/2021_Code_Data_Quality/fig")
 fig.dir <- file.path(get.IGME.dir(2021), "fig")
+# fig.dir <- "fig"
 
 # U5MR and IMR --------------------------------------------------------------------
 dir_IGME_out_folder <- get.IGMEoutput.dir(2021)
 
-runname.U5MR <- "U5MR_20210607"
-runname.IMR <- "IMR_20210607"
+runname.U5MR <- "U5MR_20210608"
+runname.IMR <- "IMR_20210608"
 
 output.dir.U5MR <- file.path(dir_IGME_out_folder, runname.U5MR) #  where the mcmc.meta.rda is
 output.dir.IMR <- file.path(dir_IGME_out_folder, runname.IMR) #  where the mcmc.meta.rda is
@@ -36,7 +37,7 @@ output.dir.IMR <- file.path(dir_IGME_out_folder, runname.IMR) #  where the mcmc.
 # plot all countries in pdf
 savePlotResults(runname = runname.U5MR,  # which will be used in the pdf file name
                 fig.dir = fig.dir,
-
+                iso.subset.c = "MCO",
                 output.dir = output.dir.U5MR, # where the mcmc.meta.rda (required) sits
                 pdf.or.png = 'pdf',      # pdf or png
                 new_entry_date = "2020-10",
@@ -121,6 +122,11 @@ check_ratio_and_logit <- function(file_dir){
 check_ratio_and_logit(file_dir = filerate)
 check_ratio_and_logit(file_dir = fileratio)
 
+# rate results (old)
+resultsfile = file.path(Sys.getenv("USERPROFILE"), "Dropbox/NMR/output/final/finalresults.jtc.Rda")
+# ratio results
+resultsfile_ratio =file.path(Sys.getenv("USERPROFILE"), "Dropbox/NMR/output/final/finalresults_ratio.jtc.Rda")
+
 # u5median.crisisandhivfree.rda required by `GetDataU5MRNMR`
 u5median.crisisandhivfree_file <- file.path(Sys.getenv("USERPROFILE"),'/Dropbox/NMR/data/u5median.crisisandhivfree.rda')
 file.exists(u5median.crisisandhivfree_file)
@@ -129,11 +135,12 @@ crisisadjfile <- file.path(Sys.getenv("USERPROFILE"),'Dropbox/NMR/data/reference
 file.exists(crisisadjfile)
 
 # runname is used as label in the filename, first NMR rate then ratio
-runname <- "NMR_20210607"
+runname <- "NMR_20210608"
 
 # NMR
 meta_file <- transformdataforNMR(
   file = filerate,
+  resultsfile = resultsfile,
   new.cname.df = new_cnames,
   crisisadjfile = crisisadjfile,
   scale = "NMR",
@@ -142,6 +149,7 @@ meta_file <- transformdataforNMR(
 # Ratio
 meta_file_ratio <- transformdataforNMR(
   file = filerate,
+  resultsfile = resultsfile_ratio,
   new.cname.df = new_cnames,
   crisisadjfile = crisisadjfile,
   scale = "ratio",
@@ -150,7 +158,7 @@ meta_file_ratio <- transformdataforNMR(
 
 
 
-# to plot isos with new series
+# to plot only isos with new series
 dt_nmr <- fread(get.dir_NMR(y5 = TRUE)) # use either dataset
 dt_nmr[, Date.Of.Data.Added2:= as.Date(paste0(sub("-", "", Date.Of.Data.Added), "01"), format = "%Y%m%d")]
 isos_new_series_nmr <- dt_nmr[Date.Of.Data.Added2>="2020-10-01" , unique(Country.Code)]
@@ -177,12 +185,13 @@ savePlotResults(runname = runname,
                 pdf.or.png = pdf.or.png
 )
 
+# plot for all isos
 # to make data plot for all in pdf
 savePlotResults(runname = runname,
                 fig.dir = fig.dir,
-                iso.subset.c = isos_new_series_nmr,
-
                 legend1 = NULL,
+                iso.subset.c = NULL,
+
                 NMR_metafile = meta_file,
                 new_entry_date = "2020-10",
                 pdf.or.png = "pdf"
@@ -190,7 +199,7 @@ savePlotResults(runname = runname,
 savePlotResults(runname = runname,
                 fig.dir = fig.dir,
                 legend1 = NULL,
-                iso.subset.c = isos_new_series_nmr,
+                iso.subset.c = NULL,
 
                 NMR_metafile = meta_file_ratio,
                 new_entry_date = "2020-10" ,
@@ -209,6 +218,7 @@ dt_gender <- fix.entries.dt_gender(dt_gender) # fix some issues in the forplotti
 # countries with new series added:
 dt_gender[, Date.Of.Data.Added2:= as.Date(paste0(sub("-", "", Date.Of.Data.Added), "01"), format = "%Y%m%d")]
 isos_new_series_sex <- dt_gender[Date.Of.Data.Added2>="2020-10-01" , unique(Country.Code)]
+
 
 # review entries date
 review.date.of.dataentry(dir_file = filerate)
@@ -271,11 +281,15 @@ list.files(output_dir_gender)
 
 # Sex-specific-Data --------------------------------------------------
 # data plot
+if(!is.null(iso_given)) isos_new_series_sex <- iso_given
+
+
 save.all <- function(ind0, sex0){
   #` save.all helps to save all the combinations provided
   savePlotResults(
     output.dir = output_dir_gender,
-    fig.dir = "fig/sex-specific",
+    # fig.dir = "fig/sex-specific",
+    fig.dir = fig.dir,
     new_entry_date = "2020-10",
     legend1 = NULL,
     gender_ind = ind0, # takes indicators in the forms of either "U5MR" or "Q5"
