@@ -3,7 +3,7 @@
 # date: "2/3/2020 - 2021"
 
 run.on.server <- FALSE # Indicate if run is on the server
-username <- Sys.getenv("USERPROFILE") 
+username <- Sys.getenv("USERPROFILE")
 workdir <- file.path(username, "/Dropbox/UN IGME Data/2020 Round Estimation/Code") # Give work directory file path if not running things on server
 
 # Define working directory
@@ -467,7 +467,7 @@ save.all("Q1", "m", "pdf")
 
 
 # 4.1 Sex-specific-Results --------------------------------------------------
-# data plot 
+# data plot
 save.all <- function(ind0, sex0){
   #` save.all helps to save all the combinations provided
   savePlotResults(
@@ -592,12 +592,13 @@ invisible(Map(save.all, ind0 = c("Q5", "Q1"), sex0 = c("f", "f")))
 output.dir.19 <- file.path(Sys.getenv("USERPROFILE"), "/Dropbox/IGME 5-14/2019 Round Estimation/output/10q5-IGME20190114_all")
 output.dir.20 <- file.path(Sys.getenv("USERPROFILE"), "/Dropbox/IGME 5-14/2020 Round Estimation/Country consultation/")
 # for 10q5 country consultation
-output.dir.20.CC <- file.path(Sys.getenv("USERPROFILE"), "/Dropbox/IGME 5-14/2020 Round Estimation/Country consultation/")
+output.dir.20.CC <- file.path(Sys.getenv("USERPROFILE"), "/Dropbox/IGME 5-14/2020 Round Estimation 10q5/Country consultation/")
 
 runname5_14 <- "MR5-14_Total_CC"
 
 # to get special legend: B3, Derived from U5MR
 load(file.path(output.dir.20.CC, "mcmc.meta.rda"))
+load(file.path(output.dir.20.CC, "year.t.rda"))
 special_legend <- get.special.isos(mcmc.meta)$special_legend_vector
 
 # 5.0 Pre Country Consultation ----
@@ -630,10 +631,13 @@ savePlotResults(runname = runname5_14,
 
 # 6. 15-24 -------------------------------------------------
 runname15_24 <- "MR15-24_Total_CC"
-output.dir15_24.20.CC <- file.path(Sys.getenv("USERPROFILE"), "/Dropbox/IGME 5-14/Estimates 10q15/Country consultation/")
-output.dir15_24.20 <- file.path(Sys.getenv("USERPROFILE"), "Dropbox/IGME 5-14/Estimates 10q15/output/10q15-IGME2020GLOBALRUN-11_all")
+output.dir15_24.20.CC <- file.path(Sys.getenv("USERPROFILE"),
+                                   "Dropbox/IGME 15-24/2020 Round Estimation 10q15/Country consultation/")
+output.dir15_24.20 <- file.path(Sys.getenv("USERPROFILE"),
+                                   "Dropbox/IGME 15-24/2020 Round Estimation 10q15/Country consultation/")
 
 load(file.path(output.dir15_24.20.CC, "mcmc.meta.rda"))
+load(file.path(output.dir15_24.20.CC, "res.cqt.Lw.rda"))
 special_legend <- get.special.isos(mcmc.meta)$special_legend_vector
 
 # 6.0 Pre CC ----

@@ -240,6 +240,8 @@ get.res.cqt.rda.diffname <- function(output.dir, name_only = FALSE){
 #'   runname1)`
 #' @param runname2 if supply, will try to load `file.path(getwd(), "output",
 #'   runname1)`
+#' @param pooling_weight pooling_weight to draw from res.cqt
+#'
 #' @return matched cqt object
 #' @export obtain.matched.cqt
 #'
@@ -247,7 +249,8 @@ obtain.matched.cqt <- function(
   output.dir1 = NULL,
   output.dir2 = NULL,
   runname1 = NULL,
-  runname2 = NULL
+  runname2 = NULL,
+  pooling_weight
 ){
   if (is.null(output.dir1)) output.dir1 <- file.path(getwd(), "output", runname1)
   if(!dir.exists(output.dir1)) stop("Check if dir exists: ", output.dir1)
@@ -259,7 +262,7 @@ obtain.matched.cqt <- function(
   load(file.path(output.dir1, "year.t.rda"))
   year.t1 <- year.t
   res.cqt.Lw1 <- get.res.cqt.rda.diffname(output.dir1)
-  res.cqt1 <- res.cqt.Lw1[["0.5"]]
+  res.cqt1 <- res.cqt.Lw1[[pooling_weight]]
 
 
   load(file.path(output.dir2, "iso.c.rda"))
@@ -267,7 +270,7 @@ obtain.matched.cqt <- function(
   load(file.path(output.dir2, "year.t.rda"))
   year.t2 <- year.t
   res.cqt.Lw2 <-  get.res.cqt.rda.diffname(output.dir2)
-  res.cqt2 <- res.cqt.Lw2[["0.5"]]
+  res.cqt2 <- res.cqt.Lw2[[pooling_weight]]
 
   resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
   resfinal.cqt2[, , is.element(year.t1, year.t2)] <-
@@ -588,11 +591,29 @@ get.cqt.from.results <- function(
   results_filename = "results.csv",
   return_dt_long = FALSE
 ){
-  load(file.path(output_dir, mcmc.meta_filename))
+  check.rda.exist(output_dir)
+
+  if(file.exists(file.path(output_dir, mcmc.meta_filename))){
+    load(file.path(output_dir, mcmc.meta_filename))
+  } else {
+    stop("File doesn't exist: ", file.path(output_dir, mcmc.meta_filename))
+  }
   iso_order <- mcmc.meta$data.all$iso.c
-  load(file.path(output_dir, "year.t.rda"))
+
+  if(file.exists(file.path(output_dir, "year.t.rda"))){
+    load(file.path(output_dir, "year.t.rda"))
+  } else {
+    message("Maybe you can get `year.t.rda` from `as.numeric(dimnames(res.cqt.Lw$`0.5`)[[3]])`")
+    # but I won't do it automatically here since it's not always right
+    stop("File doesn't exist: ", file.path(output_dir, "year.t.rda"))
+  }
   years <- year.t
-  dt <- fread(file.path(output_dir, results_filename))
+
+  if(file.exists(file.path(output_dir, results_filename))){
+    dt <- fread(file.path(output_dir, results_filename))
+  } else {
+    stop("File doesn't exist: ", file.path(output_dir, results_filename))
+  }
   vars_wanted <- c("ISO.Code", "Quantile", paste0("X", years))
   dt_long <- melt(dt[,..vars_wanted], measure.vars = paste0("X", years), variable.factor = FALSE)
   dt_long[, years:=as.numeric(sub("X", "", variable))]

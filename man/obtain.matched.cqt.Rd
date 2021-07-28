@@ -8,7 +8,8 @@ obtain.matched.cqt(
   output.dir1 = NULL,
   output.dir2 = NULL,
   runname1 = NULL,
-  runname2 = NULL
+  runname2 = NULL,
+  pooling_weight
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ runname1)`}
 
 \item{runname2}{if supply, will try to load `file.path(getwd(), "output",
 runname1)`}
+
+\item{pooling_weight}{pooling_weight to draw from res.cqt}
 }
 \value{
 matched cqt object

@@ -29,7 +29,7 @@ savePlotResults(
   res.cqt4 = NULL,
   res_ex.cqt = NULL,
   save_cqt_copy = FALSE,
-  legend1 = "UN IGME 2020",
+  legend1 = "Draft UN IGME 2021",
   legend2 = NULL,
   legend3 = NULL,
   legend4 = NULL,
@@ -123,8 +123,8 @@ a dark-red line}
 into a folder created as `cqt_backup`}
 
 \item{legend1}{the legend for the main series (legendfull), has default
-value. It can be used as switch to hide the estimate by setting it
-as NULL. To plot imr method in legend: input \code{legend1 =
+value. It can be used as switch to hide the estimate by setting it as NULL.
+To plot imr method in legend: input \code{legend1 =
 mcmc.meta$data.all$imrmethod.c}, to plot 5-14 legend: use \code{legend1 =
 get.special.isos(mcmc.meta)$special_legend_vector}}
 
@@ -194,7 +194,8 @@ sex-specific plot, accepts "m", "f", or "ratio"}
 for sex-specific plot, accepts either "Q5", "Q1", "Q4" or "q5", "q1", "q4"}
 
 \item{pooling_weight}{default to "0.5", sometimes we need to show a different
-weight, for example, for 5-24 estimates}
+weight, for example, for 5-24 estimates. It also applies to cqt2-4 read
+from output.dir}
 
 \item{return_info}{logical, default to FALSE, if TRUE will return runtime}
 
@@ -209,13 +210,12 @@ a list of related information: runname, time_spent, debugging
 `savePlotResults` saves plots as png or pdf files by setting `pdf.or.png`. It
 saves results as one file or separately by setting
 `separate.plots.by.country`. It calls the plotting function
-\code{PlotDataAndEstimates2020}. Plot a subset of countries using
-either `n.countries` (a numeric vector) or `iso.subset.c` (a vector of
-ISO3Code). The name of the output file saved is auto-generated as
-`filename`+`runname` auto-generated part (Results/Data/Results Comparison +
-legends of series) depending on how many series will be plot. Set `AfterCC`
-to `TRUE` will force the output to be named "Results" instead of
-"Comparison". The function combined the old `PlotResults` and
-`PlotComparison` function. If error occurs, debugging information is
-returned.
+\code{PlotDataAndEstimates2020}. Plot a subset of countries using either
+`n.countries` (a numeric vector) or `iso.subset.c` (a vector of ISO3Code).
+The name of the output file saved is auto-generated as `filename`+`runname`
+auto-generated part (Results/Data/Results Comparison + legends of series)
+depending on how many series will be plot. Set `AfterCC` to `TRUE` will force
+the output to be named "Results" instead of "Comparison". The function
+combined the old `PlotResults` and `PlotComparison` function. If error
+occurs, debugging information is returned.
 }

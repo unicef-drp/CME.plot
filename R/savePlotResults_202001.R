@@ -7,15 +7,14 @@
 #' `savePlotResults` saves plots as png or pdf files by setting `pdf.or.png`. It
 #' saves results as one file or separately by setting
 #' `separate.plots.by.country`. It calls the plotting function
-#' \code{PlotDataAndEstimates2020}. Plot a subset of countries using
-#' either `n.countries` (a numeric vector) or `iso.subset.c` (a vector of
-#' ISO3Code). The name of the output file saved is auto-generated as
-#' `filename`+`runname` auto-generated part (Results/Data/Results Comparison +
-#' legends of series) depending on how many series will be plot. Set `AfterCC`
-#' to `TRUE` will force the output to be named "Results" instead of
-#' "Comparison". The function combined the old `PlotResults` and
-#' `PlotComparison` function. If error occurs, debugging information is
-#' returned.
+#' \code{PlotDataAndEstimates2020}. Plot a subset of countries using either
+#' `n.countries` (a numeric vector) or `iso.subset.c` (a vector of ISO3Code).
+#' The name of the output file saved is auto-generated as `filename`+`runname`
+#' auto-generated part (Results/Data/Results Comparison + legends of series)
+#' depending on how many series will be plot. Set `AfterCC` to `TRUE` will force
+#' the output to be named "Results" instead of "Comparison". The function
+#' combined the old `PlotResults` and `PlotComparison` function. If error
+#' occurs, debugging information is returned.
 #'
 #' @param runname used to look for `res.cqt`. If `output.dir` is NULL, it will
 #'   make the `output.dir` from runname if `getwd()` can point correctly to the
@@ -48,8 +47,8 @@
 #' @param add.legend default to TRUE, used to determine the right size of the
 #'   plot
 #' @param legend1 the legend for the main series (legendfull), has default
-#'   value. It can be used as switch to hide the estimate by setting it
-#'   as NULL. To plot imr method in legend: input \code{legend1 =
+#'   value. It can be used as switch to hide the estimate by setting it as NULL.
+#'   To plot imr method in legend: input \code{legend1 =
 #'   mcmc.meta$data.all$imrmethod.c}, to plot 5-14 legend: use \code{legend1 =
 #'   get.special.isos(mcmc.meta)$special_legend_vector}
 #' @param legend2 show legend for cqt2, can be used as a switch for showing cqt
@@ -109,7 +108,8 @@
 #'
 #' @param ylab default to NULL, value supplied by mcmc.meta
 #' @param pooling_weight default to "0.5", sometimes we need to show a different
-#'   weight, for example, for 5-24 estimates
+#'   weight, for example, for 5-24 estimates. It also applies to cqt2-4 read
+#'   from output.dir
 #' @param save_cqt_copy logical, if TRUE will save the `res.cqt.rds` plotted
 #'   into a folder created as `cqt_backup`
 #' @param return_info logical, default to FALSE, if TRUE will return runtime
@@ -146,7 +146,7 @@ savePlotResults <- function(
   res.cqt4 = NULL,       # a dark-red line, years adjusted in function
   res_ex.cqt = NULL,     # the expected series, years adjusted in function
   save_cqt_copy = FALSE, # if TRUE save a copy of res.cqt1 for checking
-  legend1 = "UN IGME 2020", # a switch for showing main estimates (set NULL for data plot): red line
+  legend1 = "Draft UN IGME 2021", # a switch for showing main estimates (set NULL for data plot): red line
   legend2 = NULL, # used as a switch for showing cqt2: green line
   legend3 = NULL, # used as a switch for showing cqt3: sienna line: `scales::show_col("sienna2")`
   legend4 = NULL, # used as a switch for showing cqt4: dark red line: `scales::show_col("#c7202e")`
@@ -259,7 +259,9 @@ savePlotResults <- function(
       }
       if(!is.null(output.dir2)){
         check.rda.exist(output.dir2)
-        res.cqt2 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir2)
+        res.cqt2 <- obtain.matched.cqt(output.dir1 = output.dir,
+                                       output.dir2 = output.dir2,
+                                       pooling_weight = pooling_weight)
       }
 
       # runname 3
@@ -269,7 +271,9 @@ savePlotResults <- function(
       }
       if(!is.null(output.dir3)){
         check.rda.exist(output.dir3)
-        res.cqt3 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir3)
+        res.cqt3 <- obtain.matched.cqt(output.dir1 = output.dir,
+                                       output.dir2 = output.dir3,
+                                       pooling_weight = pooling_weight)
       }
 
       # runname4
@@ -279,7 +283,9 @@ savePlotResults <- function(
       }
       if(!is.null(output.dir4)){
         check.rda.exist(output.dir4)
-        res.cqt4 <- obtain.matched.cqt(output.dir1 = output.dir, output.dir2 = output.dir4)
+        res.cqt4 <- obtain.matched.cqt(output.dir1 = output.dir,
+                                       output.dir2 = output.dir4,
+                                       pooling_weight = pooling_weight)
       }
 
 
