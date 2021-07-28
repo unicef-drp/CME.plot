@@ -6,3 +6,6 @@ figData
 fig2020AfterCC
 output
 doc
+9.0_data_plots_for_all_indicators.R
+9.1_plots_for_all_indicators_beforeCC.R
+9.2_plots_for_all_indicators_afterCC.R
