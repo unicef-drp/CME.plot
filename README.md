@@ -11,7 +11,7 @@ CME.plot wraps plotting functions into a package.
 You can install the developing version from Github.  
 If this repo is set as private, you could download the repo and compile the library locally.
 
-All the scripts are also combined into the `Code/R` for internal users so could be sourced locally too
+All the scripts are also combined into the `Code/R` for internal users so could be sourced locally too: when load the code using `LoadLibrariesAndCodes` set argument `load.CME.plot` to be `TRUE` to load scripts and data from this package)
 
 ``` r
 devtools::install_github("unicef-drp/CME.plot")
@@ -36,3 +36,7 @@ The tricky part is to determine which countries have updated VR by comparing the
 "R/4.mydata.R" records data files included in the package.
 
 "R/5.mics.R" can be ignored, it is used to please the CRAN package checking.
+
+## News
+
+2021-07: major bug fix, avoid array dimension lose so can plot for one-country run. 

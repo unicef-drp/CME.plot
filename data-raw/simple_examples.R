@@ -7,7 +7,7 @@ output.dir <- file.path(dir_IGME_out_folder, runname) # 2020 on dropbox
 output.dir.19 <- file.path(dir_IGME_out_folder, runname_19)
 
 cqt_last_year <- obtain.matched.cqt(output.dir1 = output.dir,
-                                 output.dir2 = output.dir.19)
+                                 output.dir2 = output.dir.19, pooling_weight = 0.5)
 
 cqt3 <- cqt_last_year*0.7
 cqt4 <- cqt_last_year*1.2
@@ -29,15 +29,17 @@ dir_old_data_U5MR <- new_dirs$dir_old_data_U5MR
 # minimum results/data plot:
 savePlotResults(runname = "GR20200214",
                      output.dir = output.dir,
-                     legend1 = NULL,
-                     new_entry_date = "2020-01",
+                     # legend1 = NULL,
+                     # new_entry_date = "2020-01",
+                     wpp.cqt = u5mr.wpp.cqt.2019,
+                     ihme.cqt = u5mr.ihme.cqt.2019,
                      n.countries = 1:10)
 
-# sort iso order
+# using a specific iso order
 savePlotResults(runname = "test",
                 output.dir = output.dir,
                 pdf.or.png = "pdf",
-                fig.dir = "fig2020",
+                fig.dir = "fig",
                 iso.subset.c = c("CAF", "CIV", "AFG"),
                 sort_the_isos = FALSE
 )

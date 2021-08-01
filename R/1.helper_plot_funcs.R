@@ -227,9 +227,10 @@ get.res.cqt.rda.diffname <- function(output.dir, name_only = FALSE){
 }
 
 
-#' Obtain cqt from runname2, match to runname1 by iso order and year range
+#' Obtain cqt from runname2, match to runname1 by iso order and number and year
+#' range
 #'
-#' Match output.dir2 to output.dir2, prefer to supply the complete `output.dir`
+#' Match output.dir2 to output.dir1, prefer to supply the complete `output.dir`
 #' than using `runname`
 #'
 #' @param output.dir1 the output directory including runname folder, where to
@@ -250,7 +251,7 @@ obtain.matched.cqt <- function(
   output.dir2 = NULL,
   runname1 = NULL,
   runname2 = NULL,
-  pooling_weight
+  pooling_weight = 0.5
 ){
   if (is.null(output.dir1)) output.dir1 <- file.path(getwd(), "output", runname1)
   if(!dir.exists(output.dir1)) stop("Check if dir exists: ", output.dir1)
@@ -277,6 +278,45 @@ obtain.matched.cqt <- function(
     res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1)]
   dimnames(resfinal.cqt2)[[3]] <- year.t1
 
+  return(resfinal.cqt2)
+}
+
+
+
+#' Match `res.cqt2` to `iso.c1` and `year.t1`, the core code used in
+#' obtain.matched.cqt
+#'
+#' @param iso.c1 target iso(s)
+#' @param year.t1 target years
+#' @param res.cqt2 the cqt that needs to be matched to target
+#'
+#' @return matched cqt object
+#'
+match.cqt.core <- function(iso.c1, year.t1, res.cqt2){
+  if(is.null(res.cqt2)) return(NULL)
+  iso.c2 <- dimnames(res.cqt2)[[1]]
+  year.t2 <- dimnames(res.cqt2)[[3]]
+  year.t2_new <- floor(as.numeric(year.t2))
+  year.t1_new <- floor(as.numeric(year.t1))
+
+  resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
+  resfinal.cqt2[, , is.element(year.t1_new, year.t2_new)] <-
+    res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2_new, year.t1_new)]
+  dimnames(resfinal.cqt2)[[3]] <- year.t1
+  # dimnames(resfinal.cqt2)[[1]] <- iso.c1
+  return(resfinal.cqt2)
+}
+
+#' Match iso of `res.cqt2` to iso.c1
+#'
+#' @inheritParams match.cqt.core
+#'
+#' @return iso-matched cqt object
+#'
+match.cqt.iso <- function(iso.c1, res.cqt2){
+  if(is.null(res.cqt2)) return(NULL)
+  iso.c2 <- dimnames(res.cqt2)[[1]]
+  resfinal.cqt2 <- res.cqt2[match(iso.c1, iso.c2), , , drop = FALSE]
   return(resfinal.cqt2)
 }
 

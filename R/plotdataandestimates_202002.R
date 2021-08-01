@@ -170,23 +170,10 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
       }
 
       # consider the year of estimates for gender-specific mainly (YL2020)
-      # plot from the most left available estimates
+      # plot from the most left-side available estimates
       if(!is.null(CIs.cqt)){
         xmin <- min(as.numeric(names(na.omit(CIs.cqt[c,1,]))), xmin)
       }
-
-      # check wpp_and_completeihme YL -------------------------------------------
-      reorder.iso <- function(array0, new_order) array0[match(new_order, rownames(array0)),,]
-      if(!is.null(wpp_and_completeihme$ihme.cqt)){
-        if(!identical(rownames(wpp_and_completeihme$ihme.cqt), data.all$iso.c)){
-          message("Check ISO order by ihme.cqt, not aligned with iso.c")
-          wpp_and_completeihme$ihme.cqt <- reorder.iso(wpp_and_completeihme$ihme.cqt, data.all$iso.c)
-        }}
-      if(!is.null(wpp_and_completeihme$wpp.cqt)){
-        if(!identical(rownames(wpp_and_completeihme$wpp.cqt), data.all$iso.c)){
-          message("Check ISO order by ihme.cqt, not aligned with iso.c")
-          wpp_and_completeihme$wpp.cqt <- reorder.iso(wpp_and_completeihme$wpp.cqt, data.all$iso.c)
-        }}
 
       #if (!is.null(wpp_and_ihme$wpp.cqt)){
        # ymin <- min(ymin,wpp_and_ihme$wpp.cqt[c,1,], na.rm = T)
@@ -262,8 +249,8 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
                                                                   unlist(data.all$year.Lcs.j[[c]]) >= xmin],
                                   na.rm = T), na.rm = T)
       }
-      ####compare the max and min value with the value in ihme and wpp data
 
+      ####compare the max and min value with the value in ihme and wpp data
       if (!is.null(wpp_and_ihme$ihme.cqt)) {
         ymin <- min(ymin,wpp_and_ihme$ihme.cqt[c,1,which(as.numeric(dimnames(wpp_and_ihme$ihme.cqt)[[3]]) %in% (xmin+0.5)):length(as.numeric(dimnames(wpp_and_ihme$ihme.cqt)[[3]]))], na.rm = T)
         ymax <- max(ymax, wpp_and_ihme$ihme.cqt[c,3,which(as.numeric(dimnames(wpp_and_ihme$ihme.cqt)[[3]]) %in% (xmin+0.5)):length(as.numeric(dimnames(wpp_and_ihme$ihme.cqt)[[3]]))], na.rm = T)
@@ -508,35 +495,41 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
     }
 
 
-
-    # plotCIs ---------------------------------------------
-
-    if (!is.null(wpp_and_ihme$ihme.cqt)){
-      ihmeyear.t = c(seq((max(ceiling(xmin*2/10)*5+0.5,min(as.numeric(dimnames(wpp_and_ihme$ihme.cqt)[[3]])))),2010.5,5),year.end)
-      ihmeyearlocation = which(as.numeric(dimnames(wpp_and_ihme$ihme.cqt)[[3]]) %in% min(ihmeyear.t))
-      PlotCIs(c = c, CIs.cqt = wpp_and_ihme$ihme.cqt[,,ihmeyearlocation:10], year.t = ihmeyear.t, col.est = "springgreen", col.CI = "springgreen")    ####plot CIs for ihme gbd 2016
-    }
-    if (!is.null(wpp_and_completeihme$ihme.cqt)){
-      if(xmin!=1990){
-        completeihmeyear.t = c(as.numeric(dimnames(wpp_and_completeihme$ihme.cqt)[[3]]))
-      } else {completeihmeyear.t=seq(1989.5,max(as.numeric(dimnames(wpp_and_completeihme$ihme.cqt)[[3]])),1)
-      }
-      ihmeyearminlocation = which(as.numeric(dimnames(wpp_and_completeihme$ihme.cqt)[[3]]) %in% min(completeihmeyear.t))  #####get the min year location in IHME
-      ihmeyearmaxlocation = which(as.numeric(dimnames(wpp_and_completeihme$ihme.cqt)[[3]]) %in% max(completeihmeyear.t))  #####get the max year location in IHME
-      PlotCIs(c = c, CIs.cqt = wpp_and_completeihme$ihme.cqt[,,ihmeyearminlocation:ihmeyearmaxlocation],
-              year.t = completeihmeyear.t, col.est = "steelblue", col.CI = col.ihme)    ####plot CIs for ihme gbd 2016
-    }
-
     message("xmin is " , xmin)
     message("ymin is " , ymin)
     #
     message("year start " , year.start)
     message("year end " , year.end)
 
-    if (!is.null(wpp_and_completeihme$wpp.cqt)){
-      wppyear.t = c(seq((max(ceiling(xmin*2/10)*5-2, min(as.numeric(dimnames(wpp_and_completeihme$wpp.cqt)[[3]])))),year.end+0.5,5))
-      wppyearlocation = which(as.numeric(dimnames(wpp_and_completeihme$wpp.cqt)[[3]]) == min(wppyear.t))
+    # plotCIs ---------------------------------------------
+    # Plot CI for IHME
+    if (!is.null(wpp_and_ihme$ihme.cqt)){
+      ihmeyear.t = c(seq((max(ceiling(xmin*2/10)*5+0.5,min(as.numeric(dimnames(wpp_and_ihme$ihme.cqt)[[3]])))),2010.5,5),year.end)
+      ihmeyearlocation = which(as.numeric(dimnames(wpp_and_ihme$ihme.cqt)[[3]]) %in% min(ihmeyear.t))
+      PlotCIs(c = c, CIs.cqt = wpp_and_ihme$ihme.cqt[,,ihmeyearlocation:10], year.t = ihmeyear.t, col.est = "springgreen", col.CI = "springgreen")    ####plot CIs for ihme gbd 2016
     }
+
+    if (!is.null(wpp_and_completeihme$ihme.cqt)){
+      if(xmin!=1990){
+        completeihmeyear.t = c(as.numeric(dimnames(wpp_and_completeihme$ihme.cqt)[[3]]))
+      } else {
+        completeihmeyear.t = seq(1989.5,max(as.numeric(dimnames(wpp_and_completeihme$ihme.cqt)[[3]])),1)
+      }
+      message("completeihmeyear.t: ", paste(range(completeihmeyear.t), collapse = "-"))
+      ihmeyearminlocation = which(as.numeric(dimnames(wpp_and_completeihme$ihme.cqt)[[3]]) %in% min(completeihmeyear.t))  #####get the min year location in IHME
+      ihmeyearmaxlocation = which(as.numeric(dimnames(wpp_and_completeihme$ihme.cqt)[[3]]) %in% max(completeihmeyear.t))  #####get the max year location in IHME
+
+      # beware that doing things like wpp_and_completeihme$ihme.cqt[,,ihmeyearminlocation:ihmeyearmaxlocation]
+      # will lose one dimention of the array
+      PlotCIs(c = c,
+              CIs.cqt = wpp_and_completeihme$ihme.cqt[,,ihmeyearminlocation:ihmeyearmaxlocation,
+                                                      drop = FALSE], # YL 2021.07 add `drop = FALSE` to keep array dimension for one-country run
+              year.t = completeihmeyear.t,
+              col.est = "steelblue", col.CI = col.ihme)    ####plot CIs for ihme gbd 2016
+    }
+
+
+
     if (!is.null(CIs4.cqt)) # darkred "#c7202e"
       PlotCIs(c = c, CIs.cqt = CIs4.cqt, year.t = est.years, col.est = "#c7202e", col.CI = col.CI4)
     if (!is.null(CIs3.cqt))
@@ -558,13 +551,17 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
 
 
     # plot lines ---------------------------------------------
-    #if (!is.null(wpp_and_ihme$wpp.cqt)){
-    #lines(wpp_and_ihme$wpp.cqt[c,1,wppyearlocation:length(as.numeric(dimnames(wpp_and_ihme$wpp.cqt)[[3]]))] ~ wppyear.t,col = "olivedrab", lty = 1, lwd = 5*cex.adj.factor)  ####line plot for wpp
-    #}
+    if (!is.null(wpp_and_completeihme$wpp.cqt)){
+      wppyear.t = c(seq((max(ceiling(xmin*2/10)*5-2,
+                             min(as.numeric(dimnames(wpp_and_completeihme$wpp.cqt)[[3]])))),year.end+0.5,5))
+      wppyearlocation = which(as.numeric(dimnames(wpp_and_completeihme$wpp.cqt)[[3]]) == min(wppyear.t))
+    }
+
     if (!is.null(wpp_and_ihme$ihme.cqt)){
       lines(wpp_and_ihme$ihme.cqt[c,2,ihmeyearlocation:10] ~ ihmeyear.t,col = "limegreen", lty = 1, lwd = 5*cex.adj.factor)    #####line plot for gbd
     }
     if (!is.null(wpp_and_completeihme$wpp.cqt)){
+      # 2nd dimension is `1` since WPP doesn't have CI
       lines(wpp_and_completeihme$wpp.cqt[c,1,wppyearlocation:length(as.numeric(dimnames(wpp_and_completeihme$wpp.cqt)[[3]]))] ~ wppyear.t,col = "olivedrab", lty = 1, lwd = 5*cex.adj.factor)  ####line plot for wpp
     }
     if (!is.null(wpp_and_completeihme$ihme.cqt)){

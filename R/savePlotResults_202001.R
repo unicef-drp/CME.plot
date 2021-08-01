@@ -435,6 +435,19 @@ savePlotResults <- function(
   res.cqt4 <- set.cqt.year.limit(res.cqt4, year_start = year.start, year_end = year.end)
   res_ex.cqt <- set.cqt.year.limit(res_ex.cqt, year_start = year.start, year_end = year.end)
 
+
+  # this part mainly serves one-country run ----
+  # in which situation the first series (res.cqt) is a one-country run
+  # matching iso order is necessary for wpp and ihme too
+  # `year.t` is same as `dimnames(res.cqt)[[3]]`
+  res.cqt2 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt2)
+  res.cqt3 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt3)
+  res.cqt4 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt4)
+  res_ex.cqt <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res_ex.cqt)
+  wpp.cqt <- match.cqt.iso(iso.c1 = iso.c, res.cqt2 = wpp.cqt)
+  ihme.cqt <- match.cqt.iso(iso.c1 = iso.c, res.cqt2 = ihme.cqt)
+
+
   # if to hide the estimate line (legend as an extra switch to turn on/off series)
   if(is.null(legend1)) res.cqt <- NULL
   if(is.null(legend2)) res.cqt2 <- NULL
@@ -473,19 +486,19 @@ savePlotResults <- function(
   }
 
   if(!After_CC){
-  filename <- paste0(filename,
-                     ifelse(!is.null(legend_ex), "_vs_Expected", ""),
-                     ifelse(!is.null(legend2), paste0("_vs_", gsub(" ", "", legend2)), ""),
-                     ifelse(!is.null(legend3), paste0("_vs_", gsub(" ", "", legend3)), ""),
-                     ifelse(!is.null(legend4), paste0("_vs_", gsub(" ", "", legend4)), "")
-                     )
-  }
+    filename <- paste0(filename,
+                       ifelse(!is.null(legend_ex), "_vs_Expected", ""),
+                       ifelse(!is.null(legend2), paste0("_vs_", gsub(" ", "", legend2)), ""),
+                       ifelse(!is.null(legend3), paste0("_vs_", gsub(" ", "", legend3)), ""),
+                       ifelse(!is.null(legend4), paste0("_vs_", gsub(" ", "", legend4)), "")
+                       )
 
-  if(!is.null(wpp.cqt)) {
-    filename <- paste0(filename, "_vs_", gsub(" ", "", legend_WPP)) # e.g. _vs_WPP2019
-  }
-  if(!is.null(ihme.cqt)) {
-    filename <- paste0(filename, "_vs_", gsub(" ", "", legend_IHME))
+    if(!is.null(wpp.cqt)) {
+      filename <- paste0(filename, "_vs_", gsub(" ", "", legend_WPP)) # e.g. _vs_WPP2019
+    }
+    if(!is.null(ihme.cqt)) {
+      filename <- paste0(filename, "_vs_", gsub(" ", "", legend_IHME))
+    }
   }
 
   message("filename is ", filename)
@@ -536,7 +549,7 @@ savePlotResults <- function(
                          c = c,
 
                          main.plot = main.plot,  # Include main plot?
-                         zoom = zoom,       # Include zoom plot?
+                         zoom = zoom,            # Include zoom plot?
 
                          ... # passing extra arguments to `PlotDataAndEstimates2020`
 
@@ -577,7 +590,7 @@ savePlotResults <- function(
   # save png
   if(pdf.or.png == "png"){
     # seperate png
-    width0 <- if(all(main.plot, zoom)) 24 else 8.5 # YL 200430
+    width0 <- if(all(main.plot, zoom)) 24 else 8.5 # YL 2020.04
     height0 <- if(all(main.plot, zoom)) 8 else 8
     if(After_CC){
       width0 <- 22

@@ -2,14 +2,15 @@
 % Please edit documentation in R/1.helper_plot_funcs.R
 \name{obtain.matched.cqt}
 \alias{obtain.matched.cqt}
-\title{Obtain cqt from runname2, match to runname1 by iso order and year range}
+\title{Obtain cqt from runname2, match to runname1 by iso order and number and year
+range}
 \usage{
 obtain.matched.cqt(
   output.dir1 = NULL,
   output.dir2 = NULL,
   runname1 = NULL,
   runname2 = NULL,
-  pooling_weight
+  pooling_weight = 0.5
 )
 }
 \arguments{
@@ -31,6 +32,6 @@ runname1)`}
 matched cqt object
 }
 \description{
-Match output.dir2 to output.dir2, prefer to supply the complete `output.dir`
+Match output.dir2 to output.dir1, prefer to supply the complete `output.dir`
 than using `runname`
 }

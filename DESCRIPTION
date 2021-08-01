@@ -1,5 +1,5 @@
 Package: CME.plot
-Title: Make Plots for Child Mortality Estimation
+Title: Make Plots for Child Mortality Estimates
 Version: 1.2.0
 Authors@R: 
     person(given = "Yang",
@@ -7,7 +7,9 @@ Authors@R:
            role = c("aut", "cre"),
            email = "lyhello@gmail.com",
            comment = c(ORCID = "0000-0001-6557-6439"))
-Description: Plotting functions for UNICEF child mortality estimation (CME). 
+Description: Plotting functions as an independent package for plotting child mortality estimates 
+  in base plot. It has included more checking steps, embedded necessary data, and added more 
+  features like highlighting newly added series.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -18,9 +20,9 @@ Imports:
     RColorBrewer,
     reshape2,
     data.table (>= 1.12.0),
-    readxl,
     usethis
 Suggests: 
+    readxl,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
