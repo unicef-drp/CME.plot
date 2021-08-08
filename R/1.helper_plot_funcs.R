@@ -143,7 +143,7 @@ check.rda.exist <- function(output.dir, mcmc.only = FALSE){
   }
 
   all_files <- c("mcmc.meta.rda",
-                 get.res.cqt.rda.diffname(output.dir, name_only = TRUE),
+                 "res.cqt.Lw.rda",
                  "year.t.rda")
   files <- if(mcmc.only) c("mcmc.meta.rda") else all_files
   invisible(sapply(files, report))
@@ -202,8 +202,8 @@ update.data.new_cnames <- function(country.info.file.name = "country.info.CME.19
 
 # Functions for managing array  ------------------------------------------------
 
-#' If the cqt is named differently, allowing an alternative to select cqt in
-#' other names
+#' (No longer used) If the cqt is named differently, allowing an alternative to
+#' select cqt in other names: `res.cqt.Lw.new.rda` will be selected if it exists
 #'
 #' @param output.dir dir to output folder
 #' @param name_only return only the file names, otherwise the cqt object
@@ -212,12 +212,14 @@ update.data.new_cnames <- function(country.info.file.name = "country.info.CME.19
 #'
 get.res.cqt.rda.diffname <- function(output.dir, name_only = FALSE){
   # return the first cqt file found among this list:
-  cqt.names <- c( "res.cqt.Lw.new.rda", "res.cqt.Lw.rda")
+  # cqt.names <- c( "res.cqt.Lw.new.rda", "res.cqt.Lw.rda")
+  cqt.names <- c("res.cqt.Lw.rda")
   cqt.exist <- file.exists(file.path(output.dir, cqt.names))
 
   if(any(cqt.exist)){
     cqt.names <- cqt.names[cqt.exist][1]
     load(file.path(output.dir, cqt.names))
+    if(cqt.names!="res.cqt.Lw.rda")message("!! Notice that the rda file loaded is: ", cqt.names)
     res.cqt.Lw <- get(sub(".rda", "", cqt.names))
   } else {
     cqt.names <- NULL
@@ -262,20 +264,21 @@ obtain.matched.cqt <- function(
   iso.c1 <- iso.c
   load(file.path(output.dir1, "year.t.rda"))
   year.t1 <- year.t
-  res.cqt.Lw1 <- get.res.cqt.rda.diffname(output.dir1)
-  res.cqt1 <- res.cqt.Lw1[[pooling_weight]]
+  load(file.path(output.dir1, "res.cqt.Lw.rda"))
+  res.cqt1 <- res.cqt.Lw[[pooling_weight]]
 
 
   load(file.path(output.dir2, "iso.c.rda"))
   iso.c2 <- iso.c
   load(file.path(output.dir2, "year.t.rda"))
   year.t2 <- year.t
-  res.cqt.Lw2 <-  get.res.cqt.rda.diffname(output.dir2)
-  res.cqt2 <- res.cqt.Lw2[[pooling_weight]]
+  load(file.path(output.dir2, "res.cqt.Lw.rda"))
+  res.cqt2 <- res.cqt.Lw[[pooling_weight]]
 
   resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
   resfinal.cqt2[, , is.element(year.t1, year.t2)] <-
     res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1)]
+  dimnames(resfinal.cqt2)[[1]] <- iso.c1
   dimnames(resfinal.cqt2)[[3]] <- year.t1
 
   return(resfinal.cqt2)
@@ -283,8 +286,12 @@ obtain.matched.cqt <- function(
 
 
 
-#' Match `res.cqt2` to `iso.c1` and `year.t1`, the core code used in
-#' obtain.matched.cqt
+#' Match the 1st dimension of `res.cqt2` to `iso.c1` and match its 3nd dimension
+#' to `year.t1`
+#'
+#' The core part of `obtain.matched.cqt` does the same thing but
+#' `obtain.matched.cqt` takes `output.dir` as input and `match.cqt.core` takes
+#' res.cqt2 as input.
 #'
 #' @param iso.c1 target iso(s)
 #' @param year.t1 target years
@@ -295,6 +302,7 @@ obtain.matched.cqt <- function(
 match.cqt.core <- function(iso.c1, year.t1, res.cqt2){
   if(is.null(res.cqt2)) return(NULL)
   iso.c2 <- dimnames(res.cqt2)[[1]]
+  if(is.null(iso.c2)) stop("dimnames(res.cqt2)[[1]] in match.cqt.core is NULL")
   year.t2 <- dimnames(res.cqt2)[[3]]
   year.t2_new <- floor(as.numeric(year.t2))
   year.t1_new <- floor(as.numeric(year.t1))
@@ -302,8 +310,8 @@ match.cqt.core <- function(iso.c1, year.t1, res.cqt2){
   resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
   resfinal.cqt2[, , is.element(year.t1_new, year.t2_new)] <-
     res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2_new, year.t1_new)]
+  dimnames(resfinal.cqt2)[[1]] <- iso.c1
   dimnames(resfinal.cqt2)[[3]] <- year.t1
-  # dimnames(resfinal.cqt2)[[1]] <- iso.c1
   return(resfinal.cqt2)
 }
 
@@ -525,6 +533,8 @@ remove.specific.series <- function(
   if(HIV_removed) data.all <- mcmc.meta$data.hivremoved.all
   # message("Preview for AGO before: ", paste(data.all$source.Lc.s[[5]], sep = ", "))
 
+  if(is.null(remove_date)|is.na(remove_date)) remove_date <- 0
+
   for(i in 1:length(data.all$iso.c)){
     if(!is.null(data.all$source.Lc.s[[i]])){
     # print(i)
@@ -575,6 +585,8 @@ remove.specific.series.15_24 <- function(
   data.all <- mcmc.meta$data.all
   if(HIV_removed) data.all <- mcmc.meta$data.hivremoved.all
   # message("Preview for AND before: ", paste(data.all$sourcevr.Lc.s[[4]], sep = ", "))
+
+  if(is.null(remove_date)|is.na(remove_date)) remove_date <- 0
 
   for(i in 1:length(data.all$iso.c)){
     if(!is.null(data.all$sourcevr.Lc.s[[i]])){

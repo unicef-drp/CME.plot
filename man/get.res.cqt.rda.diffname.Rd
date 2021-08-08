@@ -2,8 +2,8 @@
 % Please edit documentation in R/1.helper_plot_funcs.R
 \name{get.res.cqt.rda.diffname}
 \alias{get.res.cqt.rda.diffname}
-\title{If the cqt is named differently, allowing an alternative to select cqt in
-other names}
+\title{(No longer used) If the cqt is named differently, allowing an alternative to
+select cqt in other names: `res.cqt.Lw.new.rda` will be selected if it exists}
 \usage{
 get.res.cqt.rda.diffname(output.dir, name_only = FALSE)
 }
@@ -16,6 +16,6 @@ get.res.cqt.rda.diffname(output.dir, name_only = FALSE)
 the wanted res.cqt.Lw object
 }
 \description{
-If the cqt is named differently, allowing an alternative to select cqt in
-other names
+(No longer used) If the cqt is named differently, allowing an alternative to
+select cqt in other names: `res.cqt.Lw.new.rda` will be selected if it exists
 }

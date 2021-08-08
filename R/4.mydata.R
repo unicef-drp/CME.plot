@@ -22,6 +22,17 @@
 #' @keywords WPP
 "imr.wpp.cqt.2019"
 
+#'m10q5.wpp.cqt.2019
+#'
+#' @docType data
+#' @keywords WPP
+"m10q5.wpp.cqt.2019"
+
+#'m10q15.wpp.cqt.2019
+#'
+#' @docType data
+#' @keywords WPP
+"m10q15.wpp.cqt.2019"
 
 #'wpp_2019_cqt_by_sex: female and male WPP 2019 for IMR and U5MR
 #'
@@ -87,7 +98,18 @@
 #' @keywords IHME
 "nmr.ihme.cqt.2019"
 
+#'m10q5.ihme.cqt.2019
+#'
+#' @docType data
+#' @keywords IHME
+"m10q5.ihme.cqt.2019"
 
+
+#'m10q15.ihme.cqt.2019
+#'
+#' @docType data
+#' @keywords IHME
+"m10q15.ihme.cqt.2019"
 
 # isos --------------------------------------------------------------------
 

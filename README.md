@@ -40,3 +40,4 @@ The tricky part is to determine which countries have updated VR by comparing the
 ## News
 
 2021-07: major bug fix, avoid array dimension lose so can plot for one-country run. 
+2021-08: streamline the logic to supply `res.cqt`: since `output.dir` is required anyway, `res.cqt1` is more prioritized. If `res.cqt1` is supplied, will not use the default `res.cqt.Lw.rda` from `output.dir`. But `res.cqt2`, `res.cqt3`, `res.cqt4` are less prioritized than their respective output.dir arguments, which means if both `res.cqt2` and `output.dir2` are supplied, will use the default `res.cqt.Lw.rda` from `output.dir2`. 

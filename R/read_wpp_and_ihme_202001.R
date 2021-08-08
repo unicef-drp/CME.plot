@@ -99,9 +99,8 @@ get.wpp.cqt <- function(
 ){
   #
   ind_vector <- c("Q5", "Q1")
-  ind_vector2 <- c("U5MR", "IMR")
+  ind_vector2 <- c("U5MR", "IMR", "10q5", "10q15")
   new_list <- list("Q5" = "U5MR", "Q1" = "IMR")
-  ind <- toupper(ind)
   if(ind%in%ind_vector) ind <- get.match(ind, new_list = new_list)
   if (!ind %in% ind_vector2) stop("`ind` should be among ",
                                                  paste(c(ind_vector, ind_vector2), collapse = ", "))
@@ -111,7 +110,9 @@ get.wpp.cqt <- function(
   setkey(new_cnames0, UNCode)
   # not all the wpp are in our 195 list, so fill NA to the rest
   # 184 isos co-exist
-  wpp_dt_iso <- new_cnames0[,.(ISO3Code, UNCode)][wpp_dt, nomatch = 0][, c("ISO3Code", "year", toupper(ind)), with = FALSE]
+  wpp_dt_iso <- new_cnames0[,.(ISO3Code, UNCode)][wpp_dt, nomatch = 0][, c("ISO3Code", "year", ind), with = FALSE]
+  wpp_dt_iso <- wpp_dt_iso[ISO3Code%in%iso_order]
+  message("wpp_dt_iso contains ", wpp_dt_iso[,uniqueN(ISO3Code)], " countries.")
   years <- unique(wpp_dt_iso[ ,year]) # 14 years interval
   ISO_missing <-  iso_order[!iso_order%in%wpp_dt_iso$ISO3Code] # 11 isos, in total 195
   wpp_dt_NA <- expand.grid(ISO3Code = ISO_missing, year = years)
@@ -255,15 +256,18 @@ get.sex.ihme.cqt.2017 <- function(
 
 #' Reorganize IHME 2019 dt
 #'
+#' @param ihme can supply ihme dataset following the same structure
 #' @param dir_IHME0 IHME file directory to "GBD2019_Under5_estimates.xlsx"
 #' @param ind sheet name in "GBD2019_Under5_estimates.xlsx"
 #'
-get_dt_IHME_2019 <- function(dir_IHME0 = dir_IHME_2019, ind){
+get_dt_IHME_2019 <- function(ihme = NULL,
+                             dir_IHME0 = dir_IHME_2019,
+                             ind = NULL){
 
   # read in data
-  ihme <- setDT(readxl::read_xlsx(dir_IHME0, sheet = ind))
+  if(is.null(ihme)) ihme <- setDT(readxl::read_xlsx(dir_IHME0, sheet = ind))
   if("sex_name" %in% colnames(ihme)) setnames(ihme, "sex_name", "sex")
-  setnames(ihme, c("year_id", "val"), c("year", "mean"))
+  setnames(ihme, c("year_id", "val"), c("year", "mean"), skip_absent = TRUE)
   ihme$sex <- as.factor(ihme$sex)
   if(identical(levels(ihme$sex), c("both", "female", "male"))){
     ihme$sex <- factor(ihme$sex, levels = c("both", "female", "male"))
@@ -271,8 +275,8 @@ get_dt_IHME_2019 <- function(dir_IHME0 = dir_IHME_2019, ind){
   }
   # subsetting
   ihme[, sex:=tolower(sex)] # "Both" -> "both"
+  ihme$mean <- ihme$mean*1000
   #
-  if(ind!="RATIO") ihme$mean <- ihme$mean*1000
   if("upper"%in%colnames(ihme)){
     ihme$upper <- ihme$upper*1000
   } else {
@@ -283,8 +287,15 @@ get_dt_IHME_2019 <- function(dir_IHME0 = dir_IHME_2019, ind){
   } else {
     ihme$lower <- NA_real_
   }
-  ihme <- ihme[,.(location_id, year, sex, lower, mean, upper)]
-  ihme[, ind := ind]
+  if("age_group_name" %in% colnames(ihme)){
+    ihme[, ind:=age_group_name]
+  }
+  ihme <- ihme[,.(location_id, year, sex, lower, mean, upper, ind)]
+
+  if(!is.null(ind)){
+    ihme[, ind := ind]
+    if(ind == "ratio") ihme$mean <- ihme$mean/1000
+  }
   return(ihme)
 }
 
@@ -305,10 +316,11 @@ get.ihme.cqt.2019 <- function(
   ind0 = "U5MR",
   sex0 = "f"
 ){
-  ind_vector1 <- c("U5MR", "IMR", "NMR", "CMR") # available sheets
+  ind_vector1 <- c("U5MR", "IMR", "NMR", "CMR",
+                   "10q15", "10q5",  "5q10",  "5q15",  "5q20",  "5q5"
+                   ) # available sheets
   ind_vector2 <- c("Q5", "Q1", "Q4") # also accepted
   new_list <- list("Q5" = "U5MR", "Q1" = "IMR", "Q4" = "CMR")
-  ind0 <- toupper(ind0)
   if(ind0%in%ind_vector2) ind0 <- get.match(ind0, new_list = new_list)
   if (!ind0 %in% ind_vector1) stop("`ind0` should be among ",
                                        paste(c(ind_vector1), collapse = ", "))

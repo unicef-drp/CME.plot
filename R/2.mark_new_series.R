@@ -134,9 +134,17 @@ get.new.series.mark.entry <- function(dt_cme,
 #' Used for U5MR and IMR only, called in `savePlotResults`
 #'
 #' @param output.dir output.dir
-#' @param new_entry_date must supply, cannot be NULL, format is checked, accept yyyy-mm-dd and yyyy-mm
+#' @param new_entry_date must supply, cannot be NULL, format is checked, accept
+#'   yyyy-mm-dd and yyyy-mm
 #' @param dir_IGME default to NULL, where to read data_CMEInfo.csv
-get.new.series <- function(output.dir, new_entry_date = NULL, dir_IGME = NULL){
+#' @param return_dt_cme default to FALSE, if TRUE, can return the dataset with
+#'   new entries marked as 1
+#' @export get.new.series
+get.new.series <- function(output.dir,
+                           new_entry_date = NULL,
+                           dir_IGME = NULL,
+                           return_dt_cme = FALSE
+                           ){
   # by default, cut new entries as input after Oct.1st last year
   if(is.null(new_entry_date)) stop("Please supply new_entry_date, now it is NULL")
   # Check if the input date is valid: "YYYY-MM" is also allowed
@@ -173,7 +181,7 @@ get.new.series <- function(output.dir, new_entry_date = NULL, dir_IGME = NULL){
            grepl("Direct", Series.Type), new_entry := 0]
   # create source id
   new.sourceID.i <- get.new.sourceID.i(dt_cme)
-  return(new.sourceID.i)
+  return(if(return_dt_cme) dt_cme else new.sourceID.i)
 }
 
 #' Revise mcmc.meta and return a new mcmc.meta
@@ -262,17 +270,22 @@ find.dir.for.VR.comparison <- function(
   return(list(dir_new_data_U5MR = dir_new_data_U5MR, dir_old_data_U5MR = dir_old_data_U5MR))
 }
 
-#' Compare the WHO VR dt_new vs. dt_old
+#' Compare the WHO VR dt_new vs. dt_old, count only the countries with new year
+#' data because if we calculate the diff, it's not clear round to which digits
 #'
 #' dir_new_data_U5MR and dir_old_data_U5MR can be loaded by
 #' \code{\link{find.dir.for.VR.comparison}}
 #'
-#' Supply `dir_new_data_U5MR` or/and `dir_old_data_U5MR` in the global environment to
-#' overwrite the default selection
+#' Supply `dir_new_data_U5MR` or/and `dir_old_data_U5MR` in the global
+#' environment to overwrite the default selection
+#'
+#' @param count_rounding default to NULL, if supply 6, it will count the
+#'   difference also using the diff round to 1E-6
 #'
 #' @return list of dt1 (the comparison dataset for debugging) and iso_newVR (the
 #'   vector of country isos with different WHO VR)
 get.diff.dt.WHOVR <- function(
+  count_rounding = NULL
 ){
   default_dir <- find.dir.for.VR.comparison()
   if(!exists("dir_new_data_U5MR")) dir_new_data_U5MR <- default_dir$dir_new_data_U5MR
@@ -305,7 +318,8 @@ get.diff.dt.WHOVR <- function(
     dt_new_2 <- dt_new[grepl("WHO", Series.Name) & Visible == 1]
     # Series.Name2 is the new one
     dt_new_2[, Series.Name:=gsub(" version", "", Series.Name)]
-    dt_new_2[, Series.Name:=gsub(" 2018| 2019| 2020", "", Series.Name)]
+    dt_new_2[, Series.Name:=gsub("2018|2019|2020|2021|2022|2023", "", Series.Name)]
+    dt_new_2[, Series.Name:=trimws(Series.Name)]
     dt_new_2[, key:=paste(Country.Code, Series.Name, Reference.Date, sep = "_")]
 
     setkey(dt_new_2, key)
@@ -317,9 +331,16 @@ get.diff.dt.WHOVR <- function(
   setnames(dt_old_2, "Estimates", "Estimates_19")
   setnames(dt_new_2, "Estimates", "Estimates_20")
   dt1 <- dt_old_2[dt_new_2]
-  dt1[, diff:= Estimates_20 - Estimates_19]
-  dt1[,pcnt:= (Estimates_20 - Estimates_19)/Estimates_19]
-  dt_new <- dt1[is.na(Estimates_19),]
+
+  if(!is.null(count_rounding)){
+    if(count_rounding<1) message("count_rounding is the rounding digits")
+    count_rounding <- as.integer(count_rounding)
+    dt1[, diff:= abs(round(Estimates_20 - Estimates_19, count_rounding))]
+    dt_new <- dt1[ diff >0 | is.na(Estimates_19),]
+  } else {
+    dt_new <- dt1[is.na(Estimates_19),] # only count new year
+  }
+
   iso_newVR <- dt_new[, unique(Country.Code)]
   # message(dt_diff[, uniqueN(Country.Code)], " out of ", dt_new_2[,uniqueN(Country.Code)],
   #         " have WHO VR U5MR estimate differences > ", cutoff, " comparing 2020 to 2019")

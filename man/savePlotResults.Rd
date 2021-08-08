@@ -20,6 +20,7 @@ savePlotResults(
   year.end = 2021,
   zoom.year.start = 1990,
   zoom.year.end = 2021,
+  remove_date_5_24 = 1990,
   main.plot = TRUE,
   zoom = TRUE,
   add.legend = TRUE,
@@ -78,7 +79,7 @@ be used as legend if legend is not supplied}
 be used as legend if legend is not supplied}
 
 \item{output.dir}{the MCMC output folder: where to read `mcmc.meta.rda` and
-`res.cqt1`}
+`res.cqt1`, but if `res.cqt1` is supplied, will use the supplied `res.cqt1`}
 
 \item{output.dir2}{if supplied and valid, will use it to locate `res.cqt2`}
 
@@ -95,6 +96,10 @@ be used as legend if legend is not supplied}
 \item{zoom.year.start}{default to 1990}
 
 \item{zoom.year.end}{default to `last.year()`}
+
+\item{remove_date_5_24}{default to 1990, for 5-24: by default remove series
+that are earlier than 1990 so not shown on the CC plot. If want to see all
+the series, set a lower number, e.g. 0}
 
 \item{main.plot}{default to TRUE, used to determine the right size of the
 plot}

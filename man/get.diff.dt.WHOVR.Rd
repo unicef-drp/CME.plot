@@ -2,9 +2,14 @@
 % Please edit documentation in R/2.mark_new_series.R
 \name{get.diff.dt.WHOVR}
 \alias{get.diff.dt.WHOVR}
-\title{Compare the WHO VR dt_new vs. dt_old}
+\title{Compare the WHO VR dt_new vs. dt_old, count only the countries with new year
+data because if we calculate the diff, it's not clear round to which digits}
 \usage{
-get.diff.dt.WHOVR()
+get.diff.dt.WHOVR(count_rounding = NULL)
+}
+\arguments{
+\item{count_rounding}{default to NULL, if supply 6, it will count the
+difference also using the diff round to 1E-6}
 }
 \value{
 list of dt1 (the comparison dataset for debugging) and iso_newVR (the
@@ -15,6 +20,6 @@ dir_new_data_U5MR and dir_old_data_U5MR can be loaded by
 \code{\link{find.dir.for.VR.comparison}}
 }
 \details{
-Supply `dir_new_data_U5MR` or/and `dir_old_data_U5MR` in the global environment to
-overwrite the default selection
+Supply `dir_new_data_U5MR` or/and `dir_old_data_U5MR` in the global
+environment to overwrite the default selection
 }

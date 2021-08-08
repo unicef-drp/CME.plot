@@ -4,9 +4,11 @@
 \alias{get_dt_IHME_2019}
 \title{Reorganize IHME 2019 dt}
 \usage{
-get_dt_IHME_2019(dir_IHME0 = dir_IHME_2019, ind)
+get_dt_IHME_2019(ihme = NULL, dir_IHME0 = dir_IHME_2019, ind = NULL)
 }
 \arguments{
+\item{ihme}{can supply ihme dataset following the same structure}
+
 \item{dir_IHME0}{IHME file directory to "GBD2019_Under5_estimates.xlsx"}
 
 \item{ind}{sheet name in "GBD2019_Under5_estimates.xlsx"}

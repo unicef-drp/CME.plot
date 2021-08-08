@@ -97,7 +97,9 @@ if(getRversion()>= "2.15.1"){
                            "wpp_2019_cqt_by_sex",
                            "dir_IGME",
                            "Code", "Country.ISO" ,
-                           "Series.Category", "default_label"
+                           "Series.Category",
+                           "default_label",
+                           "age_group_name"
 
                            ))
 }

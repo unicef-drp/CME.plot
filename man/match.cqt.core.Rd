@@ -2,8 +2,8 @@
 % Please edit documentation in R/1.helper_plot_funcs.R
 \name{match.cqt.core}
 \alias{match.cqt.core}
-\title{Match `res.cqt2` to `iso.c1` and `year.t1`, the core code used in
-obtain.matched.cqt}
+\title{Match the 1st dimension of `res.cqt2` to `iso.c1` and match its 3nd dimension
+to `year.t1`}
 \usage{
 match.cqt.core(iso.c1, year.t1, res.cqt2)
 }
@@ -18,6 +18,7 @@ match.cqt.core(iso.c1, year.t1, res.cqt2)
 matched cqt object
 }
 \description{
-Match `res.cqt2` to `iso.c1` and `year.t1`, the core code used in
-obtain.matched.cqt
+The core part of `obtain.matched.cqt` does the same thing but
+`obtain.matched.cqt` takes `output.dir` as input and `match.cqt.core` takes
+res.cqt2 as input.
 }

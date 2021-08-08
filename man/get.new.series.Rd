@@ -5,14 +5,23 @@
 \title{Read cmeinfo file from `output.dir` and return the vector of new entries:
 `new.sourceID.i`}
 \usage{
-get.new.series(output.dir, new_entry_date = NULL, dir_IGME = NULL)
+get.new.series(
+  output.dir,
+  new_entry_date = NULL,
+  dir_IGME = NULL,
+  return_dt_cme = FALSE
+)
 }
 \arguments{
 \item{output.dir}{output.dir}
 
-\item{new_entry_date}{must supply, cannot be NULL, format is checked, accept yyyy-mm-dd and yyyy-mm}
+\item{new_entry_date}{must supply, cannot be NULL, format is checked, accept
+yyyy-mm-dd and yyyy-mm}
 
 \item{dir_IGME}{default to NULL, where to read data_CMEInfo.csv}
+
+\item{return_dt_cme}{default to FALSE, if TRUE, can return the dataset with
+new entries marked as 1}
 }
 \description{
 Used for U5MR and IMR only, called in `savePlotResults`

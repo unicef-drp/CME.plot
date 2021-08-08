@@ -1,6 +1,6 @@
 Package: CME.plot
 Title: Make Plots for Child Mortality Estimates
-Version: 1.2.0
+Version: 1.2.1
 Authors@R: 
     person(given = "Yang",
            family = "Liu",
@@ -12,7 +12,6 @@ Description: Plotting functions as an independent package for plotting child mor
   features like highlighting newly added series.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.1.1
 Depends: 
     R (>= 3.0.0),

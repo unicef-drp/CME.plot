@@ -27,7 +27,7 @@
 #' @param runname4 used to look for `res.cqt4` if `output.dir4` is NULL. It will
 #'   be used as legend if legend is not supplied
 #' @param output.dir the MCMC output folder: where to read `mcmc.meta.rda` and
-#'   `res.cqt1`
+#'   `res.cqt1`, but if `res.cqt1` is supplied, will use the supplied `res.cqt1`
 #' @param output.dir2 if supplied and valid, will use it to locate `res.cqt2`
 #' @param output.dir3 if supplied and valid, will use it to locate `res.cqt3`
 #' @param output.dir4 if supplied and valid, will use it to locate `res.cqt4`
@@ -116,6 +116,10 @@
 #' @param ...  more arguments not listed here but can still be passed into the
 #'   function `PlotDataAndEstimates2020`
 #'
+#' @param remove_date_5_24 default to 1990, for 5-24: by default remove series
+#'   that are earlier than 1990 so not shown on the CC plot. If want to see all
+#'   the series, set a lower number, e.g. 0
+#'
 #' @return a list of related information: runname, time_spent, debugging
 #'   information if there is an error
 #'
@@ -137,10 +141,11 @@ savePlotResults <- function(
   year.end = 2021,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
   zoom.year.start = 1990,
   zoom.year.end = 2021,
+  remove_date_5_24 = 1990, # for 5-24: by default remove series older than 1990 so not on the CC plot
   main.plot = TRUE,  # include main plot?
   zoom = TRUE,       # include zoom plot?
   add.legend = TRUE, # show legend?
-  res.cqt1 = NULL,
+  res.cqt1 = NULL,       # if res.cqt is supplied,
   res.cqt2 = NULL,       # a green line, years adjusted in function
   res.cqt3 = NULL,       # a brown line, years adjusted in function
   res.cqt4 = NULL,       # a dark-red line, years adjusted in function
@@ -201,11 +206,17 @@ savePlotResults <- function(
       load(file.path(output.dir, "mcmc.meta.rda"))
       # revise mcmc.meta for 5-24 --- 8/2020, combined into the function
       if(!is.null(ylab)){
-        if(ylab %in% c("10q5", "5q5")) mcmc.meta <- remove.specific.series(mcmc.meta, remove_pattern = "Derived from 5q0|Subnational")
+        if(ylab %in% c("10q5", "5q5")){
+          mcmc.meta <- remove.specific.series(mcmc.meta,
+                                              remove_pattern = "Derived from 5q0|Subnational",
+                                              remove_date = remove_date_5_24)
+        }
 
         if(ylab %in% c("10q15", "5q15")){
-          mcmc.meta <- remove.specific.series.15_24(mcmc.meta, remove_pattern = "Derived from 5q0")
-          mcmc.meta <- remove.specific.series(mcmc.meta, remove_date = 1990)
+          mcmc.meta <- remove.specific.series.15_24(mcmc.meta,
+                                                    remove_pattern = "Derived from 5q0",
+                                                    remove_date = remove_date_5_24)
+          mcmc.meta <- remove.specific.series(mcmc.meta, remove_date = remove_date_5_24)
         }
       }
 
@@ -219,10 +230,16 @@ savePlotResults <- function(
       if(file.exists(file.path(output.dir, "year.t.rda"))) load(file.path(output.dir, "year.t.rda")) else year.t <- NULL
       if(!is.null(res.cqt1)){
         res.cqt <- res.cqt1
+        # if res.cqt1 is supplied, will use it instead of the res.cqt in the output.dir
+        # but for the other series, res.cqt2-4 are ignored if there is valid output.dir2-4 supplied
+        # the rule is slightly different because output.dir is a must have, but not so for other output.dir2-4
       } else {
-        res.cqt.Lw <- get.res.cqt.rda.diffname(output.dir)
-        res.cqt <- res.cqt.Lw[[as.character(pooling_weight)]] #
-        if(!HIV_removed)message("res.cqt.Lw file used: ", get.res.cqt.rda.diffname(output.dir, name_only = TRUE))
+        if(file.exists(file.path(output.dir, "res.cqt.Lw.rda"))){
+          load(file.path(output.dir, "res.cqt.Lw.rda"))
+          res.cqt <- res.cqt.Lw[[as.character(pooling_weight)]] #
+        } else {
+          res.cqt <- NULL
+        }
       }
       # YL 1/29 HIV-removed, can load from a specific `output.dir.for.hivremoved.cqt` if supplied
       if(HIV_removed){
@@ -244,7 +261,10 @@ savePlotResults <- function(
 
       }
 
-      dimnames(res.cqt)[[3]] <- year.t
+      # dimnames(res.cqt)[[3]] <- year.t #
+      if(is.null(year.t)) year.t <- dimnames(res.cqt)[[3]] # ?? 2021/8
+      message("year.t: ", paste(range(year.t), collapse = "-"))
+
 
       indicator.type <- mcmc.meta$settings$indicator.type
       is.validation <- mcmc.meta$settings$is.validation
@@ -252,6 +272,7 @@ savePlotResults <- function(
       # Allowing using output.dir to search for other res.cqt series to plot 2020.12
       # if only supply `runname`, will try to guess `output.dir`; better supply `output.dir`
       # if `output.dir` is supplied, either `runname` or `legend` is also needed so we can have the legend
+      #
       # runname2
       if(!is.null(runname2)){
         if(is.null(legend2)) legend2 <- runname2
@@ -264,7 +285,7 @@ savePlotResults <- function(
                                        pooling_weight = pooling_weight)
       }
 
-      # runname 3
+      # runname3
       if(!is.null(runname3)){
         if(is.null(legend3)) legend3 <- runname3
         if(is.null(output.dir3)) output.dir3 <- file.path(getwd(), "output", runname3)
@@ -428,24 +449,33 @@ savePlotResults <- function(
     }
   }
 
-  # limit years of res.cqt series by `year.start` and `year.end`
+  # this part is needed if res.cqt is not from the output.dir but supplied directly
+  # it helps one-country run too to limit the iso to 1
+  # matching iso order is also necessary for wpp and ihme cqt
+  # `year.t` is same as `dimnames(res.cqt)[[3]]`
+  if(is.null(output.dir2))res.cqt2 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt2)
+  if(is.null(output.dir3))res.cqt3 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt3)
+  if(is.null(output.dir4))res.cqt4 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt4)
+  # these 2 will always be matched
+  res.cqt <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt)
+  res_ex.cqt <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res_ex.cqt)
+
+  # rematch iso order for wpp and ihme
+  wpp.cqt <- match.cqt.iso(iso.c1 = iso.c, res.cqt2 = wpp.cqt)
+  ihme.cqt <- match.cqt.iso(iso.c1 = iso.c, res.cqt2 = ihme.cqt)
+
+
+  # further limit years of res.cqt series by `year.start` and `year.end`
+  # message("year.start: ", year.start)
+  # message("year.end:", year.end)
   res.cqt <- set.cqt.year.limit(res.cqt, year_start = year.start, year_end = year.end)
   res.cqt2 <- set.cqt.year.limit(res.cqt2, year_start = year.start, year_end = year.end)
   res.cqt3 <- set.cqt.year.limit(res.cqt3, year_start = year.start, year_end = year.end)
   res.cqt4 <- set.cqt.year.limit(res.cqt4, year_start = year.start, year_end = year.end)
   res_ex.cqt <- set.cqt.year.limit(res_ex.cqt, year_start = year.start, year_end = year.end)
+  wpp.cqt <- set.cqt.year.limit(wpp.cqt, year_start = year.start, year_end = year.end)
+  ihme.cqt <- set.cqt.year.limit(ihme.cqt, year_start = year.start, year_end = year.end)
 
-
-  # this part mainly serves one-country run ----
-  # in which situation the first series (res.cqt) is a one-country run
-  # matching iso order is necessary for wpp and ihme too
-  # `year.t` is same as `dimnames(res.cqt)[[3]]`
-  res.cqt2 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt2)
-  res.cqt3 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt3)
-  res.cqt4 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt4)
-  res_ex.cqt <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res_ex.cqt)
-  wpp.cqt <- match.cqt.iso(iso.c1 = iso.c, res.cqt2 = wpp.cqt)
-  ihme.cqt <- match.cqt.iso(iso.c1 = iso.c, res.cqt2 = ihme.cqt)
 
 
   # if to hide the estimate line (legend as an extra switch to turn on/off series)
