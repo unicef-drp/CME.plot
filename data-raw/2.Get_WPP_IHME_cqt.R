@@ -49,10 +49,9 @@ imr.wpp.cqt.2019 <-  get.wpp.cqt(dir_wpp_Q5 = dir_wpp_Q5,
 # usethis::use_data(imr.wpp.cqt.2019)
 # 5-24
 dt_wpp <- fread(dir_wpp_5_24)
-dt_wpp <- dt_wpp[Sex=="Both sexes"]
 dt_wpp[, value:= nqx * 1000]
 dt_wpp <- dt_wpp[!(AgeStart==0 & AgeSpan==5)]
-dt_wppw <- dcast.data.table(dt_wpp, LocID + Year ~ AgeStart)
+dt_wppw <- dcast.data.table(dt_wpp, LocID + Year + Sex ~ AgeStart)
 setnames(dt_wppw, c("0", "1"), c("IMR", "CMR"))
 get.5q0 <- function(q1, q4) (1 - (1 - q1 / 1E3) * (1 - q4 / 1E3)) * 1E3
 dt_wppw[, `:=`(
@@ -62,14 +61,15 @@ dt_wppw[, `:=`(
 setnames(dt_wppw, c("LocID", "Year"), c("UNCode", "year"))
 # dt_wppw <- dt_wppw[year %in% as.numeric(dimnames(u5mr.wpp.cqt.2019)[[3]])]
 
-u5mr.wpp.cqt.2019 <- get.wpp.cqt(wpp_dt = dt_wppw,
-                                 ind = "U5MR")
+u5mr.wpp.cqt.2019 <- get.wpp.cqt(wpp_dt = dt_wppw, ind = "U5MR")
 # 10q5
-m10q5.wpp.cqt.2019 <- get.wpp.cqt(wpp_dt = dt_wppw,
-                                 ind = "10q5")
-# IMR
-m10q15.wpp.cqt.2019 <-  get.wpp.cqt(wpp_dt = dt_wppw,
-                                 ind = "10q15")
+m10q5.wpp.cqt.2019 <- get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Both sexes"], ind = "10q5")
+m10q5.wpp.cqt.2019.f <- get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Female"], ind = "10q5")
+m10q5.wpp.cqt.2019.m <- get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Male"], ind = "10q5")
+# 10q15
+m10q15.wpp.cqt.2019 <-  get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Both sexes"], ind = "10q15")
+m10q15.wpp.cqt.2019.f <-  get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Female"], ind = "10q15")
+m10q15.wpp.cqt.2019.m <-  get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Male"], ind = "10q15")
 # usethis::use_data(m10q5.wpp.cqt.2019, overwrite = TRUE)
 # usethis::use_data(m10q15.wpp.cqt.2019, overwrite = TRUE)
 
@@ -139,8 +139,13 @@ nmr.ihme.cqt.2019  <- get.ihme.cqt.2019(ihme = ihme_2019, ind0 = "NMR",  sex0 = 
 # produced in script 1.Process_raw_IHME_to_get_GBD2019_Under5_estimates.R:
 ihme_2019_5_24 <- fread(file.path(Sys.getenv("USERPROFILE"),
                                   "Dropbox/UN IGME data/2020 Round Estimation/Code/output/IHME/GBD2019_5-24_estimates.csv"))
+ihme_2019_5_24[, table(sex, ind)]
 m10q5.ihme.cqt.2019 <- get.ihme.cqt.2019(ihme = ihme_2019_5_24, ind0 = "10q5", sex0 = "both")
+m10q5.ihme.cqt.2019.f <- get.ihme.cqt.2019(ihme = ihme_2019_5_24, ind0 = "10q5", sex0 = "f")
+m10q5.ihme.cqt.2019.m <- get.ihme.cqt.2019(ihme = ihme_2019_5_24, ind0 = "10q5", sex0 = "m")
 m10q15.ihme.cqt.2019  <- get.ihme.cqt.2019(ihme = ihme_2019_5_24, ind0 = "10q15",  sex0 = "both")
+m10q15.ihme.cqt.2019.f  <- get.ihme.cqt.2019(ihme = ihme_2019_5_24, ind0 = "10q15",  sex0 = "f")
+m10q15.ihme.cqt.2019.m  <- get.ihme.cqt.2019(ihme = ihme_2019_5_24, ind0 = "10q15",  sex0 = "m")
 # usethis::use_data(m10q5.ihme.cqt.2019)
 # usethis::use_data(m10q15.ihme.cqt.2019)
 

@@ -16,7 +16,7 @@
 #' @param resultsiso the desired iso order for results
 #' @param year_range year range, default to `1950.5:2030.5` if not specified
 #' @param crisisadjfile dir to "dataPostAdj_U5MR.csv"
-#' @param mlinfo dir to "MLinfo.csv"
+#' @param mlinfo dir to "MLinfo.csv", used to mark `includedvr.Lcs.j` for IMR
 #'
 #' @return a list of data and res.cqt(s)
 #' @export transformdataSexSpecific
@@ -36,10 +36,10 @@ transformdataSexSpecific <- function(
   resultsfile_cqt3=NULL,
   year_range = NULL,
   crisisadjfile = NULL, ##default NULL, exclude data in the crisis year
-  mlinfo
+  mlinfo = NULL
 ){
   # ddata=read.csv(dir_dataset, stringsAsFactors = F)
-  dd=subset(dt_gender, Indicator==indicator & Visible==1)
+  d = subset(dt_gender, Indicator==indicator & Visible==1)
   # filerate <- file.path("C:/Users",username,"Dropbox/CMEgender2015/Database/dataset_forplotting_2019-08-04_new_ID.csv")
   # dt_gender <- fread(filerate)
   # dd = subset(dt_gender, Indicator == "Under-five Mortality Rate" & Visible == 1)
@@ -48,8 +48,8 @@ transformdataSexSpecific <- function(
     crisisadjfile1=read.csv(crisisadjfile,stringsAsFactors = F,header=T)[,2:3]
     crisisadjfile1$crisisornot=1
     colnames(crisisadjfile1)[1:2]=c("Country.Code","Reference.Date")
-    d = merge(dd, crisisadjfile1, by = c("Country.Code", "Reference.Date"), all.x = TRUE)
-    # d1 = dplyr::left_join(dd, crisisadjfile1, by = c("Country.Code", "Reference.Date"))
+    d = merge(d, crisisadjfile1, by = c("Country.Code", "Reference.Date"), all.x = TRUE)
+    # d1 = dplyr::left_join(d, crisisadjfile1, by = c("Country.Code", "Reference.Date"))
     d$crisisornot=ifelse(is.na(d$crisisornot),0,1)
     d$Inclusion.U5MR=ifelse(d$crisisornot==1,0,d$Inclusion.U5MR)
     d$Inclusion.Gender=ifelse(d$crisisornot==1,0,d$Inclusion.Gender)
@@ -141,6 +141,9 @@ transformdataSexSpecific <- function(
     isonodatanumber=match(iso_no_data,iso)
   } else {
     iso_no_data=NULL # usually iso_no_data = "FSM"
+    iso_with_data=iso[iso %in% iso.i] # DS added 2021-08-08 or loop below would not work
+    isonumber=match(iso_with_data,iso)# DS added 2021-08-08 or loop below would not work
+    isonodatanumber=match(iso_no_data,iso)
   }
 
 

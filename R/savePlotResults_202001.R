@@ -545,9 +545,11 @@ savePlotResults <- function(
   if (is.null(fig.dir)) fig.dir <- file.path(getwd(), "fig")
   # add a subfolder for pngs using full runname e.g. NMR_20190807 Ratio Results
   if (pdf.or.png == "png") fig.dir <- file.path(fig.dir, if(is.null(filename)) "test" else filename)
-  # message("fig.dir is ", fig.dir)
-  if(!dir.exists(fig.dir)) dir.create(fig.dir, recursive = TRUE) # create all levels of folders using recursive
 
+  if(!dir.exists(fig.dir)){
+    dir.create(fig.dir, recursive = TRUE) # create all levels of folders using recursive
+    message("fig.dir assigned didn't exist, it has been created as: ", fig.dir)
+  }
 
   # Call `PlotDataAndEstimates2020`-----------------------------------
   plot.by.c <- function(c){suppressMessages(

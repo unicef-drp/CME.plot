@@ -13,6 +13,7 @@ Description: Plotting functions as an independent package for plotting child mor
 License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.1
+LazyData: true
 Depends: 
     R (>= 3.0.0),
 Imports: 
