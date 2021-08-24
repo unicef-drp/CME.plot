@@ -74,16 +74,16 @@ transformdataSexSpecific <- function(
   # This is the series type, not the seriesname
   # e.g. "Others Indirect", "Census Direct"
   df$Series.Name <- as.character(df$Series.Name)
-  # If want to change legend name, modify the Series.Name directly
+  # If want to change legend name, could modify the Series.Name directly
   df$Series.Name <- ifelse(df$Series.Category=="SVR", gsub('[0-9]+',"", df$Series.Name), df$Series.Name)
-  df$Series.Name <- ifelse(grepl("WHO",df$Series.Name), "WHO", df$Series.Name)
+  # df$Series.Name <- ifelse(grepl("WHO",df$Series.Name), "WHO", df$Series.Name) # YL 2021.08 comment out as this is taken care of in `AddVRData` in a better way
 
   df$sourcetype.i = ifelse(df$Series.Type!="VR",
                            ifelse(grepl("Household Deaths", df$Data.Collection.Method, ignore.case = TRUE) ,
                                   paste(df$sourcetype.i, df$Data.Collection.Method, sep=" "),
                                   paste(df$sourcetype.i, df$Series.Type, sep=" ")),
                            "VR")
-  # I guess this shall be used as only a marker
+
   df$seriesnameandyear = ifelse(df$Series.Type!="VR",
                                 paste0(df$Series.Name, " ", df$Series.Year, " (", df$sourcetype.i,")"),
                                 df$Series.Name)
@@ -98,7 +98,6 @@ transformdataSexSpecific <- function(
   df <- get.new.series.mark.entry(df, new_entry_date)
 
   # For setting the right dimension of res.cqt
-  # if(!is.null(resultsfile_cqt)) year.u.t <- as.numeric(dimnames(resultsfile_cqt)[[3]]) else year.u.t <- 1950.5:2030.5 # sorry for the hard coding
   year.u.t <- 1950.5:2030.5 # sorry for the hard coding
 
   # if `year_range` is provided, set the uplimit of year.u.t

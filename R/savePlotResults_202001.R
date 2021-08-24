@@ -180,6 +180,8 @@ savePlotResults <- function(
   return_info = FALSE, # return info on runtime. etc
   ... # allowing more options passed to `PlotDataAndEstimates2020`
 ) {
+  if(!is.null(dev.list())) dev.off() # close any open devices
+
   # set directory
   # if runname is NULL, output.dir
   if (is.null(output.dir)) output.dir <- file.path(getwd(), "output", runname)

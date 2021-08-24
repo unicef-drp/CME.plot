@@ -367,8 +367,10 @@ copy_code_to_dropbox <- function(){
     "IGME2021" = file.path("C:/Users/", username, "/Dropbox/UN IGME Data/2021 Round Estimation/Code/R/"),
     "NMR" = file.path("C:/Users/", username, "/Dropbox/NMR/code/functions/")
   )
-  if(!any(sapply(dir_of_destinations, dir.exists)))stop("Check if file path exists")
-  # The rest won't change ---------------------------------------------------
+  if(!any(sapply(dir_of_destinations, dir.exists)))stop("Check if all file path exists")
+  # only existing paths will be written
+  # dir_of_destinations <- dir_of_destinations[sapply(dir_of_destinations, dir.exists)]
+  # The rest won't change
 
   # Code
   # CME_code_source <- file.path("C:/Users/", username, "/Dropbox/UNICEF Work/CME Plots/R")
@@ -413,7 +415,7 @@ copy_data_to_dropbox <- function(){
     "NMR" = file.path("C:/Users/", username, "/Dropbox/NMR/output/")
   )
   if(!any(sapply(dir_of_destinations, dir.exists)))stop("Check if file path exists")
-  # The rest won't change ---------------------------------------------------
+  # The rest won't change
 
   # Code
   CME_code_source <- file.path("C:/Users/", username, "/Dropbox/UNICEF_Work_Project/CME.plot/data")

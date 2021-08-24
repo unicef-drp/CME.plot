@@ -945,7 +945,9 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
   }
   legendtext.si <- paste0(ifelse(grepl("SVR", source.s[series]), "", "VR "),
                           ifelse(grepl("WHO", source.s[series]),
-                                 ifelse(grepl("Recalculated", source.s[series]), "WHO (Recalculated) ", "WHO "),
+                                 # 2020.06 YL: the recalculated VR for 5-24 into "VR WHO (Recalculated)"
+                                 ifelse(grepl("Recalculated", source.s[series], ignore.case = FALSE),
+                                        "WHO (Recalculated) ", "WHO "),
                                  source.s[series]))
   # ad-hoc change JR, 3 Sep 2013
   legendtext.si <- gsub("Population Growth Estimation Experiment", "Pop Growth Est Expmt", legendtext.si)
