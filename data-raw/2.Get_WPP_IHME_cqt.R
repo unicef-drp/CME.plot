@@ -71,7 +71,11 @@ m10q15.wpp.cqt.2019 <-  get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Both sexes"], ind = "
 m10q15.wpp.cqt.2019.f <-  get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Female"], ind = "10q15")
 m10q15.wpp.cqt.2019.m <-  get.wpp.cqt(wpp_dt = dt_wppw[Sex=="Male"], ind = "10q15")
 # usethis::use_data(m10q5.wpp.cqt.2019, overwrite = TRUE)
+# usethis::use_data(m10q5.wpp.cqt.2019.f, overwrite = TRUE)
+# usethis::use_data(m10q5.wpp.cqt.2019.m, overwrite = TRUE)
 # usethis::use_data(m10q15.wpp.cqt.2019, overwrite = TRUE)
+# usethis::use_data(m10q15.wpp.cqt.2019.f, overwrite = TRUE)
+# usethis::use_data(m10q15.wpp.cqt.2019.m, overwrite = TRUE)
 
 
 # sex-specific
