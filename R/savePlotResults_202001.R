@@ -622,11 +622,8 @@ savePlotResults <- function(
   # save png
   if(pdf.or.png == "png"){
     # seperate png
-    width0 <- if(all(main.plot, zoom)) 24 else 8.5 # YL 2020.04
+    width0 <- if(all(main.plot, zoom)) 22.5 else 8.5 # YL 2020.04, for png to fit CC profile, width 24->22.5
     height0 <- if(all(main.plot, zoom)) 8 else 8
-    if(After_CC){
-      width0 <- 22
-    }
     save.png <- function(c){
       # message("save plot for iso: ", iso.c[c])
       # add a progress message
