@@ -129,8 +129,8 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
   data.all=indirect_data_visibility(data=data.all, indirect_series_visibility=indirect_series_visibility)     #####whether indirect series should be visible kai added 05/22/2018
 
 
-  message("mar:", paste0(par("mar"), sep= ", "))
-  message("mgp:", paste0(par("mgp"), sep= ", "))
+  # message("mar:", paste0(par("mar"), sep= ", "))
+  # message("mgp:", paste0(par("mgp"), sep= ", "))
 
   # set xy-axis min and max range ------------------------------------------------
   for (i in i.seq) { # 1st plot is normal, 2nd plot is zoomed
@@ -192,6 +192,13 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
 
        }
       }
+
+      # 2021/9/8
+      if(ymax < 5){
+        # limit the min and max for plots with very low mortality
+        ymax <- 5; ymin <- 0
+      }
+
 
     } else {
       # for the zoom-in plot
@@ -258,6 +265,11 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
       if (!is.null(wpp_and_completeihme$ihme.cqt)) {
         ymin <- min(ymin, wpp_and_completeihme$ihme.cqt[c,1, ihme_years> xmin], na.rm = T)
         ymax <- max(ymax, wpp_and_completeihme$ihme.cqt[c,3, ihme_years> xmin], na.rm = T)
+      }
+      # 2021/9/8
+      if(ymax < 5){
+        # limit the min and max for plots with very low mortality
+        ymax <- 5; ymin <- 0
       }
 
     } # end i loop
@@ -607,7 +619,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
       if (!is.null(CIs.cqt) | !is.null(legendfull)) {
         # if these cqts are used (not used for now)
         if ((!is.null(CIs.tr.cqt) | !is.null(legendtr)) + (!is.null(CIs.iid.cqt) | !is.null(legendiid)) == 2) {
-          message("legend condition 1")
+          # message("legend condition 1")
           legend.text=legendtext
           if(is.null(legend.text))
           legend.text <- legendfull
@@ -634,7 +646,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
           legend("topright", legend = legend.text, col = legend.col, lty = 1, lwd = 3, bty = legend.bty, cex = ifelse((main.plot+zoom+add.legend)==3,1.4,0.9))
         } else if ((!is.null(CIs.tr.cqt) | !is.null(legendtr)) +
                    (!is.null(CIs.iid.cqt) | !is.null(legendiid)) == 1) {
-          message("legend condition 2")
+          # message("legend condition 2")
           if (!is.null(CIs.tr.cqt) | !is.null(legendtr))
             legend("topright", legend = c(ifelse(is.null(legendfull), "B3", legendfull),
                                             ifelse(is.null(legendtr), "Training", legendtr)),
@@ -752,7 +764,7 @@ AddSurveyData <- function(# Add survey data and/or sampling errors to plot
                      RColorBrewer::brewer.pal(8, "Dark2")[4],
                      RColorBrewer::brewer.pal(12, "Paired")[c(1, 3, 5, 7, 9)]) # change JR, 24 Sep 2013
     col.s <- rep(col.palette, ceiling(nsurveys/length(col.palette)))[1:nsurveys]
-    message("AddSurvey: col.s:", paste(col.s, collapse = ", "))
+    # message("AddSurvey: col.s:", paste(col.s, collapse = ", "))
   }
   legendpch.si <- rep(NA, nsurveys)
   legendtext.si <- rep("", nsurveys)
@@ -1148,8 +1160,8 @@ PlotLegend <- function(# Plot legend.
   # set_text_length = {1,8X}, set a limit of 86 nchar per line of legend text
   set_text_length = 85
   n_long <- sapply(legendtext.s, function(x)nchar(x)>=set_text_length)
-  message("n_long TRUE: ", legendtext.s[n_long])
-  message("length: ", length(legendtext.s))
+  # message("n_long TRUE: ", legendtext.s[n_long])
+  # message("length: ", length(legendtext.s))
 
   strBreakInLines <- function(s) {
   # break a line that is too long, the X in (.{1,X})
@@ -1159,13 +1171,13 @@ PlotLegend <- function(# Plot legend.
 
   if(any(n_long) & length(legendtext.s)>25) {
     cex= 1.5 - length(legendtext.s)/100
-    message("smaller cex is ", cex)
+    # message("smaller cex is ", cex)
   } else {
 
     for (i in 1: length(legendtext.s)){
       legendtext.s[i] <- sub("\n", " ", legendtext.s[i])
       legendtext.s[i] <- strBreakInLines(legendtext.s[i])
-      message("legendtext.s[i] is ", legendtext.s[i])
+      # message("legendtext.s[i] is ", legendtext.s[i])
     }
   }
 

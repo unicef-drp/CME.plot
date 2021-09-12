@@ -19,7 +19,7 @@ transformdataSexSpecific(
   resultsfile_cqt3 = NULL,
   year_range = NULL,
   crisisadjfile = NULL,
-  mlinfo
+  mlinfo = NULL
 )
 }
 \arguments{
@@ -51,7 +51,7 @@ transformdataSexSpecific(
 
 \item{crisisadjfile}{dir to "dataPostAdj_U5MR.csv"}
 
-\item{mlinfo}{dir to "MLinfo.csv"}
+\item{mlinfo}{dir to "MLinfo.csv", used to mark `includedvr.Lcs.j` for IMR}
 }
 \value{
 a list of data and res.cqt(s)

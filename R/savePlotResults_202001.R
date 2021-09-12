@@ -105,7 +105,6 @@
 #' @param ihme.cqt a blue line for IHME series
 #' @param legend_WPP  default WPP legend
 #' @param legend_IHME default IHME legend
-#'
 #' @param ylab default to NULL, value supplied by mcmc.meta
 #' @param pooling_weight default to "0.5", sometimes we need to show a different
 #'   weight, for example, for 5-24 estimates. It also applies to cqt2-4 read
@@ -113,12 +112,11 @@
 #' @param save_cqt_copy logical, if TRUE will save the `res.cqt.rds` plotted
 #'   into a folder created as `cqt_backup`
 #' @param return_info logical, default to FALSE, if TRUE will return runtime
+#' @param remove_date_5_24 default to 1990, for total and sex-specific 5-24: by
+#'   default remove series that are earlier than 1990 so not shown on the CC
+#'   plot. If want to see all the series, set a lower number, e.g. 0
 #' @param ...  more arguments not listed here but can still be passed into the
-#'   function `PlotDataAndEstimates2020`
-#'
-#' @param remove_date_5_24 default to 1990, for 5-24: by default remove series
-#'   that are earlier than 1990 so not shown on the CC plot. If want to see all
-#'   the series, set a lower number, e.g. 0
+#'   function `PlotDataAndEstimates2020`, like col.CI, col.CI_IHME, etc.
 #'
 #' @return a list of related information: runname, time_spent, debugging
 #'   information if there is an error
@@ -141,7 +139,7 @@ savePlotResults <- function(
   year.end = 2021,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
   zoom.year.start = 1990,
   zoom.year.end = 2021,
-  remove_date_5_24 = 1990, # for 5-24: by default remove series older than 1990 so not on the CC plot
+  remove_date_5_24 = 1990, # for 5-24 (total and sex-specific): by default remove series older than 1990 so not on the CC plot
   main.plot = TRUE,  # include main plot?
   zoom = TRUE,       # include zoom plot?
   add.legend = TRUE, # show legend?
@@ -206,7 +204,7 @@ savePlotResults <- function(
       }
       check.rda.exist(output.dir)
       load(file.path(output.dir, "mcmc.meta.rda"))
-      # revise mcmc.meta for 5-24 --- 8/2020, combined into the function
+      # revise mcmc.meta for 5-24 on 8/2020, combined into the function
       if(!is.null(ylab)){
         if(ylab %in% c("10q5", "5q5")){
           mcmc.meta <- remove.specific.series(mcmc.meta,
@@ -364,7 +362,7 @@ savePlotResults <- function(
       gender.rda$data$newentry.Lc.s <- NULL
       gender.rda$data$newentryvr.Lc.s <- NULL
     } else {
-      # if you supply new_entry_data, do newentry exist in the data?
+      # if you supply new_entry_data, does `newentry.Lc.s` exist in the data?
       if(is.null(gender.rda$data$newentry.Lc.s)) message("data$newentry.Lc.s is NULL, was it added correctly in `transformdataforNMR`?")
       if(new_entry_date!=gender.rda$new_entry_date) message("Note: new_entry_date used when making the data file is ", gender.rda$new_entry_date)
     }
@@ -373,6 +371,25 @@ savePlotResults <- function(
     mcmc.meta$data.all <- gender.rda$data
     mcmc.meta$data.all$C <- gender.rda$data$c
     mcmc.meta$data.all$iso.c <- gender.rda$iso
+
+    # revise mcmc.meta for sex-specific 5-24 on 9/2021, combined into the function
+    if(!is.null(ylab)){
+      if(ylab %in% c("10q5", "5q5")){
+        mcmc.meta <- remove.specific.series(mcmc.meta,
+                                            remove_pattern = "Derived from 5q0|Subnational",
+                                            remove_date = remove_date_5_24,
+                                            adjust_method.Lc.s = FALSE)
+      }
+
+      if(ylab %in% c("10q15", "5q15")){
+        mcmc.meta <- remove.specific.series.15_24(mcmc.meta,
+                                                  remove_pattern = "Derived from 5q0",
+                                                  remove_date = remove_date_5_24)
+        mcmc.meta <- remove.specific.series(mcmc.meta, remove_date = remove_date_5_24,
+                                            adjust_method.Lc.s = FALSE)
+      }
+    }
+
     year.t <- gender.rda$year.t
     res.cqt <- gender.rda$res.cqt
     if(!is.null(legend2)) res.cqt2 <- gender.rda$res2.cqt

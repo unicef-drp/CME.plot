@@ -571,7 +571,7 @@ GetDataGlobalNMR<- function(file, #data file, must be in form of log ratios
 
   # Ratio estimates
   # d<-read.csv(filerate)
-  d<-read.csv(file)
+  d <- check_ratio_and_logit(file)
   # YL2020: to mark new entries
   d <- get.new.series.mark.entry(d, new_entry_date)
   vars_wanted <- c("Country.Code", "Series.Name","Reference.Date", "Estimates",
@@ -760,4 +760,37 @@ GetDataU5MRNMR<- function(d=NULL, # median data file
   u.ct <- d
   u.ct <- data.matrix(u.ct)
   return (list(year.u.t=year.u.t, iso.u.c=iso.u.c, u.ct=u.ct))
+}
+
+
+#' Clean dataset for NMR
+#'
+#' @param file_dir dir to nmr dataset
+#'
+#' @return cleaned dt
+#' @export
+#'
+check_ratio_and_logit <- function(file_dir){
+  nmr <- fread(file_dir)
+  nmr$Estimates.check.rates<-with(nmr,log(Neonatal/(U5MR-Neonatal)))
+  nmr$Estimates.check.ratio<-with(nmr,log(Ratio/(1-Ratio)))
+  nmr$Estimates<-with(nmr,ifelse(is.na(Estimates) & !is.na(Estimates.check.rates),Estimates.check.rates,Estimates))
+  nmr$Estimates<-with(nmr,ifelse(is.na(Estimates) & !is.na(Estimates.check.ratio),Estimates.check.ratio,Estimates))
+
+  nmr$ratio.c<-with(nmr,ifelse(is.na(Ratio) & !is.na(U5MR) & is.na(Neonatal),Neontal/U5MR,Ratio))
+  nmr$Ratio<-with(nmr,ifelse(is.na(Ratio) & !is.na(ratio.c), ratio.c,Ratio))
+
+  nmr$diffest1<-nmr$Estimates.check.rates-nmr$Estimates
+  nmr$diffest2<-nmr$Estimates.check.ratio-nmr$Estimates
+  t<-nmr$diffest1[!is.na(nmr$diffest1)]
+  nmr$Estimates.check.rates<-NULL
+  nmr$Estimates.check.ratio<-NULL
+  nmr$diffest1<-NULL
+  nmr$diffest2<-NULL
+  nmr$ratio.c<-NULL
+  nmr$Estimates<-with(nmr,ifelse(Estimates==-Inf,NA,Estimates))
+  #order the database
+  nmr <- nmr[with(nmr, order(Country.Code, -as.numeric(Average.date.of.Survey), Series.Name, Series.Type, -Reference.Date)),]
+  # fwrite(nmr, file_dir)
+  return(nmr)
 }

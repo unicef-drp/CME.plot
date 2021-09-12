@@ -390,6 +390,9 @@ fix.entries.dt_gender <- function(dt_gender){
 
   if(dt_gender[Country.Code=="LUX" & Indicator%like%"Under-five" & Visible == 1,][Series.Name=="WHO Good Vital Registration Data 2018 version",.N]>0) warning("Check LUX")
 
+  # some 9999?
+  dt_gender <- dt_gender[Male<1000 & Female < 1000]
+
   # numeric columns
   col_num <- c(
     "Country.ISO"             ,"Start.date.of.Survey" ,   "End.date.of.Survey"     , "Average.date.of.Survey" ,
@@ -518,8 +521,11 @@ get.special.isos <- function(
 #'
 #' @param mcmc.meta mcmc.meta object
 #' @param HIV_removed is it for `mcmc.meta$data.hivremoved.all`
-#' @param remove_date remove series if all the series are before 1990, this is mainly for legend purpose since year.start won't clean up the legend
+#' @param remove_date remove series if all the series are before 1990, this is
+#'   mainly for legend purpose since year.start won't clean up the legend
+#' @param adjust_method.Lc.s default to TRUE, set to FALSE for sex-specific 5-24
 #' @param remove_pattern e.g. "Derived from 5q0"
+#'
 #' @return revised mcmc.meta object
 #' @export remove.specific.series
 #'
@@ -527,7 +533,8 @@ remove.specific.series <- function(
   mcmc.meta,
   HIV_removed = FALSE,
   remove_pattern = "Derived from 5q0",
-  remove_date = 1990
+  remove_date = 1990,
+  adjust_method.Lc.s = TRUE
   ){
   data.all <- mcmc.meta$data.all
   if(HIV_removed) data.all <- mcmc.meta$data.hivremoved.all
@@ -552,8 +559,10 @@ remove.specific.series <- function(
     data.all$included.Lcs.j[[i]] <- data.all$included.Lcs.j[[i]][keep_series]
     data.all$sourcetype.Lc.s[[i]] <- data.all$sourcetype.Lc.s[[i]][keep_series]
     data.all$sourcetype.Lcs.j[[i]] <- data.all$sourcetype.Lcs.j[[i]][keep_series]
-    data.all$method.Lc.s[[i]] <- data.all$method.Lc.s[[i]][keep_series]
-    data.all$method.Lcs.j[[i]] <- data.all$method.Lcs.j[[i]][keep_series]
+    if(adjust_method.Lc.s){
+      data.all$method.Lc.s[[i]] <- data.all$method.Lc.s[[i]][keep_series] # must remove, otherwise legend will be wrong
+      data.all$method.Lcs.j[[i]] <- data.all$method.Lcs.j[[i]][keep_series]
+    }
     data.all$sourceid.Lcs.j[[i]] <- data.all$sourceid.Lcs.j[[i]][keep_series]
     data.all$interval.Lcs.j[[i]] <- data.all$interval.Lcs.j[[i]][keep_series]
     data.all$hasbias.Lc.s[[i]] <- data.all$hasbias.Lc.s[[i]][keep_series]
@@ -570,7 +579,8 @@ remove.specific.series <- function(
   return(mcmc.meta)
 }
 
-#' Remove specific series e.g. "Derived from 5q0" in 15-24 datasets
+#' Remove specific series e.g. "Derived from 5q0" in 15-24 datasets from
+#' `sourcevr.Lc.s`, for now this function is used after `remove.specific.series`
 #'
 #' @inheritParams remove.specific.series
 #' @return revised mcmc.meta object
@@ -580,19 +590,19 @@ remove.specific.series.15_24 <- function(
   mcmc.meta,
   HIV_removed = FALSE,
   remove_pattern = "Derived from 5q0",
-  remove_date = 1990
+  remove_date = 1990 # this argument is not used for now
 ){
   data.all <- mcmc.meta$data.all
   if(HIV_removed) data.all <- mcmc.meta$data.hivremoved.all
   # message("Preview for AND before: ", paste(data.all$sourcevr.Lc.s[[4]], sep = ", "))
 
-  if(is.null(remove_date)|is.na(remove_date)) remove_date <- 0
+  # if(is.null(remove_date)|is.na(remove_date)) remove_date <- 0
 
   for(i in 1:length(data.all$iso.c)){
     if(!is.null(data.all$sourcevr.Lc.s[[i]])){
       # print(i)
       # extract sourceid from data.all
-      # keep_series is a white list e.g. T,T,T,F
+      # `keep_series` is a white list e.g. T,T,T,F
       keep_series <- !grepl(remove_pattern, data.all$sourcevr.Lc.s[[i]])
       data.all$nseriesvr.c[[i]] <- sum(keep_series)
       data.all$sourcevr.Lc.s[[i]] <- data.all$sourcevr.Lc.s[[i]][keep_series]
