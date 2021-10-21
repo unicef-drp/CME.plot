@@ -22,7 +22,7 @@ load.more.file.paths <- function(){
   dir_wpp_male   <<- file.path(dir_IGME_out_folder, "WPP2019", "WPP2019_MORT_F17_2_ABRIDGED_LIFE_TABLE_MALE.xlsx")
 
   # obtained Aug 2021 from Patrick: The extract covers 1950-2020 and includes all locations, including smaller unpublished ones.
-  dir_wpp_5_24   <<- file.path(dir_IGME_out_folder, "WPP2019", "igme_2021_WPP2019-LT_extract.csv")
+  # dir_wpp_5_24   <<- file.path(dir_IGME_out_folder, "WPP2019", "igme_2021_WPP2019-LT_extract.csv")
 
   check.file.exist <- function(file0){
     if(!file.exists(file0)) warning("Check if these required files exist: ", file0)
@@ -47,18 +47,11 @@ imr.wpp.cqt.2019 <-  get.wpp.cqt(dir_wpp_Q5 = dir_wpp_Q5,
                                  ind = "IMR")
 # usethis::use_data(u5mr.wpp.cqt.2019)
 # usethis::use_data(imr.wpp.cqt.2019)
-# 5-24
-dt_wpp <- fread(dir_wpp_5_24)
-dt_wpp[, value:= nqx * 1000]
-dt_wpp <- dt_wpp[!(AgeStart==0 & AgeSpan==5)]
-dt_wppw <- dcast.data.table(dt_wpp, LocID + Year + Sex ~ AgeStart)
-setnames(dt_wppw, c("0", "1"), c("IMR", "CMR"))
-get.5q0 <- function(q1, q4) (1 - (1 - q1 / 1E3) * (1 - q4 / 1E3)) * 1E3
-dt_wppw[, `:=`(
-  U5MR = get.5q0(q1 = IMR, q4 = CMR),
-  `10q5` = get.5q0(q1 = `5`, q4 = `10`),
-  `10q15` = get.5q0(q1 = `15`, q4 = `20`))]
-setnames(dt_wppw, c("LocID", "Year"), c("UNCode", "year"))
+
+# 5-24`
+# These results files like `dt_wppw` are created in "1.Process_raw_IHME_and_WPP.R"
+dt_wppw <- fread(file.path(Sys.getenv("USERPROFILE"),
+                 "Dropbox/UN IGME data/2020 Round Estimation/Code/output/WPP2019/igme_2021_WPP2019-LT_extract_5_24_wide_ind.csv"))
 # dt_wppw <- dt_wppw[year %in% as.numeric(dimnames(u5mr.wpp.cqt.2019)[[3]])]
 
 u5mr.wpp.cqt.2019 <- get.wpp.cqt(wpp_dt = dt_wppw, ind = "U5MR")

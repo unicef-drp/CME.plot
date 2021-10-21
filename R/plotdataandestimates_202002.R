@@ -764,6 +764,7 @@ AddSurveyData <- function(# Add survey data and/or sampling errors to plot
                      RColorBrewer::brewer.pal(8, "Dark2")[4],
                      RColorBrewer::brewer.pal(12, "Paired")[c(1, 3, 5, 7, 9)]) # change JR, 24 Sep 2013
     col.s <- rep(col.palette, ceiling(nsurveys/length(col.palette)))[1:nsurveys]
+    # col.s <- randomcoloR::distinctColorPalette(nsurveys)
     # message("AddSurvey: col.s:", paste(col.s, collapse = ", "))
   }
   legendpch.si <- rep(NA, nsurveys)
