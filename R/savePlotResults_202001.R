@@ -647,7 +647,7 @@ savePlotResults <- function(
       # message("save plot for iso: ", iso.c[c])
       # add a progress message
       cat('\014')
-      cat(c, ":", iso.c[c], ";", paste0(round(which(C==c) / length(C) * 100), "%\n"))
+      cat(c, ":", iso.c[c], ":", get.file.name(c), ";", paste0(round(which(C==c) / length(C) * 100), "%\n"))
       png(filename = file.path(fig.dir, get.file.name(c)), width = width0, height = height0, units="in", res=250)
       plot.by.c(c)
       dev.off()
