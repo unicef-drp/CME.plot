@@ -956,14 +956,48 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
     col.newentry.s <- rep("black", nseries)
     col.newentry.s[newentry.s==1] <- "#c7202e" # comment out this line if don't want to highlight any VR
   }
-  legendtext.si <- paste0(ifelse(grepl("SVR", source.s[series]), "", "VR "),
-                          ifelse(grepl("WHO", source.s[series]),
-                                 # 2020.06 YL: the recalculated VR for 5-24 into "VR WHO (Recalculated)"
-                                 ifelse(grepl("Recalculated", source.s[series], ignore.case = FALSE),
-                                        "WHO (Recalculated) ", "WHO "),
-                                 source.s[series]))
-  # ad-hoc change JR, 3 Sep 2013
-  legendtext.si <- gsub("Population Growth Estimation Experiment", "Pop Growth Est Expmt", legendtext.si)
+
+  # turn label into sth like "VR WHO (Recalculated)"
+  ReviseLegendText <- function(vr_name){
+    legendtext.si <- paste0(ifelse(grepl("SVR", vr_name), "", "VR "),
+                            if(grepl("WHO", vr_name)){
+                              paste0(
+                                if(grepl("WHO/UNPD", vr_name)) "UNPD" else "WHO",
+                                if(grepl("adjusted for incompleteness", vr_name)){
+                                  " (Adjusted)"
+                                } else if (grepl("Recalculated", vr_name)){
+                                  " (Recalculated)"
+                                } else {
+                                  ""
+                                }
+                              )
+
+                            } else {
+                              vr_name
+                            })
+    # ad-hoc change JR, 3 Sep 2013
+    legendtext.si <- gsub("- adjusted for incompleteness", "(Adjusted)", legendtext.si)
+    legendtext.si <- gsub("Population Growth Estimation Experiment", "Pop Growth Est Expmt", legendtext.si)
+    return(legendtext.si)
+  }
+  legendtext.si <- unname(sapply(source.s[series], ReviseLegendText))
+
+  # # 2021/10 replace following chunk to allow for more modification of the legend, notice that `source.s[series]` is a vector
+  #
+  # legendtext.si <- paste0(ifelse(grepl("SVR", source.s[series]), "", "VR "),
+  #                         ifelse(grepl("WHO", source.s[series]),
+  #                                # 2020.06 YL: the recalculated VR for U5MR into "VR WHO (Recalculated)"
+  #                                ifelse(grepl("Recalculated", source.s[series]),
+  #                                       # 2020.06 YL: the recalculated and adjusted VR for 5-24 into "VR WHO (Adjusted)"
+  #                                       ifelse(grepl("adjusted for incompleteness", source.s[series]),
+  #                                              "WHO (Adjusted) ",
+  #                                              "WHO (Recalculated) "),
+  #                                       "WHO "),
+  #                                source.s[series]))
+  # # ad-hoc change JR, 3 Sep 2013
+  # legendtext.si <- gsub("- adjusted for incompleteness", "(Adjusted)", legendtext.si)
+  # legendtext.si <- gsub("Population Growth Estimation Experiment", "Pop Growth Est Expmt", legendtext.si)
+
   # note: s in data and legend/col now refer to different ordering
   si <- 0
   legendpch.si <- rep(NA, nseries)

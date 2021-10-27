@@ -138,7 +138,7 @@ this.year <- function(){
 check.rda.exist <- function(output.dir, mcmc.only = FALSE){
   if(!dir.exists(output.dir)) message ("- file.dir doesn't exist")
   report <- function(file){
-    if (file.exists(file.path(output.dir, file))) message("+ ", file, " exists") else message("- Counldn't find ", file)
+    if (file.exists(file.path(output.dir, file))) message("+ ", file, " exists") else message("- Doesn't find: ", file)
     file.exists(file.path(output.dir, file))
   }
 
