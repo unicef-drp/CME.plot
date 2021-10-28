@@ -8,7 +8,8 @@ remove.specific.series(
   mcmc.meta,
   HIV_removed = FALSE,
   remove_pattern = "Derived from 5q0",
-  remove_date = 1990
+  remove_date = 1990,
+  adjust_method.Lc.s = TRUE
 )
 }
 \arguments{
@@ -18,7 +19,10 @@ remove.specific.series(
 
 \item{remove_pattern}{e.g. "Derived from 5q0"}
 
-\item{remove_date}{remove series if all the series are before 1990, this is mainly for legend purpose since year.start won't clean up the legend}
+\item{remove_date}{remove series if all the series are before 1990, this is
+mainly for legend purpose since year.start won't clean up the legend}
+
+\item{adjust_method.Lc.s}{default to TRUE, set to FALSE for sex-specific 5-24}
 }
 \value{
 revised mcmc.meta object

@@ -2,19 +2,22 @@
 % Please edit documentation in R/2.mark_new_series.R
 \name{get.new.series.mark.entry}
 \alias{get.new.series.mark.entry}
-\title{Create `new_entry` column in the dataset `dt_cme`
-only mark by date in this step}
+\title{Create `new_entry` column in the dataset `dt_cme` only mark by date in this
+step}
 \usage{
-get.new.series.mark.entry(dt_cme, new_entry_date, show_WHO_VR_by_value = TRUE)
+get.new.series.mark.entry(dt_cme, new_entry_date, show_new_WHO_VR = TRUE)
 }
 \arguments{
 \item{dt_cme}{cme dt object}
 
-\item{new_entry_date}{must supply, cannot be NULL, format is checked, accept yyyy-mm-dd and yyyy-mm}
+\item{new_entry_date}{must supply, cannot be NULL, format is checked, accept
+yyyy-mm-dd and yyyy-mm}
 
-\item{show_WHO_VR_by_value}{default to TRUE: highlight WHO VR difference by comparing values}
+\item{show_new_WHO_VR}{default to TRUE: mark `new_entry = 1` for WHO VR
+series that have new country-year data, obtained by
+\code{\link{get.diff.dt.WHOVR}}}
 }
 \description{
-Create `new_entry` column in the dataset `dt_cme`
-only mark by date in this step
+Create `new_entry` column in the dataset `dt_cme` only mark by date in this
+step
 }

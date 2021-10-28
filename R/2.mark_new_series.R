@@ -95,15 +95,19 @@ IsDate <- function(mydate, date.format = "%Y-%m-%d") {
 }
 
 
-#' Create `new_entry` column in the dataset `dt_cme`
-#' only mark by date in this step
+#' Create `new_entry` column in the dataset `dt_cme` only mark by date in this
+#' step
 #'
 #' @param dt_cme cme dt object
-#' @param new_entry_date must supply, cannot be NULL, format is checked, accept yyyy-mm-dd and yyyy-mm
-#' @param show_WHO_VR_by_value default to TRUE: highlight WHO VR difference by comparing values
+#' @param new_entry_date must supply, cannot be NULL, format is checked, accept
+#'   yyyy-mm-dd and yyyy-mm
+#' @param show_new_WHO_VR default to TRUE: mark `new_entry = 1` for WHO VR
+#'   series that have new country-year data, obtained by
+#'   \code{\link{get.diff.dt.WHOVR}}
+#'
 get.new.series.mark.entry <- function(dt_cme,
                                       new_entry_date,
-                                      show_WHO_VR_by_value = TRUE
+                                      show_new_WHO_VR = TRUE
                                       ){
   # Check if the input date is valid: "YYYY-MM" is also allowed
   if(nchar(new_entry_date) == 7) new_entry_date <- as.Date(paste0(sub("-", "", new_entry_date), "01"), format = "%Y%m%d")
@@ -119,9 +123,9 @@ get.new.series.mark.entry <- function(dt_cme,
   # turn off showing new WHO VR (as determined by date), so only surveys and nonWHO VR
 
   # 2/28: If to highlight part of the WHO Series by comparing values
-  if(show_WHO_VR_by_value){
+  if(show_new_WHO_VR){
     dt_cme[grepl("WHO", Series.Name), new_entry := 0]
-    iso_newVR <- get.diff.dt.WHOVR()$iso_newVR
+    iso_newVR <- get.diff.dt.WHOVR(count_rounding = NULL)$iso_newVR
     dt_cme[grepl("WHO", Series.Name) & Country.Code %in% iso_newVR, new_entry := 1]
   }
   dt_cme[, country_year:= paste0(IGME_Key, "_", Reference.Date)]
@@ -271,7 +275,8 @@ find.dir.for.VR.comparison <- function(
 }
 
 #' Compare the WHO VR dt_new vs. dt_old, count only the countries with new year
-#' data because if we calculate the diff, it's not clear round to which digits
+#' data because if we calculate the value differences, because the differences
+#' could be very small
 #'
 #' dir_new_data_U5MR and dir_old_data_U5MR can be loaded by
 #' \code{\link{find.dir.for.VR.comparison}}
@@ -279,8 +284,8 @@ find.dir.for.VR.comparison <- function(
 #' Supply `dir_new_data_U5MR` or/and `dir_old_data_U5MR` in the global
 #' environment to overwrite the default selection
 #'
-#' @param count_rounding default to NULL, if supply 6, it will count the
-#'   difference also using the diff round to 1E-6
+#' @param count_rounding default to NULL, if supply a value, e.g. 6, it will
+#'   count the difference also using the diff round to 1E-6
 #'
 #' @return list of dt1 (the comparison dataset for debugging) and iso_newVR (the
 #'   vector of country isos with different WHO VR)

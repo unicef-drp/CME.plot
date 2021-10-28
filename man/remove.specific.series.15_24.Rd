@@ -2,7 +2,8 @@
 % Please edit documentation in R/1.helper_plot_funcs.R
 \name{remove.specific.series.15_24}
 \alias{remove.specific.series.15_24}
-\title{Remove specific series e.g. "Derived from 5q0" in 15-24 datasets}
+\title{Remove specific series e.g. "Derived from 5q0" in 15-24 datasets from
+`sourcevr.Lc.s`, for now this function is used after `remove.specific.series`}
 \usage{
 remove.specific.series.15_24(
   mcmc.meta,
@@ -18,11 +19,13 @@ remove.specific.series.15_24(
 
 \item{remove_pattern}{e.g. "Derived from 5q0"}
 
-\item{remove_date}{remove series if all the series are before 1990, this is mainly for legend purpose since year.start won't clean up the legend}
+\item{remove_date}{remove series if all the series are before 1990, this is
+mainly for legend purpose since year.start won't clean up the legend}
 }
 \value{
 revised mcmc.meta object
 }
 \description{
-Remove specific series e.g. "Derived from 5q0" in 15-24 datasets
+Remove specific series e.g. "Derived from 5q0" in 15-24 datasets from
+`sourcevr.Lc.s`, for now this function is used after `remove.specific.series`
 }

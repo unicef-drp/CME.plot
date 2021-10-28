@@ -3,13 +3,14 @@
 \name{get.diff.dt.WHOVR}
 \alias{get.diff.dt.WHOVR}
 \title{Compare the WHO VR dt_new vs. dt_old, count only the countries with new year
-data because if we calculate the diff, it's not clear round to which digits}
+data because if we calculate the value differences, because the differences
+could be very small}
 \usage{
 get.diff.dt.WHOVR(count_rounding = NULL)
 }
 \arguments{
-\item{count_rounding}{default to NULL, if supply 6, it will count the
-difference also using the diff round to 1E-6}
+\item{count_rounding}{default to NULL, if supply a value, e.g. 6, it will
+count the difference also using the diff round to 1E-6}
 }
 \value{
 list of dt1 (the comparison dataset for debugging) and iso_newVR (the

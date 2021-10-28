@@ -97,9 +97,9 @@ be used as legend if legend is not supplied}
 
 \item{zoom.year.end}{default to `last.year()`}
 
-\item{remove_date_5_24}{default to 1990, for 5-24: by default remove series
-that are earlier than 1990 so not shown on the CC plot. If want to see all
-the series, set a lower number, e.g. 0}
+\item{remove_date_5_24}{default to 1990, for total and sex-specific 5-24: by
+default remove series that are earlier than 1990 so not shown on the CC
+plot. If want to see all the series, set a lower number, e.g. 0}
 
 \item{main.plot}{default to TRUE, used to determine the right size of the
 plot}
@@ -205,7 +205,7 @@ from output.dir}
 \item{return_info}{logical, default to FALSE, if TRUE will return runtime}
 
 \item{...}{more arguments not listed here but can still be passed into the
-function `PlotDataAndEstimates2020`}
+function `PlotDataAndEstimates2020`, like col.CI, col.CI_IHME, etc.}
 }
 \value{
 a list of related information: runname, time_spent, debugging
