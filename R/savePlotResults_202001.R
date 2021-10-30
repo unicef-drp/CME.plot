@@ -614,7 +614,7 @@ savePlotResults <- function(
     pdf.or.png <- "pdf"
   }
   if(pdf.or.png=="pdf"){
-    width0 <- if(all(main.plot, zoom)) plot.width else plot.width + 2.5
+    width0 <- if(all(main.plot, zoom)) plot.width else plot.width + 3
     height0 <- if(all(main.plot, zoom)) plot.height else plot.height + 1.5
     # seperate pdf
     if(separate.plots.by.country){
@@ -641,8 +641,8 @@ savePlotResults <- function(
   # save png
   if(pdf.or.png == "png"){
     # seperate png
-    width0 <- if(all(main.plot, zoom)) 22.5 else 8.5 # YL 2020.04, for png to fit CC profile, width 24->22.5
-    height0 <- if(all(main.plot, zoom)) 8 else 8
+    width0 <- if(all(main.plot, zoom)) 22.5 else plot.width + 3 # YL 2020.04, for png to fit CC profile, width 24->22.5
+    height0 <- if(all(main.plot, zoom)) 8 else plot.height + 1.5
     save.png <- function(c){
       # message("save plot for iso: ", iso.c[c])
       # add a progress message
