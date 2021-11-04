@@ -721,7 +721,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
                #              cex.legend*cex.adj.factor*0.67),    ####Kai changed 05/13/2018
                cex = cex.legend*cex.adj.factor*ifelse(seriesnames.in.full, 1, 1.3),
                seriesnames.in.full = seriesnames.in.full,
-               pt.cex=ifelse((main.plot+zoom+add.legend)==3,2,1.1))     #set the size of legend    change Kai, 20180308
+               pt.cex=ifelse((main.plot+zoom+add.legend)==3, 2, 1.1))     # expand the size of legend circle or square    change Kai, 20180308
   # revised version YL Jan.2020
 }
 #----------------------------------------------------------------
@@ -939,7 +939,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
   plot.points = TRUE,
   plot.lines = TRUE,
   plot.newobsPIs = FALSE,
-  lwd = 2,cex=2,   ###add cex option   kai added 05/14/2018
+  lwd = 2, cex=2,   ###add cex option   kai added 05/14/2018
   seriesnames.in.full = TRUE # change JR, 3 Sep 2013
 ) {
   # use for plot se or obs!
@@ -947,8 +947,10 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
   if (nseries == 0) return()
   series <- seq(1, nseries)
   if (is.null(col.s)) {
-    col.s <- rep(c("black", RColorBrewer::brewer.pal(11, "BrBG")[1:4]), ceiling(nseries/4))[1:nseries]
-    #col.s <- rep(c("black", "black", "black", "black", "black"), ceiling(nseries/4))[1:nseries]
+    # 2021 YL rearrange VR colors order
+    col.s <- rep(c("black", "coral4", RColorBrewer::brewer.pal(11, "BrBG")[2:4], "darkred"), ceiling(nseries/4))[1:nseries]
+    # to see the colors:
+    # scales::show_col(c("black", "coral4", RColorBrewer::brewer.pal(11, "BrBG")[2:4], "deeppink4", "darkred", "saddlebrown"))
   }
   # color for new entry
   col.newentry.s <- NULL
@@ -1230,8 +1232,8 @@ PlotLegend <- function(# Plot legend.
            text.col = c(rev(legendbg.s)), # YL 2020
            # pt.bg = c(rev(legendbg.s)),
            pch = c(rev(legendpch.s)),
-           cex = cex, lwd = cex,
-         # text.width = 3, y.intersp = 1, # not useful
+           cex = cex, lwd = cex * 1.1,
+         pt.cex = pt.cex,
          trace = FALSE)
   return(invisible())
 }
