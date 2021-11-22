@@ -128,6 +128,7 @@ get.new.series.mark.entry <- function(dt_cme,
     iso_newVR <- get.diff.dt.WHOVR(count_rounding = NULL)$iso_newVR
     dt_cme[grepl("WHO", Series.Name) & Country.Code %in% iso_newVR, new_entry := 1]
   }
+  if(!"IGME_Key" %in% colnames(dt_cme)) dt_cme <- create.IGME.key(dt_cme)
   dt_cme[, country_year:= paste0(IGME_Key, "_", Reference.Date)]
   return(dt_cme)
 }

@@ -5,7 +5,7 @@
 \alias{new_cnames}
 \title{new_cnames: the official country names: ISO3Code UNCode OfficialName}
 \format{
-An object of class \code{data.frame} with 197 rows and 3 columns.
+An object of class \code{data.table} (inherits from \code{data.frame}) with 197 rows and 3 columns.
 }
 \usage{
 new_cnames

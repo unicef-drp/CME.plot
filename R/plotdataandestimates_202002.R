@@ -56,10 +56,10 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
   col.CI = "#FF000025", ##<< Optional: Colour for CIs, default is light #c7202e # change JR, 24 Sep 2013: from FF000032
   col.val = "#00FF0032", ##<< Optional: Colour for CIs.tr, default is lighter than lightgreen. # change JR, 24 Sep 2013: from #00FF0050
   col.un = "#0000FF32", ##<< Optional: Colour for CIs.iid.cqt, default is light purple
-  col.CI_ex = "#BFEFFF80", ## be sure to use transparent color for lightblue1
-  col.CI2 = "#00FF0032", #"#A020F032", ##<< Optional: Colour for yet another set of CIs?
-  col.CI3 = "#FFA50010", # "#FFA50032", ##<< Optional: Colour for another set of CIs?
-  col.CI4 = "#0000FF32", ##<< Optional: Colour for yet one more set of CIs? light purple
+  col.CI_ex = "#FFA50032", ## be sure to use transparent color for lightblue1
+  col.CI2 = "#00FF0032", # A020F032", ##<< Optional: Colour for yet another set of CIs?
+  col.CI3 = "#BFEFFF80", ## light blue
+  col.CI4 = "#0000FF32",             ## light purple
   col.igme = "black", ##<< Optional: Colour for IGME estimates, default black.
   col.igme2 = "darkgreen", ##<< Optional: Colour for alternative IGME estimates, default dark green.
   col.data = NULL, ##<< Optional: Colour (same for all data points) for included data
@@ -530,14 +530,14 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
     if (!is.null(CIs4.cqt)) # darkred "#c7202e"
       PlotCIs(c = c, CIs.cqt = CIs4.cqt, year.t = est.years, col.est = "#c7202e", col.CI = col.CI4)
     if (!is.null(CIs3.cqt))
-      PlotCIs(c = c, CIs.cqt = CIs3.cqt, year.t = est.years, col.est = "sienna2", col.CI = col.CI3)
+      PlotCIs(c = c, CIs.cqt = CIs3.cqt, year.t = est.years, col.est = "#0058AB", col.CI = col.CI3)
     if (!is.null(CIs2.cqt)){
       PlotCIs(c = c, CIs.cqt = CIs2.cqt, year.t = est.years, col.est =
                 "green", col.CI = col.CI2)
     }
     if (!is.null(CIs_ex.cqt)){
       PlotCIs(c = c, CIs.cqt = CIs_ex.cqt, year.t = est.years, col.est =
-                "blue", col.CI = col.CI_ex)
+                "#F26A21", col.CI = col.CI_ex)
     }
     if (!is.null(CIs.iid.cqt))
       PlotCIs(c = c, CIs.cqt = CIs.iid.cqt, year.t = est.years, col.est = "steelblue", col.CI = col.un)
@@ -572,14 +572,14 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
     if (!is.null(CIs4.cqt))
       lines(CIs4.cqt[c, 2, ] ~ est.years, col = "#c7202e", lwd = 5*cex.adj.factor)
     if (!is.null(CIs3.cqt))
-      lines(CIs3.cqt[c, 2, ] ~ est.years, col = "sienna2", lwd = 5*cex.adj.factor)
+      lines(CIs3.cqt[c, 2, ] ~ est.years, col = "#0058AB", lwd = 5*cex.adj.factor)
     if (!is.null(CIs2.cqt)){
       # message(paste(range(as.numeric(dimnames(CIs2.cqt)[[3]])), collapse = " - "))
       # message(length(est.years), "est.year range is ", paste(range(est.years), collapse = " - "))
       lines(CIs2.cqt[c, 2, ] ~ est.years, col = "green", lwd = 5*cex.adj.factor)
     }
     if (!is.null(CIs_ex.cqt)) # dotted line
-      lines(CIs_ex.cqt[c, 2, ] ~ est.years, col = "blue", lty = 2, lwd = 5*cex.adj.factor)
+      lines(CIs_ex.cqt[c, 2, ] ~ est.years, col = "#F26A21", lty = 2, lwd = 5*cex.adj.factor)
     if (!is.null(CIs.iid.cqt))
       lines(CIs.iid.cqt[c, 2, ] ~ est.years, col = "steelblue", lwd = 5*cex.adj.factor)
     if (!is.null(CIs.tr.cqt))
@@ -634,11 +634,11 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
 
           legend.col <- c("red")
           if (!is.null(legend_ex))
-            legend.col <- c(legend.col, "blue")
+            legend.col <- c(legend.col, "#F26A21")
           if (!is.null(legend2))
             legend.col <- c(legend.col, "green")
           if (!is.null(legend3))
-            legend.col <- c(legend.col, "sienna3")
+            legend.col <- c(legend.col, "#0058AB")
           if (!is.null(legend4))
             legend.col <- c(legend.col, "#c7202e")
 
@@ -669,7 +669,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
           }
           if (!is.null(legend_ex)) {
             legend.text <- c(legend.text, legend_ex)
-            legend.col <- c(legend.col, "blue")
+            legend.col <- c(legend.col, "#F26A21")
             legend.lty <- c(legend.lty, 2L) # dotted line
 
           }
@@ -683,7 +683,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
 
           if (!is.null(legend3)) {
             legend.text <- c(legend.text, legend3)
-            legend.col <- c(legend.col, "sienna2")
+            legend.col <- c(legend.col, "#0058AB")
             legend.lty <- c(legend.lty, 1L)
 
             }

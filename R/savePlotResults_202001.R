@@ -121,6 +121,7 @@
 #' @return a list of related information: runname, time_spent, debugging
 #'   information if there is an error
 #'
+#' @importFrom grDevices dev.list
 #' @export savePlotResults
 #'
 savePlotResults <- function(
