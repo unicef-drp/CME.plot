@@ -194,8 +194,8 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
       }
 
       # 2021/9/8
-      if(ymax < 5){
-        # limit the min and max for plots with very low mortality
+      if(ymax < 5 & !grepl("Ratio", ylab, ignore.case = TRUE)){
+        # limit the min and max for plots with very low mortality (but not for ratio)
         ymax <- 5; ymin <- 0
       }
 
@@ -267,7 +267,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
         ymax <- max(ymax, wpp_and_completeihme$ihme.cqt[c,3, ihme_years> xmin], na.rm = T)
       }
       # 2021/9/8
-      if(ymax < 5){
+      if(ymax < 5 & !grepl("Ratio", ylab, ignore.case = TRUE)){
         # limit the min and max for plots with very low mortality
         ymax <- 5; ymin <- 0
       }

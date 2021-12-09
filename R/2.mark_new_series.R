@@ -114,7 +114,8 @@ get.new.series.mark.entry <- function(dt_cme,
   if(!IsDate(new_entry_date)) stop("new_entry_date is: ", new_entry_date, " Allowed format: yyyy-mm-dd")
 
   setDT(dt_cme)
-  dt_cme[, Date.Of.Data.Added2:= as.Date(paste0(sub("-", "", Date.Of.Data.Added), "01"), format = "%Y%m%d")]
+  dt_cme[, Date.Of.Data.Added2:= as.Date(paste0(substr(sub("-", "", Date.Of.Data.Added), 1, 6), "01"), format = "%Y%m%d")]
+  dt_cme[is.na(Date.Of.Data.Added2), Date.Of.Data.Added2:= as.Date(Date.Of.Data.Added, format = "%m/%d/%Y")]
   # hist(dt_cme$Date.Of.Data.Added2, breaks = uniqueN(dt_cme$Date.Of.Data.Added2))
   n_new <- dt_cme[Date.Of.Data.Added2>=new_entry_date ,.N]
   dt_cme[, new_entry := 0]
