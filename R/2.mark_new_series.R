@@ -325,7 +325,7 @@ get.diff.dt.WHOVR <- function(
     dt_new_2 <- dt_new[grepl("WHO", Series.Name) & Visible == 1]
     # Series.Name2 is the new one
     dt_new_2[, Series.Name:=gsub(" version", "", Series.Name)]
-    dt_new_2[, Series.Name:=gsub("2018|2019|2020|2021|2022|2023", "", Series.Name)]
+    dt_new_2[, Series.Name:=gsub(paste(2018:2030, collapse  = "|"), "", Series.Name)]
     dt_new_2[, Series.Name:=trimws(Series.Name)]
     dt_new_2[, key:=paste(Country.Code, Series.Name, Reference.Date, sep = "_")]
 

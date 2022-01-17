@@ -5,7 +5,7 @@ runname <- "GR20200214_all"
 runname_19 <- "IGME2019"
 output.dir <- file.path(dir_IGME_out_folder, runname) # 2020 on dropbox
 output.dir.19 <- file.path(dir_IGME_out_folder, runname_19)
-
+dir.exists(output.dir.19)
 cqt_last_year <- obtain.matched.cqt(output.dir1 = output.dir,
                                  output.dir2 = output.dir.19, pooling_weight = 0.5)
 
@@ -30,7 +30,7 @@ dir_old_data_U5MR <- new_dirs$dir_old_data_U5MR
 savePlotResults(runname = "GR20200214",
                      output.dir = output.dir,
                      # legend1 = NULL,
-                     # new_entry_date = "2020-01",
+                     new_entry_date = "2020-01",
                      wpp.cqt = u5mr.wpp.cqt.2019,
                      ihme.cqt = u5mr.ihme.cqt.2019,
                      n.countries = 1:10)
