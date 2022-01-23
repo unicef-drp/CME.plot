@@ -127,7 +127,11 @@ get.new.series.mark.entry <- function(dt_cme,
   if(show_new_WHO_VR){
     dt_cme[grepl("WHO", Series.Name), new_entry := 0]
     iso_newVR <- get.diff.dt.WHOVR(count_rounding = NULL)$iso_newVR
-    if(!is.null(iso_newVR)) dt_cme[grepl("WHO", Series.Name) & Country.Code %in% iso_newVR, new_entry := 1]
+    if(is.null(iso_newVR)) {
+      message("New VR series not marked when highlighting new seires.")
+    } else {
+      dt_cme[grepl("WHO", Series.Name) & Country.Code %in% iso_newVR, new_entry := 1]
+    }
   }
   if(!"IGME_Key" %in% colnames(dt_cme)) dt_cme <- create.IGME.key(dt_cme)
   dt_cme[, country_year:= paste0(IGME_Key, "_", Reference.Date)]
@@ -289,9 +293,9 @@ find.dir.for.VR.comparison <- function(
   return(list(dir_new_data_U5MR = dir_new_data_U5MR, dir_old_data_U5MR = dir_old_data_U5MR))
 }
 
-#' Compare the WHO VR dt_new vs. dt_old, count only the countries with new year
-#' data because if we calculate the value differences, because the differences
-#' could be very small
+#' Compare the WHO VR dt_new vs. dt_old, count only the countries with new years
+#' of data because if we calculate the value differences, the differences could
+#' be very small and it will depend on the rounding of the difference
 #'
 #' dir_new_data_U5MR and dir_old_data_U5MR can be loaded by
 #' \code{\link{find.dir.for.VR.comparison}}
@@ -311,17 +315,14 @@ get.diff.dt.WHOVR <- function(
   dir_new_data_U5MR <- default_dir$dir_new_data_U5MR
   dir_old_data_U5MR <- default_dir$dir_old_data_U5MR
   if(is.null(dir_new_data_U5MR)|is.null(dir_old_data_U5MR)){
-    message("New VR series not marked when highlighting new seires")
     return(NULL)
   }
   if(!file.exists(dir_new_data_U5MR)){
     message("Check if dir_new_data_U5MR exists: ", dir_new_data_U5MR)
-    message("New VR series not marked when highlighting new seires")
     return(NULL)
   }
   if(!file.exists(dir_old_data_U5MR)){
     message("Check if dir_old_data_U5MR exists: ", dir_old_data_U5MR)
-    message("New VR series not marked when highlighting new seires")
     return(NULL)
   }
 
