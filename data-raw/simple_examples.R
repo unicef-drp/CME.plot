@@ -18,7 +18,7 @@ review.date.of.dataentry(output.dir = output.dir)
 
 # the difference in VR is highlighted by comparing an new dataset to and old one
 # by default the datasets used are:
-new_dirs <- find.dir.for.VR.comparison(IGME_year_new = 2021, IGME_year_old = 2020,
+new_dirs <- find.dir.for.VR.comparison(IGME_year_new = 2022, IGME_year_old = 2021,
                                        filename_new = NULL, filename_old = NULL)
 # supply in the global environment to overwrite:
 # if `dir_new_data_U5MR` is supplied, it will be used as the new file to compare VR

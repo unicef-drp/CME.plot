@@ -127,7 +127,7 @@ get.new.series.mark.entry <- function(dt_cme,
   if(show_new_WHO_VR){
     dt_cme[grepl("WHO", Series.Name), new_entry := 0]
     iso_newVR <- get.diff.dt.WHOVR(count_rounding = NULL)$iso_newVR
-    dt_cme[grepl("WHO", Series.Name) & Country.Code %in% iso_newVR, new_entry := 1]
+    if(!is.null(iso_newVR)) dt_cme[grepl("WHO", Series.Name) & Country.Code %in% iso_newVR, new_entry := 1]
   }
   if(!"IGME_Key" %in% colnames(dt_cme)) dt_cme <- create.IGME.key(dt_cme)
   dt_cme[, country_year:= paste0(IGME_Key, "_", Reference.Date)]
@@ -237,8 +237,7 @@ mark.new.series <- function(mcmc.meta, new.sourceID.i, HIV_removed = FALSE){
 
 # For WHO VR --------------------------------------------------------------
 
-
-#' Only work on Dropbox: Find the directories to the dt_new and dt_old to
+#' Only works on Dropbox: locate the directories to the dt_new and dt_old to
 #' compare WHO VR to find out the countries (ISO3Code) new series for
 #' highlighting new series, by default will pick the latest file from this and
 #' last year's IGME Input folders
@@ -263,15 +262,29 @@ find.dir.for.VR.comparison <- function(
   filename_new = NULL,
   filename_old = NULL # e.g. "data_U5MR_20191018.csv"
 ){
- if(is.null(filename_new)){
-   dir_new_data_U5MR <- get.dir_U5MR(dir_IGME = get.IGMEinput.dir(IGME_year_new))
- } else {
-   dir_new_data_U5MR <- file.path(get.IGMEinput.dir(IGME_year_new), filename_new)
- }
-  if(is.null(filename_old)){
-    dir_old_data_U5MR <- get.dir_U5MR(dir_IGME = get.IGMEinput.dir(IGME_year_old))
-  } else {
-    dir_old_data_U5MR <- file.path(get.IGMEinput.dir(IGME_year_old), filename_old)
+  # allow global overwrite
+  if(!exists("dir_new_data_U5MR")){
+   if(is.null(filename_new)){
+     dir_new_data_U5MR <- get.dir_U5MR(dir_IGME = get.IGMEinput.dir(IGME_year_new))
+   } else {
+     dir_new_data_U5MR <- file.path(get.IGMEinput.dir(IGME_year_new), filename_new)
+   }
+   if(is.null(dir_new_data_U5MR))
+     message("If want to highlight new VR series, please add in the global environment
+      valid directories to the new U5MR datasets for value comparison:
+      `dir_new_data_U5MR = ...` ")
+  }
+
+  if(!exists("dir_old_data_U5MR")){
+    if(is.null(filename_old)){
+      dir_old_data_U5MR <- get.dir_U5MR(dir_IGME = get.IGMEinput.dir(IGME_year_old))
+    } else {
+      dir_old_data_U5MR <- file.path(get.IGMEinput.dir(IGME_year_old), filename_old)
+    }
+    if(is.null(dir_old_data_U5MR))
+      message("If want to highlight new VR series, please add in the global environment
+      valid directories to the old U5MR datasets for value comparison:
+      `dir_old_data_U5MR = ...`")
   }
   return(list(dir_new_data_U5MR = dir_new_data_U5MR, dir_old_data_U5MR = dir_old_data_U5MR))
 }
@@ -295,32 +308,25 @@ get.diff.dt.WHOVR <- function(
   count_rounding = NULL
 ){
   default_dir <- find.dir.for.VR.comparison()
-  if(!exists("dir_new_data_U5MR")) dir_new_data_U5MR <- default_dir$dir_new_data_U5MR
-  if(!exists("dir_old_data_U5MR")) dir_old_data_U5MR <- default_dir$dir_old_data_U5MR
-  if(is.null(dir_new_data_U5MR)|is.null(dir_old_data_U5MR))
-    {
-      message("If want to highlight new VR series, please add in the global environment
-      valid directories to new and old U5MR datasets for value comparison:
-      `dir_new_data_U5MR = ...` and `dir_old_data_U5MR = ...`")
-      return(NULL)
-    }
-
-  if(file.exists(dir_new_data_U5MR) & file.exists(dir_old_data_U5MR)) {
-    dt_new <- fread(dir_new_data_U5MR)
-    dt_old <- fread(dir_old_data_U5MR)
-
-  } else {
-    message("If want to highlight new VR series, please add in the global environment
-    directories to new and old U5MR datasets for value comparison:
-    `dir_new_data_U5MR = ...` and `dir_old_data_U5MR = ...`")
-    message("Couldn't find one or both of these files:\n",
-            "dir_new_data_U5MR: ", dir_new_data_U5MR, "\n",
-            "dir_old_data_U5MR: ", dir_old_data_U5MR
-    )
+  dir_new_data_U5MR <- default_dir$dir_new_data_U5MR
+  dir_old_data_U5MR <- default_dir$dir_old_data_U5MR
+  if(is.null(dir_new_data_U5MR)|is.null(dir_old_data_U5MR)){
+    message("New VR series not marked when highlighting new seires")
+    return(NULL)
+  }
+  if(!file.exists(dir_new_data_U5MR)){
+    message("Check if dir_new_data_U5MR exists: ", dir_new_data_U5MR)
+    message("New VR series not marked when highlighting new seires")
+    return(NULL)
+  }
+  if(!file.exists(dir_old_data_U5MR)){
+    message("Check if dir_old_data_U5MR exists: ", dir_old_data_U5MR)
+    message("New VR series not marked when highlighting new seires")
     return(NULL)
   }
 
-
+  dt_new <- fread(dir_new_data_U5MR)
+  dt_old <- fread(dir_old_data_U5MR)
   subset.dt <- function(dt_new){
     dt_new_2 <- dt_new[grepl("WHO", Series.Name) & Visible == 1]
     # Series.Name2 is the new one

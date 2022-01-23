@@ -211,31 +211,34 @@ transformdataforNMR = function(
     #
     # for non-VR --------------------------------------------------------------
     n.list = unique(df.selected$seriesnameandyear[!vr.ind])
-    if (sum(!vr.ind)!=0){ # there are non-vr series
-    for (n in 1:length(n.list)){
-     series.selected=n.list[n]
-     if(scale=='ratio'){
-       u.Lcs.j[[c]][[n]]=df.selected$ratio.i[df.selected$seriesnameandyear==series.selected]
-       se.Lcs.j[[c]][[n]]=df.selected$se.ratio.i[df.selected$seriesnameandyear==series.selected]
-     }else {
-       u.Lcs.j[[c]][[n]]=df.selected$neonatal.i[df.selected$seriesnameandyear==series.selected]
-       se.Lcs.j[[c]][[n]]=df.selected$se.i[df.selected$seriesnameandyear==series.selected]
-       }
+    if (sum(!vr.ind)!=0){ # if there are non-vr series
+      for (n in 1:length(n.list)){
+        series.selected=n.list[n]
+        if(scale=='ratio'){
+           u.Lcs.j[[c]][[n]]=df.selected$ratio.i[df.selected$seriesnameandyear==series.selected]
+           se.Lcs.j[[c]][[n]]=df.selected$se.ratio.i[df.selected$seriesnameandyear==series.selected]
+        } else {
+           u.Lcs.j[[c]][[n]]=df.selected$neonatal.i[df.selected$seriesnameandyear==series.selected]
+           se.Lcs.j[[c]][[n]]=df.selected$se.i[df.selected$seriesnameandyear==series.selected]
+        }
+        year.Lcs.j[[c]][[n]]=df.selected$year.i[df.selected$seriesnameandyear==series.selected]
+        included.Lcs.j[[c]][[n]]=df.selected$inclusion.i[df.selected$seriesnameandyear==series.selected]
+        # YL added to mark `newentry.Lc.s`:
+        # If a series contains Date.of.Data.entered from different period, `newentry.i` could contain both 0 and 1
+        # Thus instead of use `unique`, should use `max` (corrected 2022.01)
+        newentry.list = c(newentry.list, max(df.selected$newentry.i[df.selected$seriesnameandyear==series.selected]))
+        sourcetype.list=c(sourcetype.list,unique(as.character(df.selected$sourcetype.i[df.selected$seriesnameandyear==series.selected])))
+        seriesyear.list=c(seriesyear.list,unique(as.character(df.selected$seriesyear.i[df.selected$seriesnameandyear==series.selected])))
+        source.list=c(source.list,unique(as.character(df.selected$seriesname.i[df.selected$seriesnameandyear==series.selected])))
 
-     year.Lcs.j[[c]][[n]]=df.selected$year.i[df.selected$seriesnameandyear==series.selected]
-     included.Lcs.j[[c]][[n]]=df.selected$inclusion.i[df.selected$seriesnameandyear==series.selected]
-     newentry.list <- c(newentry.list, unique(df.selected$newentry.i[df.selected$seriesnameandyear==series.selected]))
-     sourcetype.list=c(sourcetype.list,unique(as.character(df.selected$sourcetype.i[df.selected$seriesnameandyear==series.selected])))
-     seriesyear.list=c(seriesyear.list,unique(as.character(df.selected$seriesyear.i[df.selected$seriesnameandyear==series.selected])))
-     source.list=c(source.list,unique(as.character(df.selected$seriesname.i[df.selected$seriesnameandyear==series.selected])))
-
-    }}
+      }}
     hasbias.Lc.s[[c]]=rep(0,length(n.list))
     sourcetype.Lc.s[[c]]=sourcetype.list
     seriesyear.Lc.s[[c]]=seriesyear.list
     source.Lc.s[[c]]=source.list
     nseriesnonvr.c[c]=length(n.list)
     method.Lc.s[[c]] <-  NULL # YL 2020
+    if(length(newentry.list)!= length(n.list)) stop("Check length of `newentry.Lc.s`.")
     newentry.Lc.s[[c]] <- newentry.list
 
     #

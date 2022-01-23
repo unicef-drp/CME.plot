@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.mark_new_series.R
 \name{find.dir.for.VR.comparison}
 \alias{find.dir.for.VR.comparison}
-\title{Only work on Dropbox: Find the directories to the dt_new and dt_old to
+\title{Only works on Dropbox: locate the directories to the dt_new and dt_old to
 compare WHO VR to find out the countries (ISO3Code) new series for
 highlighting new series, by default will pick the latest file from this and
 last year's IGME Input folders}
@@ -26,7 +26,7 @@ find.dir.for.VR.comparison(
 \code{get.dir_U5MR}}
 }
 \description{
-Only work on Dropbox: Find the directories to the dt_new and dt_old to
+Only works on Dropbox: locate the directories to the dt_new and dt_old to
 compare WHO VR to find out the countries (ISO3Code) new series for
 highlighting new series, by default will pick the latest file from this and
 last year's IGME Input folders
