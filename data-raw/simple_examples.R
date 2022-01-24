@@ -1,8 +1,8 @@
 # `CME.plot` simple examples
 library(CME.plot)
-dir_IGME_out_folder <- get.IGMEoutput.dir(2020)
-runname <- "GR20200214_all"
-runname_19 <- "IGME2019"
+dir_IGME_out_folder <- get.IGMEoutput.dir(2021)
+runname <- "GR20210615_all"
+runname_19 <- "IGME2020"
 output.dir <- file.path(dir_IGME_out_folder, runname) # 2020 on dropbox
 output.dir.19 <- file.path(dir_IGME_out_folder, runname_19)
 dir.exists(output.dir.19)

@@ -128,7 +128,7 @@ get.new.series.mark.entry <- function(dt_cme,
     dt_cme[grepl("WHO", Series.Name), new_entry := 0]
     iso_newVR <- get.diff.dt.WHOVR(count_rounding = NULL)$iso_newVR
     if(is.null(iso_newVR)) {
-      message("New VR series not marked when highlighting new seires.")
+      message("New WHO VR series won't be highlighted, run `find.dir.for.VR.comparison()` to check the chosen databases.")
     } else {
       dt_cme[grepl("WHO", Series.Name) & Country.Code %in% iso_newVR, new_entry := 1]
     }
