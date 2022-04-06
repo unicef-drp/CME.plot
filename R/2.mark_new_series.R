@@ -155,7 +155,6 @@ get.new.series <- function(output.dir,
                            dir_IGME = NULL,
                            return_dt_cme = FALSE
                            ){
-  # by default, cut new entries as input after Oct.1st last year
   if(is.null(new_entry_date)) stop("Please supply new_entry_date, now it is NULL")
   # Check if the input date is valid: "YYYY-MM" is also allowed
   if(nchar(new_entry_date) == 7) new_entry_date <- as.Date(paste0(sub("-", "", new_entry_date), "01"), format = "%Y%m%d")
