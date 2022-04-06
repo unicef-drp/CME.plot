@@ -259,6 +259,8 @@ obtain.matched.cqt <- function(
   if(!dir.exists(output.dir1)) stop("Check if dir exists: ", output.dir1)
   if (is.null(output.dir2)) output.dir2 <- file.path(getwd(), "output", runname2)
   if(!dir.exists(output.dir2)) stop("Check if dir exists: ", output.dir2)
+  if(!file.exists(file.path(output.dir1, "iso.c.rda"))) stop("Need the iso.c.rda in ", output.dir1)
+  if(!file.exists(file.path(output.dir2, "iso.c.rda"))) stop("Need the iso.c.rda in ", output.dir2)
 
   load(file.path(output.dir1, "iso.c.rda"))
   iso.c1 <- iso.c

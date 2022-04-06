@@ -2,9 +2,9 @@
 % Please edit documentation in R/2.mark_new_series.R
 \name{get.diff.dt.WHOVR}
 \alias{get.diff.dt.WHOVR}
-\title{Compare the WHO VR dt_new vs. dt_old, count only the countries with new year
-data because if we calculate the value differences, because the differences
-could be very small}
+\title{Compare the WHO VR dt_new vs. dt_old, count only the countries with new years
+of data because if we calculate the value differences, the differences could
+be very small and it will depend on the rounding of the difference}
 \usage{
 get.diff.dt.WHOVR(count_rounding = NULL)
 }
