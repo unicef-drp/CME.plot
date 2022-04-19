@@ -187,7 +187,7 @@ get.new.series <- function(output.dir,
   dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key%in% new_hiv_key &
            grepl("Direct", Series.Type), unique(IGME_Key)]
   dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key%in% new_hiv_key &
-           grepl("Direct", Series.Type), new_entry := 0]
+           grepl("Direct", Series.Type) & Data.Collection.Method != "Household Deaths", new_entry := 0]
   # create source id
   new.sourceID.i <- get.new.sourceID.i(dt_cme)
   return(if(return_dt_cme) dt_cme else new.sourceID.i)
