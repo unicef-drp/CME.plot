@@ -190,15 +190,15 @@ get.new_cnames <- function(dir_IGME_input, filename = "country.info.CME.csv"){
 }
 
 
-#' Internal function to update new_cnames.rda (official names)
+#' Internal function to update new_cnames.rda (for official names on the plot)
 #' @importFrom usethis use_data
-#'
-#' @param IGME_year input country.info.CME.csv from which IGME round
+#' @param IGME_round_input which IGME round of country.info.CME.csv to use
 #' @param country.info.file.name country.info.CME.csv
 #'
-update.data.new_cnames <- function(IGME_year = 2022,
-                                   country.info.file.name = "country.info.CME.csv"){
-  new_cnames <- get.new_cnames(get.IGMEinput.dir(IGME_year), country.info.file.name)
+update.data.new_cnames <- function(
+  IGME_round_input = 2022,
+  country.info.file.name = "country.info.CME.csv"){
+  new_cnames <- get.new_cnames(get.IGMEinput.dir(IGME_round_input), country.info.file.name)
   usethis::use_data(new_cnames, overwrite = TRUE)
   return(invisible())
 }

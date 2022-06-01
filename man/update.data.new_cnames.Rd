@@ -2,15 +2,18 @@
 % Please edit documentation in R/1.helper_plot_funcs.R
 \name{update.data.new_cnames}
 \alias{update.data.new_cnames}
-\title{Internal function to update new_cnames.rda (official names)}
+\title{Internal function to update new_cnames.rda (for official names on the plot)}
 \usage{
-\method{update}{data.new_cnames}(IGME_year = 2022, country.info.file.name = "country.info.CME.csv")
+\method{update}{data.new_cnames}(
+  IGME_round_input = 2022,
+  country.info.file.name = "country.info.CME.csv"
+)
 }
 \arguments{
-\item{IGME_year}{input country.info.CME.csv from which IGME round}
+\item{IGME_round_input}{which IGME round of country.info.CME.csv to use}
 
 \item{country.info.file.name}{country.info.CME.csv}
 }
 \description{
-Internal function to update new_cnames.rda (official names)
+Internal function to update new_cnames.rda (for official names on the plot)
 }
