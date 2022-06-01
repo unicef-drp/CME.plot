@@ -4,9 +4,11 @@
 \alias{update.data.new_cnames}
 \title{Internal function to update new_cnames.rda (official names)}
 \usage{
-\method{update}{data.new_cnames}(country.info.file.name = "country.info.CME.197isos.csv")
+\method{update}{data.new_cnames}(IGME_year = 2022, country.info.file.name = "country.info.CME.csv")
 }
 \arguments{
+\item{IGME_year}{input country.info.CME.csv from which IGME round}
+
 \item{country.info.file.name}{country.info.CME.csv}
 }
 \description{
