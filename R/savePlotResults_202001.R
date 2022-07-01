@@ -150,7 +150,7 @@ savePlotResults <- function(
   res.cqt4 = NULL,       # a dark-red line, years adjusted in function
   res_ex.cqt = NULL,     # the expected series, years adjusted in function
   save_cqt_copy = FALSE, # if TRUE save a copy of res.cqt1 for checking
-  legend1 = "Draft UN IGME 2021", # a switch for showing main estimates (set NULL for data plot): red line
+  legend1 = "Draft UN IGME 2022", # a switch for showing main estimates (set NULL for data plot): red line
   legend2 = NULL, # used as a switch for showing cqt2: green line
   legend3 = NULL, # used as a switch for showing cqt3: sienna line: `scales::show_col("sienna2")`
   legend4 = NULL, # used as a switch for showing cqt4: dark red line: `scales::show_col("#c7202e")`
@@ -577,7 +577,7 @@ savePlotResults <- function(
                          data.all = if(!HIV_removed) mcmc.meta$data.all else mcmc.meta$data.hivremoved.all,
                          ylab = if(is.null(ylab)) indicator.type else ylab,
                          title1 = if(!is.null(gender)) gender_title, # add Male/Female in title
-                         est.years = year.t,
+                         est.years = as.numeric(year.t),
 
                          CIs.cqt = res.cqt,
                          CIs2.cqt = res.cqt2,
