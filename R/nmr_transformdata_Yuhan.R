@@ -582,7 +582,7 @@ GetDataGlobalNMR<- function(file, #data file, must be in form of log ratios
                    "Inclusion", "Exclusion.External.Info", "Visible", "VR.recalc", "Size",
                    'Neonatal','Estimates','Standard.Error.of.Estimates', "new_entry")
   d <- d[,..vars_wanted]
-  d <- d[with(d, order(d$Country.Code, d$Series.Category, d$Reference.Date)), ]
+  # d <- d[with(d, order(d$Country.Code, d$Series.Category, d$Reference.Date)), ] # YL.2022 no need to sort again
   # if need to subset Inclusion == 1:
   ifelse(include_excluded, d<- d, d <- d[d$Inclusion==1|is.na(d$Inclusion),] )
   # only pick Visible ones

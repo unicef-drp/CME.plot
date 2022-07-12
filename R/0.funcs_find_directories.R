@@ -13,25 +13,6 @@ get.IGME.dir <- function(year){
 }
 
 
-#' Load the IGME "input" directories
-#'
-#' @return dir_IGMEinput_list: a list of directories of UN IGME Data/YYYY Round
-#'   Estimations/Code/input
-#' @export load.IGMEinput.dir
-load.IGMEinput.dir <- function(){
-  # the input folder:
-  USERPROFILE <- load_os_leading_dir()
-  dir_IGMEinput_list <- list(
-    dir_IGME_thisyear = file.path(USERPROFILE, paste0("/Dropbox/UN IGME Data/", format(Sys.Date(), "%Y") ," Round Estimation/Code/input/")),
-    dir_IGME_21       = file.path(USERPROFILE, "/Dropbox/UN IGME Data/2021 Round Estimation/Code/input/"),
-    dir_IGME_20       = file.path(USERPROFILE, "/Dropbox/UN IGME Data/2020 Round Estimation/Code/input/"),
-    dir_IGME_19       = file.path(USERPROFILE, "/Dropbox/UN IGME Data/2019 Round Estimation/Code/input/"),
-    dir_IGME_NMR      = file.path(USERPROFILE, "/Dropbox/NMR/data")
-  )
-  return(dir_IGMEinput_list)
-}
-
-
 #' Get "input" dir for a given year
 #'
 #' If `year` is 2020, returns the directory to input folder in the 2020 Round
@@ -42,22 +23,6 @@ load.IGMEinput.dir <- function(){
 get.IGMEinput.dir <- function(year){
   USERPROFILE <- load_os_leading_dir()
   file.path(USERPROFILE, paste0("/Dropbox/UN IGME Data/", year ," Round Estimation/Code/input/"))
-}
-
-#' Load the IGME "output" directories
-#' @return dir_IGMEoutput_list: a list of directories to UN IGME Data/YYYY Round
-#'   Estimations/Code/output
-#' @export load.IGMEoutput.dir
-load.IGMEoutput.dir <- function(){
-  USERPROFILE <- load_os_leading_dir()
-  dir_IGMEoutput_list <- list(
-    dir_IGME_thisyear = file.path(USERPROFILE, paste0("/Dropbox/UN IGME Data/", format(Sys.Date(), "%Y") ," Round Estimation/Code/output/")),
-    dir_IGME_21       = file.path(USERPROFILE, "/Dropbox/UN IGME Data/2021 Round Estimation/Code/output/"),
-    dir_IGME_20       = file.path(USERPROFILE, "/Dropbox/UN IGME Data/2020 Round Estimation/Code/output/"),
-    dir_IGME_19       = file.path(USERPROFILE, "/Dropbox/UN IGME Data/2019 Round Estimation/Code/output/"),
-    dir_IGME_NMR      = file.path(USERPROFILE, "/Dropbox/NMR/output")
-  )
-  return(dir_IGMEoutput_list)
 }
 
 #' Get "output" dir for a given year

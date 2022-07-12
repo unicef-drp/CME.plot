@@ -33,7 +33,7 @@
 #' @param output.dir4 if supplied and valid, will use it to locate `res.cqt4`
 #'
 #' @param filename extra label in the front of the output file if supplied
-#' @param After_CC suppress the rules to create filenames automatically, adding
+#' @param suppress_auto_filename suppress the rules to create filenames automatically, adding
 #'   a "Results" in the front for CC profiles
 #' @param fig.dir where to save the figures
 #' @param year.start default to NULL
@@ -126,7 +126,7 @@
 #'
 savePlotResults <- function(
   filename = NULL,
-  After_CC = FALSE,
+  suppress_auto_filename = FALSE,
   runname = NULL, # `Runname` for labeling and for constructing output.dir
   runname2 = NULL,
   runname3 = NULL,
@@ -346,8 +346,20 @@ savePlotResults <- function(
       if(!is.null(legend3)) res.cqt3 <- nmr$res3.cqt
       if(!is.null(legend_ex)) res_ex.cqt <- nmr$res_ex.cqt
       # if(!is.null(res.cqt)) dimnames(res.cqt)[[3]] <- year.t
-      indicator.type <- if(NMR_scale=="NMR") "NMR" else "NMR/U5MR Ratio"
-      indicator.filename <- if(NMR_scale=="NMR") "Rate" else "Ratio"
+      if(!is.null(nmr$sex)){ # 2022.06 allowing sex-specific NMR, CMR
+        indicator.type <- nmr$indicator_label # e.g. CMR, used in filename, could be different from ylab
+        gender_title <- nmr$sex
+        gender <- nmr$sex
+        if(is.null(filename)){
+          filename <- paste(indicator.type, gender_title, sep = "_")
+        } else {
+          filename <- paste(indicator.type, gender_title, filename, sep = "_") # append as extra note
+        }
+      } else {
+        indicator.type <- if(NMR_scale=="NMR") "NMR" else "NMR/U5MR Ratio"
+        indicator.filename <- if(NMR_scale=="NMR") "Rate" else "Ratio"
+      }
+
       is.validation <- FALSE
     }
 
@@ -517,7 +529,7 @@ savePlotResults <- function(
                   !is.null(legend4), !is.null(legend_ex),
                   !is.null(wpp.cqt),
                   !is.null(ihme.cqt))
-  if(After_CC) n_series <- 1
+  if(suppress_auto_filename) n_series <- 1
   # show.legend <- function(x){
   #   if(!is.null(x)) cat ("x is ", eval(x))
   # }
@@ -535,7 +547,7 @@ savePlotResults <- function(
       if(HIV_removed)filename <- paste(filename, "(HIV-removed)")
   }
 
-  if(!After_CC){
+  if(!suppress_auto_filename){
     filename <- paste0(filename,
                        ifelse(!is.null(legend_ex), "_vs_Expected", ""),
                        ifelse(!is.null(legend2), paste0("_vs_", gsub(" ", "", legend2)), ""),
@@ -572,11 +584,14 @@ savePlotResults <- function(
   }
 
   # Call `PlotDataAndEstimates2020`-----------------------------------
+  title1.sex <- if(!is.null(gender)) gender_title else NULL # add Male/Female in title
+  if(gender == "Total") title1.sex <- NULL # but don't add "Total"
+  
   plot.by.c <- function(c){suppressMessages(
     PlotDataAndEstimates2020(data = NULL, # YL: doesn't really need mcmc.meta$data
                          data.all = if(!HIV_removed) mcmc.meta$data.all else mcmc.meta$data.hivremoved.all,
                          ylab = if(is.null(ylab)) indicator.type else ylab,
-                         title1 = if(!is.null(gender)) gender_title, # add Male/Female in title
+                         title1 = title1.sex, # add Male/Female in title
                          est.years = as.numeric(year.t),
 
                          CIs.cqt = res.cqt,
