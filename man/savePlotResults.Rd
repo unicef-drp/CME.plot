@@ -6,7 +6,7 @@
 \usage{
 savePlotResults(
   filename = NULL,
-  After_CC = FALSE,
+  suppress_auto_filename = FALSE,
   runname = NULL,
   runname2 = NULL,
   runname3 = NULL,
@@ -30,7 +30,7 @@ savePlotResults(
   res.cqt4 = NULL,
   res_ex.cqt = NULL,
   save_cqt_copy = FALSE,
-  legend1 = "Draft UN IGME 2021",
+  legend1 = "Draft UN IGME 2022",
   legend2 = NULL,
   legend3 = NULL,
   legend4 = NULL,
@@ -61,7 +61,7 @@ savePlotResults(
 \arguments{
 \item{filename}{extra label in the front of the output file if supplied}
 
-\item{After_CC}{suppress the rules to create filenames automatically, adding
+\item{suppress_auto_filename}{suppress the rules to create filenames automatically, adding
 a "Results" in the front for CC profiles}
 
 \item{runname}{used to look for `res.cqt`. If `output.dir` is NULL, it will
