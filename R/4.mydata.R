@@ -8,38 +8,19 @@
 
 
 # WPP ---------------------------------------------------------------------
-
 # no NMR
 
-#'u5mr.wpp.cqt.2019
+#' dt_wpp_2019, master data table containing all needed indicator by sex
 #'
 #' @docType data
-#' @keywords WPP
-"u5mr.wpp.cqt.2019"
+#' @keywords WPP2019
+"dt_wpp_2019"
 
-#'imr.wpp.cqt.2019
+#' dt_wpp_2022, master data table containing all needed indicator by sex
 #'
 #' @docType data
-#' @keywords WPP
-"imr.wpp.cqt.2019"
-
-#'m10q5.wpp.cqt.2019
-#'
-#' @docType data
-#' @keywords WPP
-"m10q5.wpp.cqt.2019"
-
-#'m10q15.wpp.cqt.2019
-#'
-#' @docType data
-#' @keywords WPP
-"m10q15.wpp.cqt.2019"
-
-#'wpp_2019_cqt_by_sex: female and male WPP 2019 for IMR and U5MR
-#'
-#' @docType data
-#' @keywords WPP
-"wpp_2019_cqt_by_sex"
+#' @keywords WPP2022
+"dt_wpp_2022"
 
 
 # IHME
@@ -120,12 +101,6 @@
 #' @docType data
 #' @keywords ISO3Code
 "u5mr.iso.c"
-
-#'sexspecific.iso.c: orderd isos
-#'
-#' @docType data
-#' @keywords ISO3Code
-"sexspecific.iso.c"
 
 #' IHME_codebook: IHME codebook matching Location_ID to ISO3Code and IGME country
 #' names

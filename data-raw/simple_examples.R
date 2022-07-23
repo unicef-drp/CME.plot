@@ -1,13 +1,11 @@
 # `CME.plot` simple examples
-library(CME.plot)
+devtools::load_all()
 dir_IGME_out_folder <- get.IGMEoutput.dir(2021)
-runname <- "GR20210615_all"
-runname_19 <- "IGME2020"
-output.dir <- file.path(dir_IGME_out_folder, runname) # 2020 on dropbox
-output.dir.19 <- file.path(dir_IGME_out_folder, runname_19)
-dir.exists(output.dir.19)
+output.dir <- file.path(dir_IGME_out_folder, "GR20210615_all")
+output.dir.for.comparison <- file.path(dir_IGME_out_folder, "IGME2020")
+dir.exists(output.dir.for.comparison)
 cqt_last_year <- obtain.matched.cqt(output.dir1 = output.dir,
-                                 output.dir2 = output.dir.19, pooling_weight = 0.5)
+                                 output.dir2 = output.dir.for.comparison, pooling_weight = 0.5)
 
 cqt3 <- cqt_last_year*0.7
 cqt4 <- cqt_last_year*1.2
@@ -31,7 +29,7 @@ savePlotResults(runname = "GR20200214",
                      output.dir = output.dir,
                      # legend1 = NULL,
                      new_entry_date = "2020-01",
-                     wpp.cqt = u5mr.wpp.cqt.2019,
+                     wpp.cqt = get.wpp.cqt("U5MR"),
                      ihme.cqt = u5mr.ihme.cqt.2019,
                      n.countries = 1:10)
 
@@ -51,9 +49,9 @@ savePlotResults(runname = "GR20200214",
                      legend3 = "UN IGME 2019_3",
                      legend4 = "UN IGME 2019_4",
                      output.dir = output.dir,
-                     output.dir2 = output.dir.19,
-                     output.dir3 = output.dir.19,
-                     output.dir4 = output.dir.19,
+                     output.dir2 = output.dir.for.comparison,
+                     output.dir3 = output.dir.for.comparison,
+                     output.dir4 = output.dir.for.comparison,
                      n.countries = 1:5)
 
 savePlotResults(runname = "GR20200214",
@@ -61,9 +59,9 @@ savePlotResults(runname = "GR20200214",
                      runname3 = "UN IGME 2019_3",
                      runname4 = "UN IGME 2019_4",
                      output.dir = output.dir,
-                     output.dir2 = output.dir.19,
-                     output.dir3 = output.dir.19,
-                     output.dir4 = output.dir.19,
+                     output.dir2 = output.dir.for.comparison,
+                     output.dir3 = output.dir.for.comparison,
+                     output.dir4 = output.dir.for.comparison,
                      n.countries = 1:5)
 
 # show wpp and ihme lines:
@@ -71,7 +69,7 @@ savePlotResults(runname = "GR20200214",
                      filename = "mytest",
                      output.dir = output.dir,
                      fig.dir = "fig",
-                     wpp.cqt = u5mr.wpp.cqt.2019,
+                     wpp.cqt = get.wpp.cqt("U5MR"),
                      ihme.cqt = u5mr.ihme.cqt.2019,
                      n.countries = 1:10 # save only 5 countries
 )
@@ -91,7 +89,7 @@ savePlotResults(runname = "GR20200214",
                      res.cqt4 = cqt4,
                      legend_ex = "Expected",
                      res_ex.cqt = cqt5,
-                     wpp.cqt = u5mr.wpp.cqt.2019,
+                     wpp.cqt = get.wpp.cqt("U5MR"),
                      ihme.cqt = u5mr.ihme.cqt.2017,
                      n.countries = 1:5 # save only 5 countries
 )

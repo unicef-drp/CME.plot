@@ -8,9 +8,9 @@ library(tidyr)
 library(readxl)
 library(writexl)
 # Format IHME output files
-user <- Sys.getenv("USERPROFILE")
+USERPROFILE <- Sys.getenv("USERPROFILE")
 
-dir_IHME_data<- file.path(user,"/Dropbox/UN IGME data/2020 Round Estimation/Code/output/IHME")
+dir_IHME_data<- file.path(USERPROFILE,"/Dropbox/UN IGME data/2020 Round Estimation/Code/output/IHME")
 # Under 5 by sex and total
 u5mr.file<-"IHME_GBD_2019_MORTALITY_1950_2019_5Q0_WSHOCK_Y2020M07D31.CSV"
 # IMR by sex and total
@@ -55,14 +55,14 @@ sheets <- list("U5MR" = u5mr[u5mr$metric_name=="Probability of death" & u5mr$loc
                "CMR"=cmr[cmr$metric_name=="Probability of death" & cmr$location_id %in%IHME_codebook$Location_ID,],
                "Ratio"=ratio)
 write_xlsx(sheets,
-           file.path(user, "Dropbox/UN IGME data/2020 Round Estimation/Code/output/IHME/GBD2019_Under5_estimates.xlsx"))
+           file.path(USERPROFILE, "Dropbox/UN IGME data/2020 Round Estimation/Code/output/IHME/GBD2019_Under5_estimates.xlsx"))
 
 
 
 # 5-24 --------------------------------------------------------------------
 # Format IHME output files
-user <- Sys.getenv("USERPROFILE")
-dir_IHME_data<- file.path(user,"/Dropbox/UN IGME data/2020 Round Estimation/Code/output/IHME")
+USERPROFILE <- Sys.getenv("USERPROFILE")
+dir_IHME_data<- file.path(USERPROFILE,"/Dropbox/UN IGME data/2020 Round Estimation/Code/output/IHME")
 dir_list <- list(
   m5_9.file   = file.path(dir_IHME_data, "IHME_GBD_2019_LIFE_TABLES_1950_2019_ID_6_WSHOCK_Y2020M07D31_5-9.CSV"),
   m10_14.file = file.path(dir_IHME_data, "IHME_GBD_2019_LIFE_TABLES_1950_2019_ID_7_WSHOCK_Y2020M07D31_10-14.CSV"),
@@ -96,22 +96,26 @@ fwrite(ihme_2019_5_24,
 
 # WPP  --------------------------------------------------------------------
 # obtained Aug 2021 from Patrick: The extract covers 1950-2020 and includes all locations, including smaller unpublished ones.
+dir.wpp <- file.path(USERPROFILE, "Dropbox/UNICEF Work/WPP/")
 dir_IGME_out_folder <- get.IGMEoutput.dir(2020)
 dir_wpp_5_24   <- file.path(dir_IGME_out_folder,
                             "WPP2019", "igme_2021_WPP2019-LT_extract.csv")
-
 dt_wpp <- fread(dir_wpp_5_24)
 dt_wpp[, value:= nqx * 1000]
+uncode <- readRDS(file.path(dir.wpp, "UNPD_284LocID.rds"))
+dt_wpp <- merge(uncode, dt_wpp, by = "LocID")
+dt_wpp <- dt_wpp[AgeStart<=20]
 dt_wpp <- dt_wpp[!(AgeStart==0 & AgeSpan==5)]
-dt_wppw <- dcast.data.table(dt_wpp, LocID + Year + Sex ~ AgeStart)
-setnames(dt_wppw, c("0", "1"), c("IMR", "CMR"))
+unique(dt_wpp[, .(AgeStart, AgeSpan)])
+dt_wpp[, Year:= floor(Year)]
+dt_wpp_2019 <- dcast.data.table(dt_wpp, ISO3Code + LocID + Year + Sex ~ AgeStart)
+setnames(dt_wpp_2019, c("0", "1", "5", "10", "15", "20"), c("IMR", "CMR", "5q5", "5q10", "5q15", "5q20"))
 get.5q0 <- function(q1, q4) (1 - (1 - q1 / 1E3) * (1 - q4 / 1E3)) * 1E3
-dt_wppw[, `:=`(
+dt_wpp_2019[, `:=`(
   U5MR = get.5q0(q1 = IMR, q4 = CMR),
-  `10q5` = get.5q0(q1 = `5`, q4 = `10`),
-  `10q15` = get.5q0(q1 = `15`, q4 = `20`))]
-setnames(dt_wppw, c("LocID", "Year"), c("UNCode", "year"))
-
-fwrite(dt_wppw,
-       file.path(Sys.getenv("USERPROFILE"),
-                 "Dropbox/UN IGME data/2020 Round Estimation/Code/output/WPP2019/igme_2021_WPP2019-LT_extract_5_24_wide_ind.csv"))
+  `10q5` = get.5q0(q1 = `5q5`, q4 = `5q10`),
+  `10q15` = get.5q0(q1 = `5q15`, q4 = `5q20`))]
+dt_wpp_2019[, Sex:= dplyr::recode(Sex, "Female" = "f", "Male" = "m", "Both sexes" = "both")]
+usethis::use_data(dt_wpp_2019, overwrite = TRUE)
+fwrite(dt_wpp_2019,
+       file.path(dir.wpp, "WPP 2019/WPP2019-LT_extract_5_24_wide_ind.csv"))

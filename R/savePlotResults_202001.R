@@ -157,7 +157,7 @@ savePlotResults <- function(
   legend_ex = NULL,# used as a switch for showing expected series: blue dotted line
   wpp.cqt = NULL,  # green line
   ihme.cqt = NULL, # blue line
-  legend_WPP = "WPP 2019",
+  legend_WPP = "WPP 2022",
   legend_IHME = "IHME GBD 2019",
   ylab = NULL,
   new_entry_date = NULL,
@@ -346,7 +346,7 @@ savePlotResults <- function(
       if(!is.null(legend3)) res.cqt3 <- nmr$res3.cqt
       if(!is.null(legend_ex)) res_ex.cqt <- nmr$res_ex.cqt
       # if(!is.null(res.cqt)) dimnames(res.cqt)[[3]] <- year.t
-      if(!is.null(nmr$sex)){ # 2022.06 allowing sex-specific NMR, CMR
+      if(!is.null(nmr$sex)){ # 2022.06 allowing sex-specific input in NMR format, e.g. sex-specific 4q1
         indicator.type <- nmr$indicator_label # e.g. CMR, used in filename, could be different from ylab
         gender_title <- nmr$sex
         gender <- nmr$sex
@@ -585,8 +585,10 @@ savePlotResults <- function(
 
   # Call `PlotDataAndEstimates2020`-----------------------------------
   title1.sex <- if(!is.null(gender)) gender_title else NULL # add Male/Female in title
-  if(gender == "Total") title1.sex <- NULL # but don't add "Total"
-  
+  if(!is.null(gender)) {
+    if(gender == "Total") title1.sex <- NULL # but don't add "Total"
+  }
+
   plot.by.c <- function(c){suppressMessages(
     PlotDataAndEstimates2020(data = NULL, # YL: doesn't really need mcmc.meta$data
                          data.all = if(!HIV_removed) mcmc.meta$data.all else mcmc.meta$data.hivremoved.all,

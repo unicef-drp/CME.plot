@@ -1,161 +1,57 @@
 # Functions to create/read wpp and ihme cqt
 # Yang Liu
-# 1/3/2020
+# 2022/07
 
 
 # Read WPP -------------------------------------------------------------
 
-#' Read WPP xlsx files
-#'
-#' read from xlsx files: WPP2019_MORT_F01_2_Q5_BOTH_SEXES.xlsx, WPP2019_MORT_F01_1_IMR_BOTH_SEXES.xlsx
-#' This is the wide format dataset, columns like "1950-1955", ..., "2015-2020"
-#'
-#' @param dir_wpp dir to WPP files
-#' @param ind  Q5, IMR
-read.wpp.file <- function(dir_wpp, ind){
-  wpp <- setDT(readxl::read_xlsx(dir_wpp, skip = 16))
-  col_years <- grep("-", colnames(wpp), value = TRUE)
-  col_wanted <- c("Country code", col_years)
-  wpp_dt <- setDT(wpp)[,..col_wanted]
-  setnames(wpp_dt, c("UNCode", substr(col_years, 1, 4)))
-  wpp_long <- data.table::melt.data.table(wpp_dt, id.vars = "UNCode",
-                              variable.name = "year", variable.factor = FALSE)
-  wpp_long <- wpp_long[, lapply(.SD, as.numeric), by = .SD]
-  # adjust year to match 1953 1958 1963 1968 1973 1978 1983 1988 1993 1998 2003 2008 2013 2018
-  wpp_long[, year:=year + 3]
-  wpp_long[, ind:=ind]
-  return(wpp_long)
-}
 
-#' Read the two WPP xlsx files for U5MR and IMR into one dataset
+#' Get WPP cqt by indicator and sex (2022 version)
 #'
-#' @param dir_wpp_Q5 dir to "WPP2019_MORT_F01_2_Q5_BOTH_SEXES.xlsx"
-#' @param dir_wpp_IMR dir to "WPP2019_MORT_F01_1_IMR_BOTH_SEXES.xlsx"
-read.wpp.v2 <- function(dir_wpp_Q5, dir_wpp_IMR){
-  suppressWarnings(
-  wpp_list <- mapply(read.wpp.file, dir_wpp = c(dir_wpp_Q5, dir_wpp_IMR), ind = c("Q5", "IMR"), SIMPLIFY = FALSE)
+#' @param ind0 indicator, choose from "U5MR", "IMR", "CMR", "5q5", "5q10",
+#'   "5q15", "5q20", "10q5", "10q15"
+#' @param sex0 "f" or "m" or "both"
+#' @param iso_order isos to extract in order
+#' @param WPP_round default to 2022
+#'
+#' @return a wpp_cqt file
+#' @export get.wpp.cqt
+get.wpp.cqt <- function(ind0,
+                        sex0 = "both",
+                        iso_order = u5mr.iso.c,
+                        WPP_round = 2022
+  ){
+  stopifnot(WPP_round%in%c(2019, 2022))
+  stopifnot(sex0%in%c("f", "m", "both"))
+  stopifnot(ind0%in%c("U5MR", "IMR", "CMR", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15"))
+  dt_wpp <- switch(as.character(WPP_round),
+    "2022" = dt_wpp_2022,
+    "2019" = dt_wpp_2019
   )
-  wpp_long <- data.table::rbindlist(wpp_list)
-  wpp_dt <- data.table::dcast.data.table(wpp_long, UNCode + year ~ ind, value.var = "value")
-  setnames(wpp_dt, "Q5", "U5MR")
-  return(wpp_dt)
-}
-# wpp_dt1 <- read.wpp.v1(dir_wpp= dir_wpp_new)
-# UNCode year     IMR      U5MR
-# 1:    108 1950 169.825 286.357
-# 2:    108 1951 168.932 284.860
-# wpp_dt2 <- read.wpp.v2(dir_wpp_Q5, dir_wpp_IMR)
-# UNCode year       IMR        U5MR
-# 1:      4 1953 275.86600 405.09000
-# 2:      4 1958 253.64700 374.13800
 
+  dt_wpp_sub <- dt_wpp[ISO3Code %in% iso_order & Sex==sex0, ]
+  years <- sort(unique(dt_wpp_sub[ ,Year]))
 
-#' Read from WPP life table: seperate files for male / female
-#'
-#'  The XLSX files are:
-#' WPP2019_MORT_F17_3_ABRIDGED_LIFE_TABLE_FEMALE.xlsx
-#' WPP2019_MORT_F17_3_ABRIDGED_LIFE_TABLE_MALE.xlsx
-#'
-#' @param dir_wpp_LT dir to WPP life table
-read.wpp.v3 <- function(dir_wpp_LT){
-  wpp <- setDT(readxl::read_xlsx(dir_wpp_LT, skip = 16))
-  wpp[, x_n := paste(`Age (x)`, `Age interval (n)`, sep = "_")]
-  wpp <- wpp[x_n %in% c("0_1", "1_4"),]
-  setnames(wpp, c("Country code", "Probability of dying q(x,n)"), c("UNCode", "qxn"))
-  # P(Dying)
-  wpp[, qxn := as.numeric(qxn)]
-  wpp <- wpp[,.(UNCode, Period, x_n, qxn)]
-  wpp_wide <- data.table::dcast.data.table(wpp, UNCode + Period ~ x_n, value.var = "qxn")
+  # just in case iso_order has ISOS outside dt_wpp, which should be none in 2022
+  ISO_missing <-  iso_order[!iso_order%in%dt_wpp_sub$ISO3Code]
+  if(length(ISO_missing)!=0) message("Notice isos in iso_order not in WPP:", paste(ISO_missing, collapse = ","))
+  wpp_dt_NA <- expand.grid(ISO3Code = ISO_missing, Year = years)
+  dt_wpp_sub <- rbind(dt_wpp_sub, wpp_dt_NA, fill = TRUE)
 
-  # Calculate IMR and Q5 from q(0,1) and q(1,4)
-  get.U5MR <- function(q01, q14) (1-(1-q01)*(1-q14)) * 1000
-  wpp_wide[, IMR:=`0_1`*1000]
-  wpp_wide[, U5MR:= get.U5MR(q01 = `0_1`, q14 = `1_4`)]
-
-  # adjust year to match 1953 1958 1963 1968 1973 1978 1983 1988 1993 1998 2003 2008 2013 2018
-  wpp_wide[, year:=as.numeric(substr(Period, 1,4)) + 3]
-  return(wpp_wide[,.(UNCode, year, IMR, U5MR)])
-}
-
-
-#' Function to get `wpp.cqt` for all indicators for total sex
-#'
-#' @param ind name of the indicator: Q5, Q1, or U5MR, IMR
-#' @param wpp_dt WPP dt, if supply, ignore dir_wpp. Used for obtaining
-#'   sex-specific WPP
-#' @param new_cnames0 `new_cnames`
-#' @param dir_wpp_Q5 dir to WPP U5MR
-#' @param dir_wpp_IMR dir to WPP IMR
-#' @param iso_order the iso order from mcmc.meta that we want to match
-#'
-#' @return wpp.cqt
-get.wpp.cqt <- function(
-  wpp_dt = NULL,
-  dir_wpp_Q5 = dir_wpp_Q5,
-  dir_wpp_IMR = dir_wpp_IMR,
-  ind = "U5MR", # default to read U5MR, could be Q5 / U5mR or Q1 / IMR
-  iso_order = u5mr.iso.c,
-  new_cnames0 = new_cnames
-){
-  #
-  ind_vector <- c("Q5", "Q1")
-  ind_vector2 <- c("U5MR", "IMR", "10q5", "10q15")
-  new_list <- list("Q5" = "U5MR", "Q1" = "IMR")
-  if(ind%in%ind_vector) ind <- get.match(ind, new_list = new_list)
-  if (!ind %in% ind_vector2) stop("`ind` should be among ",
-                                                 paste(c(ind_vector, ind_vector2), collapse = ", "))
-  if(is.null(wpp_dt)) wpp_dt <- read.wpp.v2(dir_wpp_Q5, dir_wpp_IMR)
-  setkey(wpp_dt, UNCode)
-  setDT(new_cnames0)
-  setkey(new_cnames0, UNCode)
-  # not all the wpp are in our 195 list, so fill NA to the rest
-  # 184 isos co-exist
-  wpp_dt_iso <- new_cnames0[,.(ISO3Code, UNCode)][wpp_dt, nomatch = 0][, c("ISO3Code", "year", ind), with = FALSE]
-  wpp_dt_iso <- wpp_dt_iso[ISO3Code%in%iso_order]
-  message("wpp_dt_iso contains ", wpp_dt_iso[,uniqueN(ISO3Code)], " countries.")
-  years <- unique(wpp_dt_iso[ ,year]) # 14 years interval
-  ISO_missing <-  iso_order[!iso_order%in%wpp_dt_iso$ISO3Code] # 11 isos, in total 195
-  wpp_dt_NA <- expand.grid(ISO3Code = ISO_missing, year = years)
-  wpp_dt_iso <- rbind(wpp_dt_iso, wpp_dt_NA, fill = T)
-  # maybe not the best way, not easy , manually match the iso order, as reordering array with one dimension = 1 removes that dimension
-  wpp_dt_iso <- wpp_dt_iso[order(match(ISO3Code, rep(iso_order, each = length(years))))]
-  setorder(wpp_dt_iso, year) # set the right order is the key to produce right array
+  dt_wpp_sub <- dt_wpp_sub[order(match(ISO3Code, rep(iso_order, each = length(years))))]
+  setorder(dt_wpp_sub, Year) # set the right order is the key to produce right array
   # melt into array
-  wpp.cqt <- array(data = wpp_dt_iso[[ind]],
-                      dim = c(length(iso_order),
-                              1,
-                              length(years)),
-                      dimnames = list(iso_order,
-                                      "0.5",
-                                      years))
+  wpp.cqt <- array(data = dt_wpp_sub[[ind0]],
+                   dim = c(length(iso_order),
+                           1,
+                           length(years)),
+                   dimnames = list(iso_order,
+                                   "0.5",
+                                   years))
   return(wpp.cqt)
 }
-
-
-#' Get sex-specific wpp cqt using prepared data `wpp_2019_cqt_by_sex`
-#'
-#' @param ind0 indicator
-#' @param sex0 "f" or "m"
-#' @param year default to 2019
-#' @return a wpp_cqt file
-#' @export get.sex.wpp.cqt
-get.sex.wpp.cqt <- function(ind0,
-                            sex0,
-                            year = 2019
-                            ){
-  if (!sex0%in%c("f", "m")) stop("sex is either f or m")
-
-  if(year == 2019){
-    dt_wpp <- wpp_2019_cqt_by_sex # created in "data-raw/2.Get_WPP_IHME_cqt.R"
-  } else {
-    stop("only year 2019 WPP is available for now")
-  }
-  dt_wpp <- if(sex0 == "f") dt_wpp[sex=="f"] else dt_wpp[sex=="m"]
-  wpp_cqt <- get.wpp.cqt(wpp_dt = dt_wpp, ind = ind0, iso_order = sexspecific.iso.c)
-  return(wpp_cqt)
-}
-
-
+# e.g.
+# get.wpp.cqt("U5MR", "f", u5mr.iso.c, 2022)[1,,]
 
 
 

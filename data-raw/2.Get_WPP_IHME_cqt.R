@@ -1,4 +1,5 @@
-# functions to make IHME and WPP cqt files
+# functions to make IHME and WPP cqt data
+# WPP part is out-dated
 
 devtools::load_all()
 
@@ -35,6 +36,7 @@ load.more.file.paths()
 
 
 # WPP 2019 ----------------------------------------------------------------
+#
 # WPP has no CI, only estimates
 # U5MR
 u5mr.wpp.cqt.2019 <- get.wpp.cqt(dir_wpp_Q5 = dir_wpp_Q5,

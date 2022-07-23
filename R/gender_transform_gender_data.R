@@ -29,11 +29,14 @@ transformdataSexSpecific <- function(
   sex,
   iso,
   new.cname.df,
-  resultsiso,
   resultsfile_cqt = NULL, ##<< the estimates from resultfile
+  resultsiso, # the ordered iso from resultsfile
   expectedresultsfile_cqt = NULL, ## the expected results from resultfile
   resultsfile_cqt2=NULL,
+  resultsiso2 = NULL,  # since ISO order could differ YL 2022.07
   resultsfile_cqt3=NULL,
+  resultsiso3 = NULL,
+  
   year_range = NULL,
   crisisadjfile = NULL, ##default NULL, exclude data in the crisis year
   mlinfo = NULL
@@ -98,7 +101,8 @@ transformdataSexSpecific <- function(
   df <- get.new.series.mark.entry(df, new_entry_date)
 
   # For setting the right dimension of res.cqt
-  year.u.t <- 1950.5:2030.5 # sorry for the hard coding
+  year.u.t <- as.numeric(dimnames(resultsfile_cqt)[[3]]) # which is 1950: 2030
+  if(length(year.u.t)==0) year.u.t <- 1950:2030
 
   # if `year_range` is provided, set the uplimit of year.u.t
   if(!is.null(year_range)) {
@@ -126,9 +130,9 @@ transformdataSexSpecific <- function(
   res_ex.cqt=array(dim=c(length(iso),3,length(year.u.t)),dimnames = list(iso,c(0.05,0.5,0.95),year.u.t))
 
   #Other estimates to show
-  res2.cqt=array(dim=c(length(iso),3,length(year.u.t)),dimnames = list(iso,c(0.05,0.5,0.95),year.u.t))
-  res3.cqt=array(dim=c(length(iso),3,length(year.u.t)),dimnames = list(iso,c(0.05,0.5,0.95),year.u.t))
-
+  res2.cqt=array(dim=c(length(resultsiso2),3,length(year.u.t)),dimnames = list(resultsiso2,c(0.05,0.5,0.95),year.u.t))
+  res3.cqt=array(dim=c(length(resultsiso3),3,length(year.u.t)),dimnames = list(resultsiso3,c(0.05,0.5,0.95),year.u.t))
+  
   #u.ct=matrix(NA,ncol=84,nrow=length(iso))
   #t=matrix(NA,ncol=84,nrow=length(iso))
 
@@ -260,6 +264,7 @@ transformdataSexSpecific <- function(
         mlb3info=read.csv(mlinfo,header=TRUE,stringsAsFactors = F)
         imrinclude=subset(mlb3info,mlb3info$iso.c==iso.selected)
         includeornot=ifelse(imrinclude$imrmethod.c=="B3",1,0)
+        if(nrow(imrinclude)==0) includeornot = 0 # YL 2022.07
       } else if(indicator=="Infant Mortality Rate" & is.null(mlinfo)){
         includeornot=0
       }
@@ -308,72 +313,80 @@ transformdataSexSpecific <- function(
 
     ###### result
     # year series for estimation and expectation
-    cn <- which(resultsiso==paste(iso.selected)) # position of the iso code in the iso code list
 
-    ####=====estimation ####
-    if(sex=="Male"|sex=="Female"){
-      if (!is.null(resultsfile_cqt)){
-        res = resultsfile_cqt[cn,,1:length(year.u.t)]*1000 #
+    ####=====estimation 1 ###
+    if(!is.null(resultsfile_cqt)){
+      cn <- which(resultsiso == iso.selected) # position of the iso code in the iso code list
+      if(length(cn)==1){
+        # this means iso.selected has results
+        if(sex=="Male"|sex=="Female"){
+          res = resultsfile_cqt[cn,,1:length(year.u.t)]*1000
+        } else {
+          res = resultsfile_cqt[cn,,1:length(year.u.t)] # for ratio
+        }
         res_med=res[2,]
         res_upper=res[3,]
         res_lower=res[1,]
-        res.cqt[c,1,]=res_lower
-        res.cqt[c,2,]=res_med
-        res.cqt[c,3,]=res_upper
-      }} else {
-        if (!is.null(resultsfile_cqt)){
-          res = resultsfile_cqt[cn,,1:length(year.u.t)]
-          res_med=res[2,]
-          res_upper=res[3,]
-          res_lower=res[1,]
-          res.cqt[c,1,]=res_lower
-          res.cqt[c,2,]=res_med
-          res.cqt[c,3,]=res_upper
-        }}
-
-
-    ####=====estimation 2
-    if(sex=="Male"|sex=="Female"){
-      if (!is.null(resultsfile_cqt2)){
-        res2 = resultsfile_cqt2[cn,,1:length(year.u.t)]*1000 #
-        res2_med=res2[2,]
-        res2_upper=res2[3,]
-        res2_lower=res2[1,]
-        res2.cqt[c,1,]=res2_lower
-        res2.cqt[c,2,]=res2_med
-        res2.cqt[c,3,]=res2_upper
-      }} else {
-        if (!is.null(resultsfile_cqt2)){
-          res2 = resultsfile_cqt2[cn,,1:length(year.u.t)]
-          res2_med=res2[2,]
-          res2_upper=res2[3,]
-          res2_lower=res2[1,]
-          res2.cqt[c,1,]=res2_lower
-          res2.cqt[c,2,]=res2_med
-          res2.cqt[c,3,]=res2_upper
-        }}
-
-    ####=====estimation 3
-    if(sex=="Male"|sex=="Female"){
-      if (!is.null(resultsfile_cqt3)){
-        res3 = resultsfile_cqt3[cn,,1:length(year.u.t)]*1000 #
-        res3_med=res3[2,]
-        res3_upper=res3[3,]
-        res3_lower=res3[1,]
-        res3.cqt[c,1,]=res3_lower
-        res3.cqt[c,2,]=res3_med
-        res3.cqt[c,3,]=res3_upper
-      }} else {
-        if (!is.null(resultsfile_cqt3)){
-          res3 = resultsfile_cqt3[cn,,1:length(year.u.t)] #
-          res3_med=res3[2,]
-          res3_upper=res3[3,]
-          res3_lower=res3[1,]
-          res3.cqt[c,1,]=res3_lower
-          res3.cqt[c,2,]=res3_med
-          res3.cqt[c,3,]=res3_upper
-        }
+      } else {
+        # NA
+        res_med  = rep(NA, length(year.u.t))
+        res_upper= rep(NA, length(year.u.t))
+        res_lower= rep(NA, length(year.u.t))
       }
+      res.cqt[cn,1,]=res_lower
+      res.cqt[cn,2,]=res_med
+      res.cqt[cn,3,]=res_upper
+    }
+    
+    ####=====estimation 2 ###
+    if(!is.null(resultsfile_cqt2)){
+      cn2 <- which(resultsiso2 == iso.selected) # position of the iso code in the iso code list
+      if(length(cn2)==1){
+        # this means iso.selected has results
+        if(sex=="Male"|sex=="Female"){
+          res = resultsfile_cqt2[cn2,,1:length(year.u.t)]*1000
+        } else {
+          res = resultsfile_cqt2[cn2,,1:length(year.u.t)] # for ratio
+        }
+        res_med=res[2,]
+        res_upper=res[3,]
+        res_lower=res[1,]
+      } else {
+        # NA
+        res_med  = rep(NA, length(year.u.t))
+        res_upper= rep(NA, length(year.u.t))
+        res_lower= rep(NA, length(year.u.t))
+      }
+      res2.cqt[cn2,1,]=res_lower
+      res2.cqt[cn2,2,]=res_med
+      res2.cqt[cn2,3,]=res_upper
+    }
+    
+    ####=====estimation 3 ###
+    if(!is.null(resultsfile_cqt3)){
+      
+      cn3 <- which(resultsiso3 == iso.selected) # position of the iso code in the iso code list
+      if(length(cn3)==1){
+        # this means iso.selected has results
+        if(sex=="Male"|sex=="Female"){
+          res = resultsfile_cqt3[cn3,,1:length(year.u.t)]*1000
+        } else {
+          res = resultsfile_cqt3[cn3,,1:length(year.u.t)] # for ratio
+        }
+        res_med=res[2,]
+        res_upper=res[3,]
+        res_lower=res[1,]
+      } else {
+        # NA
+        res_med  = rep(NA, length(year.u.t))
+        res_upper= rep(NA, length(year.u.t))
+        res_lower= rep(NA, length(year.u.t))
+      }
+      res3.cqt[cn3,1,]=res_lower
+      res3.cqt[cn3,2,]=res_med
+      res3.cqt[cn3,3,]=res_upper
+    }
+    
 
 
     ####=====expectation
@@ -409,7 +422,7 @@ transformdataSexSpecific <- function(
     for (c in isonodatanumber){
       print(c)
       iso.selected=as.character(iso[c])
-      cn<- which(resultsiso==paste(iso.selected)) # position of the iso code in the iso code list
+      cn <- which(resultsiso==paste(iso.selected)) # position of the iso code in the iso code list
       cat(paste(iso.selected,'has no data in the database so only plot the results','\n'))
       name.c[c]=as.character(new.cname.df$OfficialName[new.cname.df$ISO3Code==iso.selected])
 
@@ -436,29 +449,81 @@ transformdataSexSpecific <- function(
       uvr.Lc.j[[c]]=NA
       #### end of construct mcmc.meta
 
-      ### construct result
-      ###### result
-      ####=====estimation
-      if(sex=="Male"|sex=="Female"){
-        if (!is.null(resultsfile_cqt)){
-          res = resultsfile_cqt[cn,,1:length(year.u.t)]*1000 #
+      ### add results for no data countries
+      
+      ####=====estimation 1 ###
+      if(!is.null(resultsfile_cqt)){
+        cn <- which(resultsiso == iso.selected) # position of the iso code in the iso code list
+        if(length(cn)==1){
+          # this means iso.selected has results
+          if(sex=="Male"|sex=="Female"){
+            res = resultsfile_cqt[cn,,1:length(year.u.t)]*1000
+          } else {
+            res = resultsfile_cqt[cn,,1:length(year.u.t)] # for ratio
+          }
           res_med=res[2,]
           res_upper=res[3,]
           res_lower=res[1,]
-          res.cqt[c,1,]=res_lower
-          res.cqt[c,2,]=res_med
-          res.cqt[c,3,]=res_upper
-        } } else {
-          if (!is.null(resultsfile_cqt)){
-            res = resultsfile_cqt[cn,,1:length(year.u.t)] #
-            res_med=res[2,]
-            res_upper=res[3,]
-            res_lower=res[1,]
-            res.cqt[c,1,]=res_lower
-            res.cqt[c,2,]=res_med
-            res.cqt[c,3,]=res_upper
-          }
+        } else {
+          # NA
+          res_med  = rep(NA, length(year.u.t))
+          res_upper= rep(NA, length(year.u.t))
+          res_lower= rep(NA, length(year.u.t))
         }
+        res.cqt[cn,1,]=res_lower
+        res.cqt[cn,2,]=res_med
+        res.cqt[cn,3,]=res_upper
+      }
+      
+      ####=====estimation 2 ###
+      if(!is.null(resultsfile_cqt2)){
+        cn2 <- which(resultsiso2 == iso.selected) # position of the iso code in the iso code list
+        if(length(cn2)==1){
+          # this means iso.selected has results
+          if(sex=="Male"|sex=="Female"){
+            res = resultsfile_cqt2[cn2,,1:length(year.u.t)]*1000
+          } else {
+            res = resultsfile_cqt2[cn2,,1:length(year.u.t)] # for ratio
+          }
+          res_med=res[2,]
+          res_upper=res[3,]
+          res_lower=res[1,]
+        } else {
+          # NA
+          res_med  = rep(NA, length(year.u.t))
+          res_upper= rep(NA, length(year.u.t))
+          res_lower= rep(NA, length(year.u.t))
+        }
+        res2.cqt[cn2,1,]=res_lower
+        res2.cqt[cn2,2,]=res_med
+        res2.cqt[cn2,3,]=res_upper
+      }
+      
+      ####=====estimation 3 ###
+      if(!is.null(resultsfile_cqt3)){
+        
+        cn3 <- which(resultsiso3 == iso.selected) # position of the iso code in the iso code list
+        if(length(cn3)==1){
+          # this means iso.selected has results
+          if(sex=="Male"|sex=="Female"){
+            res = resultsfile_cqt3[cn3,,1:length(year.u.t)]*1000
+          } else {
+            res = resultsfile_cqt3[cn3,,1:length(year.u.t)] # for ratio
+          }
+          res_med=res[2,]
+          res_upper=res[3,]
+          res_lower=res[1,]
+        } else {
+          # NA
+          res_med  = rep(NA, length(year.u.t))
+          res_upper= rep(NA, length(year.u.t))
+          res_lower= rep(NA, length(year.u.t))
+        }
+        res3.cqt[cn3,1,]=res_lower
+        res3.cqt[cn3,2,]=res_med
+        res3.cqt[cn3,3,]=res_upper
+      }
+      
 
       # if(!is.null(expectedresultsfile_cqt)){
       #   res_ex=results_ex[,,iso_selected]
@@ -474,36 +539,13 @@ transformdataSexSpecific <- function(
       #   year.t[[c]]=seq.years
       # }
 
-      ###############Kai's change
-      if(sex=="Male"|sex=="Female"){
-        if (!is.null(resultsfile_cqt2)){
-          res2 = resultsfile_cqt2[cn,,1:length(year.u.t)]*1000 #
-          res2_med=res2[2,]
-          res2_upper=res2[3,]
-          res2_lower=res2[1,]
-          res2.cqt[c,1,]=res2_lower
-          res2.cqt[c,2,]=res2_med
-          res2.cqt[c,3,]=res2_upper
-        }} else {
-          if (!is.null(resultsfile_cqt2)){
-            res2 = resultsfile_cqt2[cn,,1:length(year.u.t)] #
-            res2_med=res2[2,]
-            res2_upper=res2[3,]
-            res2_lower=res2[1,]
-            res2.cqt[c,1,]=res2_lower
-            res2.cqt[c,2,]=res2_med
-            res2.cqt[c,3,]=res2_upper
-          }
-        }
-
-
       a=a+1
     }
 
   } #there is country with no data
 
 
-  c=195
+  c=length(resultsiso)
   #add an extra c+1 to avoid error
   u.Lcs.j[[c+1]]=year.Lcs.j[[c+1]]=se.Lcs.j[[c+1]]=included.Lcs.j[[c+1]]=sourcetype.Lc.s[[c+1]]=seriesyear.Lc.s[[c+1]]=
     source.Lc.s[[c+1]]=hasbias.Lc.s[[c+1]]=method.Lc.s[[c+1]]=list()

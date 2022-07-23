@@ -12,11 +12,13 @@ transformdataSexSpecific(
   sex,
   iso,
   new.cname.df,
-  resultsiso,
   resultsfile_cqt = NULL,
+  resultsiso,
   expectedresultsfile_cqt = NULL,
   resultsfile_cqt2 = NULL,
+  resultsiso2 = NULL,
   resultsfile_cqt3 = NULL,
+  resultsiso3 = NULL,
   year_range = NULL,
   crisisadjfile = NULL,
   mlinfo = NULL
@@ -37,9 +39,9 @@ transformdataSexSpecific(
 
 \item{new.cname.df}{dataset contains both iso and official country name}
 
-\item{resultsiso}{the desired iso order for results}
-
 \item{resultsfile_cqt}{results file for cqt1}
+
+\item{resultsiso}{the desired iso order for results}
 
 \item{expectedresultsfile_cqt}{results file for cqt expected}
 

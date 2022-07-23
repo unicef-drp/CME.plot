@@ -59,7 +59,7 @@ transformdataforNMR = function(
                         crisisadjfile = crisisadjfile)
   # dt5 is just the U5 median estimates
   du5 <- GetDataU5MRNMR(adj = adj)
-  iso.u.c=du5$iso.u.c
+  iso.u.c <- du5$iso.u.c
 
   df=d$df
   df$seriesname.i=as.character(df$seriesname.i)
@@ -182,7 +182,7 @@ transformdataforNMR = function(
 
   for (c in isonumber){ # the ith country in the selected iso list
 
-    iso.selected=as.character(iso[c])
+    iso.selected = as.character(iso[c])
     message("iso.selected is ",iso.selected)
 
     if (iso.selected %in% iso.i){
@@ -276,7 +276,7 @@ transformdataforNMR = function(
 
    ###### result
    # year series for estimation and expectation
-   cn <- which(iso.u.c==paste(iso.selected)) # position of the iso code in the iso code list
+   cn <- which(iso.u.c== iso.selected) # position of the iso code in the iso code list
    # ???
    minyear <- min(1990.5, min(df$year.i[paste(df$iso.i)==paste(iso.selected)],na.rm = T),na.rm = T) #change 0706 YL:???
    minyear <- min(year_range)
@@ -291,28 +291,52 @@ transformdataforNMR = function(
    res_upper=apply(res,2,function(x) quantile(x,0.95,na.rm = T))
    res_lower=apply(res,2,function(x) quantile(x,0.05,na.rm = T))
    #names(res_upper)=year.u.t
-   res.cqt[c,1,] <- res_lower[1:which(names(res_lower)==max(year_range))] # DJS edit to only plot to max of year, so not to 2030 unless specified
-   res.cqt[c,2,] <- res_med[1:which(names(res_med)==max(year_range))]
-   res.cqt[c,3,] <- res_upper[1:which(names(res_upper)==max(year_range))]
+   res.cqt[cn,1,] <- res_lower[1:which(names(res_lower)==max(year_range))] # DJS edit to only plot to max of year, so not to 2030 unless specified
+   res.cqt[cn,2,] <- res_med[1:which(names(res_med)==max(year_range))]
+   res.cqt[cn,3,] <- res_upper[1:which(names(res_upper)==max(year_range))]
    }
 
 
    ####=====estimation 2
-
    if (!is.null(resultsfile2)){
-    res2 = results2[,,cn] #
-    res2_med=apply(res2, 2, function(x) median(x,na.rm=T))
-    res2_upper=apply(res2,2,function(x) quantile(x,0.95,na.rm = T))
-    res2_lower=apply(res2,2,function(x) quantile(x,0.05,na.rm = T))
-    names(res2_upper)=year.u.t
-
-    res2.cqt[c,1,]=res2_lower[1:which(names(res2_lower)==max(year_range))]
-    res2.cqt[c,2,]=res2_med[1:which(names(res2_med)==max(year_range))]
-    res2.cqt[c,3,]=res2_upper[1:which(names(res2_upper)==max(year_range))]
+     isos_results2 <- dimnames(results2)[[3]]
+     years_results2 <- dimnames(results2)[[2]]
+     if(iso.selected %in% isos_results2){
+       cn2 = which(isos_results2 == iso.selected)
+       res2 = results2[,,cn2] #
+       res2_med = apply(res2, 2, function(x) median(x,na.rm=T))
+       res2_upper = apply(res2,2,function(x) quantile(x,0.95,na.rm = T))
+       res2_lower = apply(res2,2,function(x) quantile(x,0.05,na.rm = T))
+     } else {
+       res2_med <- rep(NA, length(years_results2)); names(res2_med) <- years_results2
+       res2_upper <- rep(NA, length(years_results2)); names(res2_upper) <- years_results2
+       res2_lower <- rep(NA, length(years_results2)); names(res2_lower) <- years_results2
+     }
+    res2.cqt[cn2,1,]=res2_lower[1:which(names(res2_lower)==max(year_range))]
+    res2.cqt[cn2,2,]=res2_med[1:which(names(res2_med)==max(year_range))]
+    res2.cqt[cn2,3,]=res2_upper[1:which(names(res2_upper)==max(year_range))]
    }
 
    ####=====estimation 3
-
+   if (!is.null(resultsfile3)){
+     isos_results3 <- dimnames(results3)[[3]]
+     years_results3 <- dimnames(results3)[[2]]
+     if(iso.selected %in% isos_results2){
+       cn3 = which(isos_results3 == iso.selected)
+       res3 = results3[,,cn3] #
+       res3_med = apply(res3, 2, function(x) median(x,na.rm=T))
+       res3_upper = apply(res3,2,function(x) quantile(x,0.95,na.rm = T))
+       res3_lower = apply(res3,2,function(x) quantile(x,0.05,na.rm = T))
+     } else {
+       res3_med <- rep(NA, length(years_results3));   names(res3_med) <- years_results3
+       res3_upper <- rep(NA, length(years_results3)); names(res3_upper) <- years_results3
+       res3_lower <- rep(NA, length(years_results3)); names(res3_lower) <- years_results3
+     }
+     res3.cqt[cn3,1,] = res3_lower[1:which(names(res3_lower)==max(year_range))]
+     res3.cqt[cn3,2,] = res3_med[1:which(names(res3_med)==max(year_range))]
+     res3.cqt[cn3,3,] = res3_upper[1:which(names(res3_upper)==max(year_range))]
+   }
+   
    if (!is.null(resultsfile3)){
     res3 = results3[,,cn] #
     res3_med=apply(res3, 2, function(x) median(x,na.rm=T))
@@ -431,11 +455,18 @@ transformdataforNMR = function(
 
       ############### Kai's change
       if (!is.null(resultsfile2)){
-        res2 = results2[,,iso.selected] #
-        res2_med=apply(res2, 2, function(x) median(x,na.rm=T))
-        res2_upper=apply(res2,2,function(x) quantile(x,0.95,na.rm = T))
-        res2_lower=apply(res2,2,function(x) quantile(x,0.05,na.rm = T))
-        names(res2_upper)=year.u.t
+        isos_results2 <- dimnames(results2)[[3]]
+        years_results2 <- dimnames(results2)[[2]]
+        if(iso.selected %in% isos_results2){
+          res2 = results2[,,cn] #
+          res2_med=apply(res2, 2, function(x) median(x,na.rm=T))
+          res2_upper=apply(res2,2,function(x) quantile(x,0.95,na.rm = T))
+          res2_lower=apply(res2,2,function(x) quantile(x,0.05,na.rm = T))
+        } else {
+          res2_med <- rep(NA, length(years_results2)); names(res2_med) <- years_results2
+          res2_upper <- rep(NA, length(years_results2)); names(res2_upper) <- years_results2
+          res2_lower <- rep(NA, length(years_results2)); names(res2_lower) <- years_results2
+        }
 
         # res2.cqt[c,1,]=res2_lower
         # res2.cqt[c,2,]=res2_med
@@ -462,7 +493,7 @@ transformdataforNMR = function(
 
   } #there is country with no data
 
-  c = 195
+  c = length(iso)
   #add an extra c+1 to avoid error
     u.Lcs.j[[c+1]]=year.Lcs.j[[c+1]]=se.Lcs.j[[c+1]]=included.Lcs.j[[c+1]]=sourcetype.Lc.s[[c+1]]=seriesyear.Lc.s[[c+1]]=
       source.Lc.s[[c+1]]=hasbias.Lc.s[[c+1]]=method.Lc.s[[c+1]]=list()
