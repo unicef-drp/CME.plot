@@ -103,6 +103,7 @@ transformdataSexSpecific <- function(
   # For setting the right dimension of res.cqt
   year.u.t <- as.numeric(dimnames(resultsfile_cqt)[[3]]) # which is 1950: 2030
   if(length(year.u.t)==0) year.u.t <- 1950:2030
+  year.u.t <- floor(year.u.t) + 0.5
 
   # if `year_range` is provided, set the uplimit of year.u.t
   if(!is.null(year_range)) {

@@ -260,8 +260,8 @@ mark.new.series <- function(mcmc.meta, new.sourceID.i, HIV_removed = FALSE){
 #' filename_old = "data_U5MR_20191018.csv")
 #' }
 find.dir.for.VR.comparison <- function(
-  IGME_year_new = floor(this.year()), # Year to look for the IGME `Input` dir
-  IGME_year_old = floor(last.year()),
+  IGME_year_new = floor(current.year()), # Year to look for the IGME `Input` dir
+  IGME_year_old = floor(current.year()-1),
   filename_new = NULL,
   filename_old = NULL # e.g. "data_U5MR_20191018.csv"
 ){

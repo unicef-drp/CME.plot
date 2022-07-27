@@ -12,7 +12,7 @@ get.wpp.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c, WPP_round = 2022)
 
 \item{sex0}{"f" or "m" or "both"}
 
-\item{iso_order}{isos to extract in order}
+\item{iso_order}{the order of isos in the cqt file}
 
 \item{WPP_round}{default to 2022}
 }
@@ -20,5 +20,8 @@ get.wpp.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c, WPP_round = 2022)
 a wpp_cqt file
 }
 \description{
-Get WPP cqt by indicator and sex (2022 version)
+Note that the iso order of the WPP cqt doesn't matter, (it only needs to have
+named dimensions). In `savePlotResults` we will rematch iso order, by default
+we use `u5mr.iso.c`, which should include all the countries that we wish to
+see
 }

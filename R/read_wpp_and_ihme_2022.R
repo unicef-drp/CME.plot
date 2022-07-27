@@ -6,16 +6,21 @@
 # Read WPP -------------------------------------------------------------
 
 
-#' Get WPP cqt by indicator and sex (2022 version)
+#'Get WPP cqt by indicator and sex (2022 version)
 #'
-#' @param ind0 indicator, choose from "U5MR", "IMR", "CMR", "5q5", "5q10",
-#'   "5q15", "5q20", "10q5", "10q15"
-#' @param sex0 "f" or "m" or "both"
-#' @param iso_order isos to extract in order
-#' @param WPP_round default to 2022
+#'Note that the iso order of the WPP cqt doesn't matter, (it only needs to have
+#'named dimensions). In `savePlotResults` we will rematch iso order, by default
+#'we use `u5mr.iso.c`, which should include all the countries that we wish to
+#'see
 #'
-#' @return a wpp_cqt file
-#' @export get.wpp.cqt
+#'@param ind0 indicator, choose from "U5MR", "IMR", "CMR", "5q5", "5q10",
+#'  "5q15", "5q20", "10q5", "10q15"
+#'@param sex0 "f" or "m" or "both"
+#'@param iso_order the order of isos in the cqt file
+#'@param WPP_round default to 2022
+#'
+#'@return a wpp_cqt file
+#'@export get.wpp.cqt
 get.wpp.cqt <- function(ind0,
                         sex0 = "both",
                         iso_order = u5mr.iso.c,
@@ -23,15 +28,16 @@ get.wpp.cqt <- function(ind0,
   ){
   stopifnot(WPP_round%in%c(2019, 2022))
   stopifnot(sex0%in%c("f", "m", "both"))
-  stopifnot(ind0%in%c("U5MR", "IMR", "CMR", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15"))
+  stopifnot(ind0%in%c("U5MR", "Q5", "IMR", "Q1", "CMR", "Q4", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15"))
   dt_wpp <- switch(as.character(WPP_round),
     "2022" = dt_wpp_2022,
     "2019" = dt_wpp_2019
   )
-
+  new_list <- list("Q5" = "U5MR", "Q1" = "IMR", "Q4" = "CMR")
+  ind0 <- get.match(ind0, new_list = new_list)
   dt_wpp_sub <- dt_wpp[ISO3Code %in% iso_order & Sex==sex0, ]
   years <- sort(unique(dt_wpp_sub[ ,Year]))
-
+  years <- floor(years) + 0.5
   # just in case iso_order has ISOS outside dt_wpp, which should be none in 2022
   ISO_missing <-  iso_order[!iso_order%in%dt_wpp_sub$ISO3Code]
   if(length(ISO_missing)!=0) message("Notice isos in iso_order not in WPP:", paste(ISO_missing, collapse = ","))

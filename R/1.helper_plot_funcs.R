@@ -116,18 +116,11 @@ get.mcmc.meta.dir <- function(output.dir, gender_ind, gender){
   return(file_dir)
 }
 
-#' What year is last year?
-#' @return e.g. 2019.5
-#' @export last.year
-last.year <- function(){
-  as.numeric(format(Sys.Date(), "%Y")) - 0.5
-}
-
-#' What year is this year?
-#' @return e.g. 2020.5
-#' @export this.year
-this.year <- function(){
-  as.numeric(format(Sys.Date(), "%Y")) + 0.5
+#' What year is the current year
+#' @return e.g. 2022
+#' @export current.year
+current.year <- function(){
+  as.numeric(format(Sys.Date(), "%Y")) 
 }
 
 #' Check if some rda files exist
@@ -343,10 +336,10 @@ match.cqt.iso <- function(iso.c1, res.cqt2){
 set.cqt.year.limit <- function(
   res.cqt = NULL,
   year_start = NULL,
-  year_end = last.year()
+  year_end = NULL
   ){
   if(is.null(res.cqt)) return(NULL)
-  year.t <- as.numeric(dimnames(res.cqt)[[3]])
+  year.t <- floor(as.numeric(dimnames(res.cqt)[[3]]))
   # adjust res.cqt
   if (!is.null(year_start)) {
     if (year_start > min(year.t)) {

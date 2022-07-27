@@ -527,17 +527,15 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
     }
 
 
-    if (!is.null(CIs4.cqt)) # darkred "#c7202e"
-      PlotCIs(c = c, CIs.cqt = CIs4.cqt, year.t = est.years, col.est = "#c7202e", col.CI = col.CI4)
+    if (!is.null(CIs4.cqt)) # "#6A1E74"
+      PlotCIs(c = c, CIs.cqt = CIs4.cqt, year.t = est.years, col.est = "#6A1E74", col.CI = col.CI4)
     if (!is.null(CIs3.cqt))
       PlotCIs(c = c, CIs.cqt = CIs3.cqt, year.t = est.years, col.est = "#0058AB", col.CI = col.CI3)
     if (!is.null(CIs2.cqt)){
-      PlotCIs(c = c, CIs.cqt = CIs2.cqt, year.t = est.years, col.est =
-                "green", col.CI = col.CI2)
+      PlotCIs(c = c, CIs.cqt = CIs2.cqt, year.t = est.years, col.est = "green", col.CI = col.CI2)
     }
     if (!is.null(CIs_ex.cqt)){
-      PlotCIs(c = c, CIs.cqt = CIs_ex.cqt, year.t = est.years, col.est =
-                "#F26A21", col.CI = col.CI_ex)
+      PlotCIs(c = c, CIs.cqt = CIs_ex.cqt, year.t = est.years, col.est = "#F26A21", col.CI = col.CI_ex)
     }
     if (!is.null(CIs.iid.cqt))
       PlotCIs(c = c, CIs.cqt = CIs.iid.cqt, year.t = est.years, col.est = "steelblue", col.CI = col.un)
@@ -560,7 +558,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
     # }
     if (!is.null(wpp_and_completeihme$wpp.cqt)){
       # 2nd dimension is `1` since WPP doesn't have CI
-      lines(wpp_and_completeihme$wpp.cqt[c,1,] ~ wpp_years, col = "olivedrab", lty = 1, lwd = 5*cex.adj.factor)  ####line plot for wpp
+      lines(wpp_and_completeihme$wpp.cqt[c,1,] ~ wpp_years, col = "orange", lty = 1, lwd = 5*cex.adj.factor)  ####line plot for wpp
     }
     if (!is.null(wpp_and_completeihme$ihme.cqt)){
       lines(wpp_and_completeihme$ihme.cqt[c,2,] ~ ihme_years, col = "steelblue", lty = 1, lwd = 5*cex.adj.factor)    #####line plot for ihme
@@ -570,7 +568,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
     if (!is.null(igme2)) # add alternative IGME fit # change JR, 20140423: order of igme and igme2 plotting swapped
       lines(igme2$u.ct[c,] ~ igme2$t, col = col.igme2, lty = 2, lwd = 5*cex.adj.factor) # change JR, 20140423
     if (!is.null(CIs4.cqt))
-      lines(CIs4.cqt[c, 2, ] ~ est.years, col = "#c7202e", lwd = 5*cex.adj.factor)
+      lines(CIs4.cqt[c, 2, ] ~ est.years, col = "#6A1E74", lwd = 5*cex.adj.factor)
     if (!is.null(CIs3.cqt))
       lines(CIs3.cqt[c, 2, ] ~ est.years, col = "#0058AB", lwd = 5*cex.adj.factor)
     if (!is.null(CIs2.cqt)){
@@ -640,7 +638,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
           if (!is.null(legend3))
             legend.col <- c(legend.col, "#0058AB")
           if (!is.null(legend4))
-            legend.col <- c(legend.col, "#c7202e")
+            legend.col <- c(legend.col, "#6A1E74")
 
           # put the legend:
           legend("topright", legend = legend.text, col = legend.col, lty = 1, lwd = 3, bty = legend.bty, cex = ifelse((main.plot+zoom+add.legend)==3,1.4,0.9))
@@ -689,13 +687,13 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
             }
           if (!is.null(legend4)) {
             legend.text <- c(legend.text, legend4)
-            legend.col <- c(legend.col, "#c7202e")
+            legend.col <- c(legend.col, "#6A1E74")
             legend.lty <- c(legend.lty, 1L)
 
           }
           if (!is.null(wpp_and_completeihme$wpp.cqt)){
             legend.text <- c(legend.text, legend_WPP)
-            legend.col <- c(legend.col, "olivedrab")
+            legend.col <- c(legend.col, "orange")
             legend.lty <- c(legend.lty, 1L)
 
           }
@@ -775,7 +773,7 @@ AddSurveyData <- function(# Add survey data and/or sampling errors to plot
   if(!is.null(newentry.s)){
     col.newentry.s <- rep("black", nsurveys)
     newentry.s.selected <- newentry.s[select.surveys][surveys] # important to reorder
-    col.newentry.s[newentry.s.selected == 1] <- "#c7202e"
+    col.newentry.s[newentry.s.selected == 1] <- "red"
   }
  # cat("AddSurveyData: col.newentry.s:", paste(col.newentry.s, collapse = ", "), "\n")
  # trim trailing white space in source.s and add by myself (YL)
@@ -956,7 +954,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
   col.newentry.s <- NULL
   if(!is.null(newentry.s)){
     col.newentry.s <- rep("black", nseries)
-    col.newentry.s[newentry.s==1] <- "#c7202e" # comment out this line if don't want to highlight any VR
+    col.newentry.s[newentry.s==1] <- "red" # comment out this line if don't want to highlight any VR
   }
 
   # turn label into sth like "VR WHO (Recalculated)"

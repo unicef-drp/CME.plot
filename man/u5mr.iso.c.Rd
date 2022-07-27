@@ -5,7 +5,7 @@
 \alias{u5mr.iso.c}
 \title{u5mr.iso.c: orderd isos}
 \format{
-An object of class \code{NULL} of length 0.
+An object of class \code{character} of length 200.
 }
 \usage{
 u5mr.iso.c

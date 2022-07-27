@@ -4,7 +4,7 @@
 \alias{set.cqt.year.limit}
 \title{Limit the 3rd dimension (year) of NMR cqt}
 \usage{
-set.cqt.year.limit(res.cqt = NULL, year_start = NULL, year_end = last.year())
+set.cqt.year.limit(res.cqt = NULL, year_start = NULL, year_end = NULL)
 }
 \arguments{
 \item{res.cqt}{a 3-dimentional cqt array}

@@ -137,9 +137,9 @@ savePlotResults <- function(
   output.dir4 = NULL,
   fig.dir = NULL,    # directory to store plots. If \code{NULL}, defaults to folder \code{fig} in current working directory. Will create directory if doesn't exist
   year.start = NULL, # start year of estimates to plot. If \code{NULL}, earliest year of estimates available is used.
-  year.end = 2021,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
+  year.end = current.year()-1,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
   zoom.year.start = 1990,
-  zoom.year.end = 2021,
+  zoom.year.end = current.year()-1,
   remove_date_5_24 = 1990, # for 5-24 (total and sex-specific): by default remove series older than 1990 so not on the CC plot
   main.plot = TRUE,  # include main plot?
   zoom = TRUE,       # include zoom plot?
@@ -484,7 +484,7 @@ savePlotResults <- function(
   # this part is needed if res.cqt is not from the output.dir but supplied directly
   # it helps one-country run too to limit the iso to 1
   # matching iso order is also necessary for wpp and ihme cqt
-  # `year.t` is same as `dimnames(res.cqt)[[3]]`
+  # `year.t` is same as `floor(dimnames(res.cqt)[[3]])+0.5`
   if(is.null(output.dir2))res.cqt2 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt2)
   if(is.null(output.dir3))res.cqt3 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt3)
   if(is.null(output.dir4))res.cqt4 <- match.cqt.core(iso.c1 = iso.c, year.t1 = year.t, res.cqt2 = res.cqt4)
