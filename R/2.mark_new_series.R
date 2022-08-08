@@ -26,6 +26,7 @@ get.cmeinfo.dir <- function(output.dir, dir_IGME){
   message("The info.file found is, ", cmeinfo.file)
   n <- which(grepl(cmeinfo.file, list.files(file.path(dir_IGME, "input"), recursive = TRUE)))
   dir_cme_info <- list.files(file.path(dir_IGME, "input"), recursive = TRUE, full.names = TRUE)[n]
+  if(length(dir_cme_info)==0) stop("There is no corresponding data_CMEInfo.csv. Cannot mark new series for this indicator.")
   message("The cmeinfo file points to: ", dir_cme_info)
   # returns the directory to
   return(dir_cme_info)

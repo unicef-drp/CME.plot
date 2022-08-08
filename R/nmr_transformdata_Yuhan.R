@@ -336,7 +336,7 @@ transformdataforNMR = function(
      res3.cqt[cn3,2,] = res3_med[1:which(names(res3_med)==max(year_range))]
      res3.cqt[cn3,3,] = res3_upper[1:which(names(res3_upper)==max(year_range))]
    }
-   
+
    if (!is.null(resultsfile3)){
     res3 = results3[,,cn] #
     res3_med=apply(res3, 2, function(x) median(x,na.rm=T))
@@ -678,7 +678,7 @@ GetDataGlobalNMR<- function(file, #data file, must be in form of log ratios
     yr<- d$Reference.Date[i]
     u.i[i]<-u.ct[match(iso, iso.u.c), match(floor(yr), floor(year.u.t))]
   }
-
+  if(nrow(d)==0) u.i <- rold.i
   # need to remove the NAs
   # Notes:
   # ratio=invlogit(rold.i)

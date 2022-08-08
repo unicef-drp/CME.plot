@@ -39,7 +39,7 @@
 #' @param year.start default to NULL
 #' @param year.end default to last year e.g. 2019.5 if now is 2020
 #' @param zoom.year.start default to 1990
-#' @param zoom.year.end   default to `last.year()`
+#' @param zoom.year.end   default to current year minus 1
 #' @param main.plot default to TRUE, used to determine the right size of the
 #'   plot
 #' @param zoom      default to TRUE, used to determine the right size of the
@@ -149,7 +149,7 @@ savePlotResults <- function(
   res.cqt3 = NULL,       # a brown line, years adjusted in function
   res.cqt4 = NULL,       # a dark-red line, years adjusted in function
   res_ex.cqt = NULL,     # the expected series, years adjusted in function
-  save_cqt_copy = FALSE, # if TRUE save a copy of res.cqt1 for checking
+  save_cqt_copy = FALSE, # if TRUE save a copy of un-subsetted res.cqt1 (all countries even plot only a few)
   legend1 = "Draft UN IGME 2022", # a switch for showing main estimates (set NULL for data plot): red line
   legend2 = NULL, # used as a switch for showing cqt2: green line
   legend3 = NULL, # used as a switch for showing cqt3: sienna line: `scales::show_col("sienna2")`
@@ -345,8 +345,9 @@ savePlotResults <- function(
       if(!is.null(legend2)) res.cqt2 <- nmr$res2.cqt
       if(!is.null(legend3)) res.cqt3 <- nmr$res3.cqt
       if(!is.null(legend_ex)) res_ex.cqt <- nmr$res_ex.cqt
-      # if(!is.null(res.cqt)) dimnames(res.cqt)[[3]] <- year.t
-      if(!is.null(nmr$sex)){ # 2022.06 allowing sex-specific input in NMR format, e.g. sex-specific 4q1
+      #  allowing sex-specific input in NMR format for no-date indicators like
+      #  sex-specific 4q1 (2022.06)
+      if(!is.null(nmr$sex)){ 
         indicator.type <- nmr$indicator_label # e.g. CMR, used in filename, could be different from ylab
         gender_title <- nmr$sex
         gender <- nmr$sex
@@ -454,7 +455,7 @@ savePlotResults <- function(
     C <- if(sort_the_isos) which(iso.c%in%iso.c.1) else match(iso.subset.c, iso.c)
     return(C) # since required by `PlotDataAndEstimates2020`
   }
-  C <- subset.iso() # this capital C is a vector of numbers e.g. c(1,10,150)
+  C <- subset.iso() # this object `capital C` is a vector of numbers e.g. c(1,10,150)
   message("C is ", paste(C, collapse = ","))
 
   # YL: update country names
@@ -464,20 +465,23 @@ savePlotResults <- function(
   }
 
   # set cqt ------------------------------------------------------------
-  # save a copy of the cqt plotted 2020.05
+  # save a copy of the un-subsetted (all countries) cqt plotted (2020.05)
   if(save_cqt_copy){
     if(!dir.exists("output/figDataTemp/cqt_backup")) dir.create("output/figDataTemp/cqt_backup", recursive = TRUE)
     dt_cqt <- reshape2::melt(res.cqt)
     colnames(dt_cqt) <- c("ISO.Code", "Quantile", "Year", "Value")
-    ylab0 <- if(is.null(ylab)) indicator.type else ylab
-    ylab0 <- gsub("/", "_", ylab0)
-    dt_cqt$ind_short <- ylab0
+    # indicator.type is not always the correct shortind, it's U5MR/IMR for older children
+    short_ind <- if(is.null(ylab)) indicator.type else ylab 
+    # some ylab uses full name like CMR, so exceptions:
+    if(indicator.type %in% c("MR1t59", "CMR")) short_ind <- indicator.type
+    short_ind <- gsub("/", "_", short_ind)
+    dt_cqt$ind_short <- short_ind
     if(is.null(gender)){
       dt_cqt$Sex <- "Total"
-      saveRDS(dt_cqt, file = file.path("output/figDataTemp/cqt_backup", paste0("copy_of_res.cqt_", ylab0, ".rds")))
+      saveRDS(dt_cqt, file = file.path("output/figDataTemp/cqt_backup", paste0("copy_of_res.cqt_", short_ind, ".rds")))
     } else {
       dt_cqt$Sex <- gender_title
-      saveRDS(dt_cqt, file = file.path("output/figDataTemp/cqt_backup", paste0("copy_of_res.cqt_", gender_title, "_", ylab0, ".rds")))
+      saveRDS(dt_cqt, file = file.path("output/figDataTemp/cqt_backup", paste0("copy_of_res.cqt_", gender_title, "_", short_ind, ".rds")))
     }
   }
 
@@ -614,6 +618,7 @@ savePlotResults <- function(
                          zoom.year.start = zoom.year.start,
                          zoom.year.end = zoom.year.end,
                          year.start = year.start,
+                         year.end = year.end,
                          add.legend = add.legend,
                          c = c,
 

@@ -75,11 +75,11 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
   title2 = NULL, ##<< Optional: Title for second plot.
   main.plot = TRUE, ##<< Include main plot? # change JR, 26 Aug 2013
   year.start = NULL,
-  year.end = last.year(),
+  year.end = NULL,
   zoom = TRUE, ##<< Add zoom plot?
   add.legend = TRUE, ##<< Add legend plot?
   zoom.year.start = 1990, ##<< First year of zoom range for zoom plot.
-  zoom.year.end = last.year(), ##<< Last year of zoom range for zoom plot.
+  zoom.year.end = NULL, ##<< Last year of zoom range for zoom plot.
   seriesnames.in.full = TRUE, ##<< Display series names in full? # change JR, 3 Sep 2013
   mfrow.suppress = FALSE, ##<< Change layout of plots with layout() argument instead of mfrow argument?
   suppress.legend.plot1 = FALSE, ##<< Suppress legend in plot 1?
@@ -1186,12 +1186,12 @@ PlotLegend <- function(# Plot legend.
       legendbg.s <- legendbg.s[select]
   }
   # legendbg.s <- rep("#FF000020", length(legendtext.s))
-  # YL: overwrite cex in certain conditions:
+  # YL: overwrite `cex` in certain conditions, define `cex` dynamically instead of discrete 
   if(length(legendtext.s)>20) cex <- 1.6-length(legendtext.s)/100
   if(length(legendtext.s)>40) cex <- 1.5-length(legendtext.s)/100
-  # add by YS, if >30: 1; if 20~30, 1.2;if <20,1.5
+  if(length(legendtext.s)>50) cex <- 1.45-length(legendtext.s)/100
 
-  # set text length YL2020
+  # set text length YL.2020
   # set_text_length = {1,8X}, set a limit of 86 nchar per line of legend text
   set_text_length = 85
   n_long <- sapply(legendtext.s, function(x)nchar(x)>=set_text_length)
@@ -1204,7 +1204,7 @@ PlotLegend <- function(# Plot legend.
     substr(s2, 1, nchar(s2)-1) # remove the "\n" in the end
   }
 
-  if(any(n_long) & length(legendtext.s)>25) {
+  if(any(n_long) & length(legendtext.s)>20) {
     cex= 1.5 - length(legendtext.s)/100
     # message("smaller cex is ", cex)
   } else {
@@ -1227,11 +1227,12 @@ PlotLegend <- function(# Plot legend.
   plot(1, type = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n", bty = "n")
   legend("left", legend = c(rev(legendtext.s)) ,
            col = c(rev(legendcol.s)),
-           text.col = c(rev(legendbg.s)), # YL 2020
+           text.col = c(rev(legendbg.s)), # YL 2020 to highlight new series
            # pt.bg = c(rev(legendbg.s)),
            pch = c(rev(legendpch.s)),
            cex = cex, lwd = cex * 1.1,
          pt.cex = pt.cex,
+         # y.intersp = 1, # not sure how to squeeze line space, doesn't work
          trace = FALSE)
   return(invisible())
 }
