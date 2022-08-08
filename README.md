@@ -30,7 +30,8 @@ The script "R/2.mark_new_series.R" contains (internal) functions used by the mai
 *  Another exported function `review.date.of.dataentry` can quickly table the data by entry dates  
 
 
-One tricky issue is to determine which countries have updated VR by comparing the values of all VR series from a new data file against an old one. So which files are used? You can check this using the exported `find.dir.for.VR.comparison` function, which by default picks the latest U5MR database from `this.year()`'s round versus `last.year()`. To overwrite, supply `dir_new_data_U5MR` and `dir_old_data_U5MR` in the global environment and these two objects will be picked up by `find.dir.for.VR.comparison` and be used for comparison. 
+One tricky issue is to determine which countries have updated VR by comparing the values of all VR series from a new data file against an old one. So which files are used? You can check this using the exported `find.dir.for.VR.comparison` function, which by default picks the latest U5MR database from `current.year()`'s round versus `current.year()-1`.  
+To overwrite when auto searching fails, supply `dir_new_data_U5MR` and `dir_old_data_U5MR` in the global environment and these two objects will be picked up by `find.dir.for.VR.comparison`, and will be used for comparison. 
 
 "R/4.mydata.R" records data files included in the package.
 
