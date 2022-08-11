@@ -4,11 +4,17 @@
 
 <!-- badges: end -->
 
-CME.plot wraps plotting functions into a package.
+**CME.plot** wraps plotting functions into a package.
 
 ## Installation
 
-Since now this repository is set as private, you could download the repo and compile the library locally. But it's set up as a package that could be installed from Github.
+If this repository is set as private, you could download the repository and compile the library locally. It's set up as a library.
+
+To install from Github (when the repository is not private): 
+
+```{r}
+devtools::install_github("unicef-drp/CME.assistant")
+```
 
 All the scripts are also combined into the `Code/R` for internal users so could be sourced locally too: when load the code using `LoadLibrariesAndCodes` set argument `load.CME.plot` to be `TRUE` to load scripts and data from this package)
 

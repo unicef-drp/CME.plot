@@ -150,7 +150,7 @@ savePlotResults <- function(
   res.cqt4 = NULL,       # a dark-red line, years adjusted in function
   res_ex.cqt = NULL,     # the expected series, years adjusted in function
   save_cqt_copy = FALSE, # if TRUE save a copy of un-subsetted res.cqt1 (all countries even plot only a few)
-  legend1 = "Draft UN IGME 2022", # a switch for showing main estimates (set NULL for data plot): red line
+  legend1 = "Draft UN IGME estimates", # a switch for showing main estimates (set NULL for data plot): red line
   legend2 = NULL, # used as a switch for showing cqt2: green line
   legend3 = NULL, # used as a switch for showing cqt3: sienna line: `scales::show_col("sienna2")`
   legend4 = NULL, # used as a switch for showing cqt4: dark red line: `scales::show_col("#c7202e")`
@@ -590,7 +590,7 @@ savePlotResults <- function(
   # Call `PlotDataAndEstimates2020`-----------------------------------
   title1.sex <- if(!is.null(gender)) gender_title else NULL # add Male/Female in title
   if(!is.null(gender)) {
-    if(gender == "Total") title1.sex <- NULL # but don't add "Total"
+    if(gender == "Total") title1.sex <- NULL # don't add "Total" in the title, only Male, Female + Country Name
   }
 
   plot.by.c <- function(c){suppressMessages(
@@ -637,9 +637,9 @@ savePlotResults <- function(
     pdf.or.png <- "pdf"
   }
   if(pdf.or.png=="pdf"){
-    width0 <- if(all(main.plot, zoom)) plot.width else plot.width + 3
-    height0 <- if(all(main.plot, zoom)) plot.height else plot.height + 1.5
-    # seperate pdf
+    width0 <- if(all(main.plot, zoom, add.legend)) plot.width else plot.width + 3
+    height0 <- if(all(main.plot, zoom, add.legend)) plot.height else plot.height + 1.5
+    # separate pdf
     if(separate.plots.by.country){
       for (c in C) {
         pdf(file = file.path(fig.dir, get.file.name(c)), width = width0 , height = height0)
@@ -664,8 +664,8 @@ savePlotResults <- function(
   # save png
   if(pdf.or.png == "png"){
     # seperate png
-    width0 <- if(all(main.plot, zoom)) 22.5 else plot.width + 3 # YL 2020.04, for png to fit CC profile, width 24->22.5
-    height0 <- if(all(main.plot, zoom)) 8 else plot.height + 1.5
+    width0 <- if(all(main.plot, zoom, add.legend)) 22.5 else plot.width + 3 # YL 2020.04, for png to fit CC profile, width 24->22.5
+    height0 <- if(all(main.plot, zoom, add.legend)) 8 else plot.height + 1.5
     save.png <- function(c){
       # message("save plot for iso: ", iso.c[c])
       # add a progress message
@@ -691,6 +691,7 @@ savePlotResults <- function(
   message("Results saved to ", fig.dir)
 
   time_spent <- round(Sys.time() - time0, 1)
+  
   if(any(failed)){
     return(list(filename = filename, fig.dir = fig.dir,
                 C = C, isoc = iso.c,
@@ -698,6 +699,7 @@ savePlotResults <- function(
                 failed_iso = failed_isos))
   } else {
     if(return_info){
+      message("Total time spent: ", round(difftime(Sys.time(), time0, units = "mins"), 1), " mins")
       return(list(filename = filename, fig.dir = fig.dir,
                   iso.c = iso.c, C = C, iso.subset.c = iso.subset.c,
                   time_spent = time_spent))
@@ -706,7 +708,6 @@ savePlotResults <- function(
     }
 
   }
-
-  # started at 19/12/23 YL
+  # new version started at 2019/12 YL
 }
 

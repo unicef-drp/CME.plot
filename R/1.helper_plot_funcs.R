@@ -357,7 +357,8 @@ set.cqt.year.limit <- function(
 
 # For sex-specific --------------------------------------------------------
 
-#' Fix some entries in the dataset
+#' Fix some entries in the dataset for plotting, like some series not sorted
+#' properly, which will generate series lines not properly connected
 #'
 #' @param dt_gender the dataset for plotting
 #' @return revised dt_gender
@@ -391,7 +392,7 @@ fix.entries.dt_gender <- function(dt_gender){
   # some 9999?
   dt_gender <- dt_gender[Male<1000 & Female < 1000]
 
-  # numeric columns
+  # make sure these numeric columns are numeric
   col_num <- c(
     "Country.ISO"             ,"Start.date.of.Survey" ,   "End.date.of.Survey"     , "Average.date.of.Survey" ,
     "Series.Quantity"         ,"Interval"             ,   "Reference.Date"         , "Sex.Ratio"              ,
