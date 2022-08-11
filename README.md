@@ -13,7 +13,7 @@ If this repository is set as private, you could download the repository and comp
 To install from Github (when the repository is not private): 
 
 ```{r}
-devtools::install_github("unicef-drp/CME.assistant")
+devtools::install_github("unicef-drp/CME.plot")
 ```
 
 All the scripts are also combined into the `Code/R` for internal users so could be sourced locally too: when load the code using `LoadLibrariesAndCodes` set argument `load.CME.plot` to be `TRUE` to load scripts and data from this package). Or use the function `LoadCMEplotCode` to source this package only:
