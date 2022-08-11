@@ -16,8 +16,11 @@ To install from Github (when the repository is not private):
 devtools::install_github("unicef-drp/CME.assistant")
 ```
 
-All the scripts are also combined into the `Code/R` for internal users so could be sourced locally too: when load the code using `LoadLibrariesAndCodes` set argument `load.CME.plot` to be `TRUE` to load scripts and data from this package)
-
+All the scripts are also combined into the `Code/R` for internal users so could be sourced locally too: when load the code using `LoadLibrariesAndCodes` set argument `load.CME.plot` to be `TRUE` to load scripts and data from this package). Or use the function `LoadCMEplotCode` to source this package only:
+```{r}
+source(file.path(work.dir, "R/loadlibrariesandcodes.R"))
+LoadCMEplotCode(package.dir = work.dir)
+```
 
 ## Notes on the code
 
