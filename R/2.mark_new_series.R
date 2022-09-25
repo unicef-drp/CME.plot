@@ -147,14 +147,19 @@ get.new.series.mark.entry <- function(dt_cme,
 #' @param output.dir output.dir
 #' @param new_entry_date must supply, cannot be NULL, format is checked, accept
 #'   yyyy-mm-dd and yyyy-mm
-#' @param dir_IGME default to NULL, where to read data_CMEInfo.csv
+#' @param dir_database the file directory to database, default to NULL, if
+#'   provided, it will be used instead of looking into `output.dir`
 #' @param return_dt_cme default to FALSE, if TRUE, can return the dataset with
 #'   new entries marked as 1
+#' @param suppress_MM_adjustment default to TRUE: MM adjusted series not
+#'   considered new
+#'
 #' @export get.new.series
-get.new.series <- function(output.dir,
+get.new.series <- function(output.dir = NULL,
                            new_entry_date = NULL,
-                           dir_IGME = NULL,
-                           return_dt_cme = FALSE
+                           dir_database = NULL,
+                           return_dt_cme = FALSE,
+                           suppress_MM_adjustment = TRUE
                            ){
   if(is.null(new_entry_date)) stop("Please supply new_entry_date, now it is NULL")
   # Check if the input date is valid: "YYYY-MM" is also allowed
@@ -162,11 +167,11 @@ get.new.series <- function(output.dir,
   if(!IsDate(new_entry_date)) stop("new_entry_date is: ", new_entry_date, " Allowed format: yyyy-mm-dd")
 
   # read in the cmeinfo file
-  if(is.null(dir_IGME)&file.exists(file.path(output.dir, "data_CMEInfo.csv"))){
+  if(is.null(dir_database)){
     # by default look in the output.dir for "data_CMEInfo.csv"
     dir_cmeinfo <- file.path(output.dir, "data_CMEInfo.csv")
   } else {
-    dir_cmeinfo <- get.cmeinfo.dir(output.dir, dir_IGME)
+    dir_cmeinfo <- dir_database
   }
   if(!file.exists(dir_cmeinfo)) stop("Check if cmeinfo file exists: ", dir_cmeinfo)
   dt_cme <- fread(dir_cmeinfo)
@@ -174,21 +179,26 @@ get.new.series <- function(output.dir,
   #
   if (!"IGME_Key" %in% colnames(dt_cme)) dt_cme <- create.IGME.key(dt_cme)
   #
-  message("Marked as newly added after date ", new_entry_date, ": ",
-          dt_cme[new_entry == 1,.N], " out of ", dt_cme[,.N], " entries; which is ",
-          dt_cme[new_entry == 1, uniqueN(IGME_Key)], " out of ", dt_cme[,uniqueN(IGME_Key)], " unique series.")
-
-  # **** Suppressing HIV (MM-adjusted) countries ****
+  # **** Suppressing MM-adjusted series (not shown as new) ****
   # For the HIV countries, remove those just MM adjusted (since they have a new date)
   # Limited this suppressing to `Series.Type` contains Direct, since only Direct series got MM-adjusted
   iso_hiv <- dt_cme[To.be.adjusted==TRUE, unique(Country.Code)]
   # the TRUE new MM-adjusted series:
   new_hiv_key <- dt_cme[new_entry==1 & To.be.adjusted==1, unique(IGME_Key)]
   # suppress these IGME_Key series:
-  dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key%in% new_hiv_key &
-           grepl("Direct", Series.Type), unique(IGME_Key)]
-  dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key%in% new_hiv_key &
-           grepl("Direct", Series.Type) & Data.Collection.Method != "Household Deaths", new_entry := 0]
+  dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key %in% new_hiv_key &
+           grepl("Direct", Series.Type) & Data.Collection.Method != "Household Deaths",
+           unique(IGME_Key)]
+  if(suppress_MM_adjustment){
+    dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key %in% new_hiv_key &
+            grepl("Direct", Series.Type) & Data.Collection.Method != "Household Deaths",
+            new_entry := 0]
+  }
+
+  message("Marked as newly added after date ", new_entry_date, ": ",
+          dt_cme[new_entry == 1,.N], " out of ", dt_cme[,.N], " country-years; which are ",
+          dt_cme[new_entry == 1, uniqueN(IGME_Key)], " out of ", dt_cme[,uniqueN(IGME_Key)], " unique series.")
+
   # create source id
   new.sourceID.i <- get.new.sourceID.i(dt_cme)
   return(if(return_dt_cme) dt_cme else new.sourceID.i)
@@ -342,17 +352,17 @@ get.diff.dt.WHOVR <- function(
   dt_new_2 <- subset.dt(dt_new)[,.(Country.Code, Country.Name, Series.Name, Reference.Date, key, Estimates)]
   dt_old_2 <- subset.dt(dt_old)[,.(key, Estimates)]
   # joined
-  setnames(dt_old_2, "Estimates", "Estimates_19")
-  setnames(dt_new_2, "Estimates", "Estimates_20")
+  setnames(dt_old_2, "Estimates", "Estimates_WHO_old")
+  setnames(dt_new_2, "Estimates", "Estimates_WHO_new")
   dt1 <- dt_old_2[dt_new_2]
 
   if(!is.null(count_rounding)){
     if(count_rounding<1) message("count_rounding is the rounding digits")
     count_rounding <- as.integer(count_rounding)
-    dt1[, diff:= abs(round(Estimates_20 - Estimates_19, count_rounding))]
-    dt_new <- dt1[ diff >0 | is.na(Estimates_19),]
+    dt1[, diff:= abs(round(Estimates_WHO_new - Estimates_WHO_old, count_rounding))]
+    dt_new <- dt1[ diff >0 | is.na(Estimates_WHO_old),]
   } else {
-    dt_new <- dt1[is.na(Estimates_19),] # only count new year
+    dt_new <- dt1[is.na(Estimates_WHO_old),] # only count new year
   }
 
   iso_newVR <- dt_new[, unique(Country.Code)]

@@ -35,13 +35,13 @@ transformdataSexSpecific(
 
 \item{sex}{Sex (Female, Male, Sex Ratio)}
 
-\item{iso}{country iso}
+\item{iso}{country iso in desired order}
 
 \item{new.cname.df}{dataset contains both iso and official country name}
 
 \item{resultsfile_cqt}{results file for cqt1}
 
-\item{resultsiso}{the desired iso order for results}
+\item{resultsiso}{the iso order for the results}
 
 \item{expectedresultsfile_cqt}{results file for cqt expected}
 

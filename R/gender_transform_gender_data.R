@@ -7,13 +7,13 @@
 #' @param indicator full indicator, use `get.match` to get it
 #' @param indicator_label Short indicator, use `get.match` to get it
 #' @param sex Sex (Female, Male, Sex Ratio)
-#' @param iso country iso
+#' @param iso country iso in desired order 
 #' @param resultsfile_cqt results file for cqt1
 #' @param expectedresultsfile_cqt results file for cqt expected
 #' @param resultsfile_cqt2 results file for cqt2
 #' @param resultsfile_cqt3 results file for cqt3
 #' @param new.cname.df dataset contains both iso and official country name
-#' @param resultsiso the desired iso order for results
+#' @param resultsiso the iso order for the results
 #' @param year_range year range, default to `1950.5:2030.5` if not specified
 #' @param crisisadjfile dir to "dataPostAdj_U5MR.csv"
 #' @param mlinfo dir to "MLinfo.csv", used to mark `includedvr.Lcs.j` for IMR
@@ -127,8 +127,9 @@ transformdataSexSpecific <- function(
   uvr.Lc.j=list()
 
   # for estimations and expected
-  res.cqt=array(dim=c(length(iso),3,length(year.u.t)),dimnames = list(iso,c(0.05,0.5,0.95),year.u.t))
-  res_ex.cqt=array(dim=c(length(iso),3,length(year.u.t)),dimnames = list(iso,c(0.05,0.5,0.95),year.u.t))
+  # YL: note here we use the `resultsiso` instead of `iso`
+  res.cqt=array(dim=c(length(resultsiso),3,length(year.u.t)),dimnames = list(resultsiso,c(0.05,0.5,0.95),year.u.t))
+  res_ex.cqt=array(dim=c(length(resultsiso),3,length(year.u.t)),dimnames = list(resultsiso,c(0.05,0.5,0.95),year.u.t))
 
   #Other estimates to show
   res2.cqt=array(dim=c(length(resultsiso2),3,length(year.u.t)),dimnames = list(resultsiso2,c(0.05,0.5,0.95),year.u.t))

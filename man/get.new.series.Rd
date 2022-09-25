@@ -6,10 +6,11 @@
 `new.sourceID.i`}
 \usage{
 get.new.series(
-  output.dir,
+  output.dir = NULL,
   new_entry_date = NULL,
-  dir_IGME = NULL,
-  return_dt_cme = FALSE
+  dir_database = NULL,
+  return_dt_cme = FALSE,
+  suppress_MM_adjustment = TRUE
 )
 }
 \arguments{
@@ -18,10 +19,14 @@ get.new.series(
 \item{new_entry_date}{must supply, cannot be NULL, format is checked, accept
 yyyy-mm-dd and yyyy-mm}
 
-\item{dir_IGME}{default to NULL, where to read data_CMEInfo.csv}
+\item{dir_database}{the file directory to database, default to NULL, if
+provided, it will be used instead of looking into `output.dir`}
 
 \item{return_dt_cme}{default to FALSE, if TRUE, can return the dataset with
 new entries marked as 1}
+
+\item{suppress_MM_adjustment}{default to TRUE: MM adjusted series not
+considered new}
 }
 \description{
 Used for U5MR and IMR only, called in `savePlotResults`

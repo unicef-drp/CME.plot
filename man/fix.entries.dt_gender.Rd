@@ -2,7 +2,8 @@
 % Please edit documentation in R/1.helper_plot_funcs.R
 \name{fix.entries.dt_gender}
 \alias{fix.entries.dt_gender}
-\title{Fix some entries in the dataset}
+\title{Fix some entries in the dataset for plotting, like some series not sorted
+properly, which will generate series lines not properly connected}
 \usage{
 fix.entries.dt_gender(dt_gender)
 }
@@ -13,5 +14,6 @@ fix.entries.dt_gender(dt_gender)
 revised dt_gender
 }
 \description{
-Fix some entries in the dataset
+Fix some entries in the dataset for plotting, like some series not sorted
+properly, which will generate series lines not properly connected
 }

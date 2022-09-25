@@ -30,7 +30,7 @@ savePlotResults(
   res.cqt4 = NULL,
   res_ex.cqt = NULL,
   save_cqt_copy = FALSE,
-  legend1 = "Draft UN IGME 2022",
+  legend1 = "Draft UN IGME estimates",
   legend2 = NULL,
   legend3 = NULL,
   legend4 = NULL,
@@ -95,7 +95,7 @@ be used as legend if legend is not supplied}
 
 \item{zoom.year.start}{default to 1990}
 
-\item{zoom.year.end}{default to `last.year()`}
+\item{zoom.year.end}{default to current year minus 1}
 
 \item{remove_date_5_24}{default to 1990, for total and sex-specific 5-24: by
 default remove series that are earlier than 1990 so not shown on the CC
