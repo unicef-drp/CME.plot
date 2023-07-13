@@ -180,16 +180,16 @@ get.new.series <- function(output.dir = NULL,
   if (!"IGME_Key" %in% colnames(dt_cme)) dt_cme <- create.IGME.key(dt_cme)
   #
   # **** Suppressing MM-adjusted series (not shown as new) ****
-  # For the HIV countries, remove those just MM adjusted (since they have a new date)
-  # Limited this suppressing to `Series.Type` contains Direct, since only Direct series got MM-adjusted
-  iso_hiv <- dt_cme[To.be.adjusted==TRUE, unique(Country.Code)]
-  # the TRUE new MM-adjusted series:
-  new_hiv_key <- dt_cme[new_entry==1 & To.be.adjusted==1, unique(IGME_Key)]
-  # suppress these IGME_Key series:
-  dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key %in% new_hiv_key &
-           grepl("Direct", Series.Type) & Data.Collection.Method != "Household Deaths",
-           unique(IGME_Key)]
   if(suppress_MM_adjustment){
+    # For the HIV countries, remove those just MM adjusted (since they have a new date)
+    # Limited this suppressing to `Series.Type` contains Direct, since only Direct series got MM-adjusted
+    iso_hiv <- dt_cme[To.be.adjusted==TRUE, unique(Country.Code)]
+    # the TRUE new MM-adjusted series:
+    new_hiv_key <- dt_cme[new_entry==1 & To.be.adjusted==1, unique(IGME_Key)]
+    # suppress these IGME_Key series:
+    dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key %in% new_hiv_key &
+            grepl("Direct", Series.Type) & Data.Collection.Method != "Household Deaths",
+            unique(IGME_Key)]
     dt_cme[Country.Code%in%iso_hiv & new_entry==1 & !IGME_Key %in% new_hiv_key &
             grepl("Direct", Series.Type) & Data.Collection.Method != "Household Deaths",
             new_entry := 0]
