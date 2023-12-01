@@ -385,13 +385,16 @@ fix.entries.dt_gender <- function(dt_gender){
   dt_gender[Series.Type=="VR" & Visible ==1 & is.na(End.date.of.Survey), End.date.of.Survey:= as.numeric(Series.Year)]
 
   # the data should be sorted correctly
-  setorder(dt_gender, Country.Name, -End.date.of.Survey, Series.Name, Series.Type,-Reference.Date, - Inclusion.Gender)
+  setorder(dt_gender, Country.Name, -End.date.of.Survey, Series.Name, Series.Type, -Reference.Date, - Inclusion.Gender)
 
   if(dt_gender[Country.Code=="LUX" & Indicator%like%"Under-five" & Visible == 1,][Series.Name=="WHO Good Vital Registration Data 2018 version",.N]>0) warning("Check LUX")
 
   # some 9999?
   dt_gender <- dt_gender[Male<1000 & Female < 1000]
 
+  # strange coding in NIC
+  dt_gender[grepl("Demograf\xada", Series.Name) & Country.Code=="NIC", Series.Name := "Nicaraguense de Demografia y Salud (ENDESA)"]
+  
   # make sure these numeric columns are numeric
   col_num <- c(
     "Country.ISO"             ,"Start.date.of.Survey" ,   "End.date.of.Survey"     , "Average.date.of.Survey" ,
@@ -405,6 +408,34 @@ fix.entries.dt_gender <- function(dt_gender){
   dt_gender <- dt_gender[, (col_num):= lapply(.SD, function(x)as.numeric(as.character(x))), .SDcols = col_num]
 
   if(!"IGME_Key" %in% colnames(dt_gender))  dt_gender <- create.IGME.key(dt_gender)
+  
+  # add a checking step on the order of reference.date --- if it's sorted correctly
+  dt_gender <- dt_gender[Visible==1] # subset now, which is fine, only need visible ones anyway
+  
+  #
+  df_check <- copy(dt_gender)[Indicator == "Under-five Mortality Rate"]
+  df_check$Series.Name <- ifelse(df_check$Series.Category=="SVR", gsub('[0-9]+',"", df_check$Series.Name), df_check$Series.Name)
+  df_check$sourcetype.i = ifelse(df_check$Series.Type!="VR",
+                           ifelse(grepl("Household Deaths", df_check$Data.Collection.Method, ignore.case = TRUE) ,
+                                  paste(df_check$sourcetype.i, df_check$Data.Collection.Method, sep=" "),
+                                  paste(df_check$sourcetype.i, df_check$Series.Type, sep=" ")),
+                           "VR")
+  
+  df_check$seriesnameandyear = ifelse(df_check$Series.Type!="VR",
+                                paste0(df_check$Series.Name, " ", df_check$Series.Year, " (", df_check$sourcetype.i,")"),
+                                df_check$Series.Name)
+  df_check$sourcename <- paste(df_check$Country.Code, df_check$seriesnameandyear, sep = "_")
+  df_check[, I:= .I]
+  df_check[, I.obs := seq_len(.N), by = .(sourcename)]
+  setorder(df_check, sourcename, -Reference.Date)
+  df_check[, I.ref := seq_len(.N), by = sourcename]
+  check_id <- df_check[I.obs!=I.ref, unique(sourcename)]
+  if(length(check_id)>0){
+    warning("Check following series for potential issues, e.g. dup entries, varied Series.Year: ", paste(check_id, collapse = ", "))
+    if(!dir.exists("temp")) dir.create("temp")
+    writexl::write_xlsx(df_check[sourcename %in% check_id], paste("temp/check db by sex issues", Sys.Date(), ".xlsx"))
+  }
+  
   return(dt_gender)
 }
 
@@ -676,7 +707,7 @@ get.cqt.from.results <- function(
     stop("File doesn't exist: ", file.path(output_dir, results_filename))
   }
   vars_wanted <- c("ISO.Code", "Quantile", paste0("X", years))
-  dt_long <- melt(dt[,..vars_wanted], measure.vars = paste0("X", years), variable.factor = FALSE)
+  dt_long <- melt.data.table(dt[,..vars_wanted], measure.vars = paste0("X", years), variable.factor = FALSE)
   dt_long[, years:=as.numeric(sub("X", "", variable))]
   dt_long <- dt_long[order(match(ISO.Code, rep(iso_order, each = length(years))))]
   setorder(dt_long, years, Quantile) # set the right order is the key to produce right array

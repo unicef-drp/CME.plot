@@ -439,7 +439,7 @@ PlotDataAndEstimates2020 <- function(# Plot data, estimated fits and uncertainty
 
 
     # plot data - VR ----------------------------------------------------------
-    # YL 1/8 added checking uvr exists in three places where `AddVRData` is called
+    # YL 2020/1/8 added checking uvr exists in three places where `AddVRData` is called
     if (!is.null(data.all)  & !is.null(unlist(data.all$uvr.Lcs.j[[c]]))) {
       for (plot.data.excl in c(TRUE, FALSE)) {
         resvr <- AddVRData(u.Ls.i = data.all$uvr.Lcs.j[[c]],
@@ -978,6 +978,8 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
     # ad-hoc change JR, 3 Sep 2013
     legendtext.si <- gsub("- adjusted for incompleteness", "(Adjusted)", legendtext.si)
     legendtext.si <- gsub("Population Growth Estimation Experiment", "Pop Growth Est Expmt", legendtext.si)
+    
+    legendtext.si <- gsub("WHO", "submitted to UN IGME or WHO", legendtext.si)
     return(legendtext.si)
   }
   legendtext.si <- unname(sapply(source.s[series], ReviseLegendText))
@@ -1001,6 +1003,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
   # note: s in data and legend/col now refer to different ordering
   si <- 0
   legendpch.si <- rep(NA, nseries)
+  isincomplete_point_shape <- 22 # 22 is square, 24 is triangle  # YL 2023.10
   for (s in series) {
     si <- si+1
     u <- u.Ls.i[[s]]
@@ -1029,11 +1032,14 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
     } else {
       isincomplete <- rep(0, nobs)
     }
-
-    legendpch.si[si] <- ifelse(sum(included == 1) > 0, 15, 0)# 19, 1), # change JR, 20140423
-
-    #start to revise
-
+    
+    # the shape in the legend 
+    legendpch.si[si] <- ifelse(sum(included == 1) > 0, 15, 0) # 15 : solid square
+    
+    # but the issue is the legend for the whole series would change: 
+    # legendpch.si[si] <- ifelse(sum(isincomplete == 1) > 0, # change JR, 20140429
+    #                            ifelse(sum(included == 1) > 0, 17, 2),
+    #                            ifelse(sum(included == 1) > 0, 15, 0))
 
     if (!plot.data.excl) {
       # u <- u[included == 1]
@@ -1046,7 +1052,8 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
             # segments(year, u-2*se, year, u+2*se, col = col.s[si])
             segments(year, u-2*se, year, u+2*se, col = "grey")
           } else {
-            points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, 24, 22)), # change JR, 20140429
+            # pch = 24 is the triangle 
+            points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, isincomplete_point_shape, 22)), # change YL, 20231031
                    bg = ifelse(included == 1, col.s[si], "white"),
                    col = col.s[si], lwd = lwd,
                    cex = ifelse(hasbias | isincomplete, 2.5, cex)) # change JR, 20140429
@@ -1063,7 +1070,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
             if (plot.lines & !(all(as.logical(included) )& any(hasbias | isincomplete))) # change JR, 20140429
               lines(u ~ year, col = col.s[si], lwd = lwd, lty = ifelse(!plot.data.excl, 1, 2))
             if (plot.points)
-              points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, 24, 22)), # change JR, 20140429
+              points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, isincomplete_point_shape, 22)), # change JR, 20140429
                      bg = ifelse(included == 1, col.s[si], "white"), # change JR, 11 Jul
                      col = col.s[si], lwd = lwd,
                      cex = ifelse(hasbias | isincomplete, 2.5, cex)) # change JR, 20140429
@@ -1081,7 +1088,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
             if (plot.se) {
               segments(year, u-2*se, year, u+2*se, col = col.s[si])
             } else {
-              points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, 24, 22)), # change JR, 20140429
+              points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, isincomplete_point_shape, 22)), # change JR, 20140429
                      #bg = ifelse(included == 1, col.s[si], "white"),
                      bg= col.s[si],
                      col = col.s[si], lwd = lwd,
@@ -1099,7 +1106,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
               if (plot.lines & !(all(as.logical(included) )& any(hasbias | isincomplete))) # change JR, 20140429
                 lines(u ~ year, col = col.s[si], lwd = lwd, lty = ifelse(!plot.data.excl, 1, 2))
               if (plot.points)
-                points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, 24, 22)), # change JR, 20140429
+                points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, isincomplete_point_shape, 22)), # change JR, 20140429
                        #bg = ifelse(included == 1, col.s[si], "white"), # change JR, 11 Jul
                        bg = col.s[si],
                        col = col.s[si], lwd = lwd,
@@ -1112,7 +1119,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
         if (plot.se) {
           segments(year, u-2*se, year, u+2*se, col = col.s[si])
         } else {
-          points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, 24, 22)), # change JR, 20140429
+          points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, isincomplete_point_shape, 22)), # change JR, 20140429
                  bg = ifelse(included == 1, col.s[si], "white"),
                  col = col.s[si], lwd = lwd,
                  cex = ifelse(hasbias | isincomplete, 2.5, cex)) # change JR, 20140429
@@ -1129,7 +1136,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
           if (plot.lines & !(all(as.logical(included) )& any(hasbias | isincomplete))) # change JR, 20140429
             lines(u ~ year, col = col.s[si], lwd = lwd, lty = ifelse(!plot.data.excl, 1, 2))  #### place to link all data points with dashed lines 05/14/2018
           if (plot.points)
-            points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, 24, 22)), # change JR, 20140429
+            points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, isincomplete_point_shape, 22)), # change JR, 20140429
                    bg = ifelse(included == 1, col.s[si], "white"), # change JR, 11 Jul
                    col = col.s[si], lwd = lwd,
                    cex = ifelse(hasbias | isincomplete, 2.5, cex)) # change JR, 20140429
