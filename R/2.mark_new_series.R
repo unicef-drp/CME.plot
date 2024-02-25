@@ -315,7 +315,8 @@ find.dir.for.VR.comparison <- function(
 #' environment to overwrite the default selection
 #'
 #' @param count_rounding default to NULL, if supply a value, e.g. 6, it will
-#'   count the difference also using the diff round to 1E-6
+#'   count the difference also using the diff round to 1E-6, if NULL only
+#'   count new country-year
 #'
 #' @return list of dt1 (the comparison dataset for debugging) and iso_newVR (the
 #'   vector of country isos with different WHO VR)

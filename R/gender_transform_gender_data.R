@@ -51,8 +51,9 @@ transformdataSexSpecific <- function(
     crisisadjfile1=read.csv(crisisadjfile,stringsAsFactors = F,header=T)[,2:3]
     crisisadjfile1$crisisornot=1
     colnames(crisisadjfile1)[1:2]=c("Country.Code","Reference.Date")
-    d = merge(d, crisisadjfile1, by = c("Country.Code", "Reference.Date"), all.x = TRUE)
-    # d1 = dplyr::left_join(d, crisisadjfile1, by = c("Country.Code", "Reference.Date"))
+    # note that merge re-orders the db, left_join doesn't. We should use left_join here
+    # d = merge(d, crisisadjfile1, by = c("Country.Code", "Reference.Date"), all.x = TRUE)
+    d = dplyr::left_join(d, crisisadjfile1, by = c("Country.Code", "Reference.Date"))
     d$crisisornot=ifelse(is.na(d$crisisornot),0,1)
     d$Inclusion.U5MR=ifelse(d$crisisornot==1,0,d$Inclusion.U5MR)
     d$Inclusion.Gender=ifelse(d$crisisornot==1,0,d$Inclusion.Gender)
@@ -73,7 +74,8 @@ transformdataSexSpecific <- function(
   d$Male=ifelse(is.na(d$Male) |!is.finite(d$Male) |d$Male<0,NA,d$Male)
   d$Female=ifelse(is.na(d$Female) |!is.finite(d$Female) |d$Female<0,NA,d$Female)
   df = d
-
+  # df[Country.Code == "ARE", unique(Series.Name)]
+  
   # This is the series type, not the seriesname
   # e.g. "Others Indirect", "Census Direct"
   df$Series.Name <- as.character(df$Series.Name)
@@ -99,7 +101,9 @@ transformdataSexSpecific <- function(
     message("Note: `new_entry_date` default to last Oct.")
   }
   df <- get.new.series.mark.entry(df, new_entry_date)
-
+  
+  setorder(df, Country.Name, -End.date.of.Survey, Series.Name, Series.Type, -Reference.Date,  Inclusion.Gender)
+  # df[Country.Code=="ARE", unique(Series.Name)]
   # For setting the right dimension of res.cqt
   year.u.t <- as.numeric(dimnames(resultsfile_cqt)[[3]]) # which is 1950: 2030
   if(length(year.u.t)==0) year.u.t <- 1950:2030
