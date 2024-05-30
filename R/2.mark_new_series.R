@@ -127,7 +127,12 @@ get.new.series.mark.entry <- function(dt_cme,
   # 2/28: If to highlight part of the WHO Series by comparing values
   if(show_new_WHO_VR){
     dt_cme[grepl("WHO", Series.Name), new_entry := 0]
+    # Highlight new VR options
+    # 1. only highlight VR with new country-year
     # iso_newVR <- get.diff.dt.WHOVR(count_rounding = NULL)$iso_newVR
+
+    # 2. any VR got updated with diff > 0.1 will be marked as new VR:
+    # count_rounding is the digit in `round`, e.g. round(diff, 6)
     iso_newVR <- get.diff.dt.WHOVR(count_rounding = 1)$iso_newVR
     if(is.null(iso_newVR)) {
       message("New WHO VR series won't be highlighted, run `find.dir.for.VR.comparison()` to check the chosen databases.")

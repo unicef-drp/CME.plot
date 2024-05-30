@@ -51,9 +51,9 @@ To overwrite when auto searching fails, supply `dir_new_data_U5MR` and `dir_old_
 2021-07: major bug fix, avoid array dimension lose so can plot for one-country run.   
 2021-08: streamline the logic to supply `res.cqt`: since `output.dir` is required anyway, `res.cqt1` is more prioritized. If `res.cqt1` is supplied, will not use the default `res.cqt.Lw.rda` from `output.dir`. But `res.cqt2`, `res.cqt3`, `res.cqt4` are less prioritized than their respective output.dir arguments, which means if both `res.cqt2` and `output.dir2` are supplied, will use the default `res.cqt.Lw.rda` from `output.dir2`.   
 2021-09: make some adjustments to accommodate sex-specific 5-24 charts.  
-2022-07: add data of WPP2022
-2023-12: 
+2022-07: add data of WPP2022  
+2023-12:   
 In `fix.entries.dt_gender` add a checking step that gives warning on series that won't be properly plotted (wrong order of data points caused by reference.date not properly sorted)
 In `get.new.series.mark.entry` set `iso_newVR <- get.diff.dt.WHOVR(count_rounding = 1)$iso_newVR`: any VR got updated with diff > 0.1 will be marked as new VR
-In `PlotDataAndEstimates2020` no longer show different shape for VR points incomplete
+In `PlotDataAndEstimates2020` no longer show different shape for VR points incomplete  
 2024-05: cleaned up functions, add data of WPP2024 and GBD2021
