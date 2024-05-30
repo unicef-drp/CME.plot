@@ -937,7 +937,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
   plot.points = TRUE,
   plot.lines = TRUE,
   plot.newobsPIs = FALSE,
-  lwd = 2, cex=2,   ###add cex option   kai added 05/14/2018
+  lwd = 2, cex = 2,   ###add cex option   kai added 05/14/2018
   seriesnames.in.full = TRUE # change JR, 3 Sep 2013
 ) {
   # use for plot se or obs!
@@ -945,8 +945,8 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
   if (nseries == 0) return()
   series <- seq(1, nseries)
   if (is.null(col.s)) {
-    # 2021 YL rearrange VR colors order
-    col.s <- rep(c("black", "coral4", RColorBrewer::brewer.pal(11, "BrBG")[2:4], "darkred"), ceiling(nseries/4))[1:nseries]
+    # 2021 YL rearrange VR colors palette and order
+    col.s <- rep(c("black", "coral4", "#8C510A", "#BF812D", "#DFC27D", "darkred"), ceiling(nseries/4))[1:nseries]
     # to see the colors:
     # scales::show_col(c("black", "coral4", RColorBrewer::brewer.pal(11, "BrBG")[2:4], "deeppink4", "darkred", "saddlebrown"))
   }
@@ -1067,7 +1067,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
                       col = adjustcolor("grey", alpha.f = 0.2), border = NA)
             }
           } else {
-            if (plot.lines & !(all(as.logical(included) )& any(hasbias | isincomplete))) # change JR, 20140429
+            if (plot.lines & !(all(as.logical(included)) & any(hasbias | isincomplete))) # change JR, 20140429
               lines(u ~ year, col = col.s[si], lwd = lwd, lty = ifelse(!plot.data.excl, 1, 2))
             if (plot.points)
               points(u ~ year, pch = ifelse(hasbias, 23, ifelse(isincomplete, isincomplete_point_shape, 22)), # change JR, 20140429

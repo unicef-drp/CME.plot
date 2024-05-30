@@ -405,9 +405,6 @@ fix.entries.dt_gender <- function(dt_gender){
   # Fix India issue, shouldn't have NA `End.date.of.Survey`
   dt_gender[Series.Type=="VR" & Visible ==1 & is.na(End.date.of.Survey), End.date.of.Survey:= as.numeric(Series.Year)]
 
-  # the data should be sorted correctly
-  setorder(dt_gender, Country.Name, -End.date.of.Survey, Series.Name, Series.Type, -Reference.Date, - Inclusion.Gender)
-
   if(dt_gender[Country.Code=="LUX" & Indicator%like%"Under-five" & Visible == 1,][Series.Name=="WHO Good Vital Registration Data 2018 version",.N]>0) warning("Check LUX")
 
   # some 9999?
@@ -432,6 +429,8 @@ fix.entries.dt_gender <- function(dt_gender){
   # add a checking step on the order of reference.date --- if it's sorted correctly
   dt_gender <- dt_gender[Visible==1] # subset now, which is fine, only need visible ones anyway
 
+  setorder(dt_gender, Country.Name, -End.date.of.Survey, Series.Name, Series.Type, -Reference.Date,  Inclusion.Gender)
+
   #
   df_check <- copy(dt_gender)[Indicator == "Under-five Mortality Rate"]
   df_check$Series.Name <- ifelse(df_check$Series.Category=="SVR", gsub('[0-9]+',"", df_check$Series.Name), df_check$Series.Name)
@@ -455,6 +454,9 @@ fix.entries.dt_gender <- function(dt_gender){
     if(!dir.exists("temp")) dir.create("temp")
     writexl::write_xlsx(df_check[sourcename %in% check_id], paste("temp/check db by sex issues", Sys.Date(), ".xlsx"))
   }
+
+  # the data should be sorted correctly
+  setorder(dt_gender, Country.Name, -End.date.of.Survey, Series.Name, Series.Type, -Reference.Date,  Inclusion.Gender)
 
   return(dt_gender)
 }
