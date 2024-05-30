@@ -10,7 +10,7 @@ obtain.matched.cqt(
   output.dir2 = NULL,
   runname1 = NULL,
   runname2 = NULL,
-  pooling_weight = 0.5
+  pooling_weight = "0.5"
 )
 }
 \arguments{

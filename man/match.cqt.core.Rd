@@ -18,7 +18,8 @@ match.cqt.core(iso.c1, year.t1, res.cqt2)
 matched cqt object
 }
 \description{
-The core part of `obtain.matched.cqt` does the same thing but
+The core functioning part of `obtain.matched.cqt`. does the same thing but
 `obtain.matched.cqt` takes `output.dir` as input and `match.cqt.core` takes
-res.cqt2 as input.
+`res.cqt2` as input. Use `drop = FALSE` to allow `res.cqt` input whose 2nd
+dimension is 1 (no UI)
 }

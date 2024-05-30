@@ -272,17 +272,29 @@ mark.new.series <- function(mcmc.meta, new.sourceID.i, HIV_removed = FALSE){
 #' filename_old = "data_U5MR_20191018.csv")
 #' }
 find.dir.for.VR.comparison <- function(
-  IGME_year_new = floor(current.year()), # Year to look for the IGME `Input` dir
-  IGME_year_old = floor(current.year()-1),
+  IGME_year_new = 2024, # Year to look for the IGME `Input` dir
+  IGME_year_old = 2023,
   filename_new = NULL,
   filename_old = NULL # e.g. "data_U5MR_20191018.csv"
 ){
-  # allow global overwrite
+  if(floor(as.numeric(IGME_year_new)) >= 2024){
+    workdir_new <- get.workdir.sharepoint(IGME_year_new)
+  } else {
+    workdir_new <- get.workdir(IGME_year_new)
+  }
+
+  if(floor(as.numeric(IGME_year_old)) >= 2024){
+    workdir_old <- get.workdir.sharepoint(IGME_year_old)
+  } else {
+    workdir_old <- get.workdir(IGME_year_old)
+  }
+
+  # allow global overwriting if these object exist: dir_new_data_U5MR, dir_old_data_U5MR
   if(!exists("dir_new_data_U5MR")){
    if(is.null(filename_new)){
-     dir_new_data_U5MR <- get.dir_U5MR(dir_IGME = get.IGMEinput.dir(IGME_year_new))
+     dir_new_data_U5MR  <- get.dir_U5MR(workdir = workdir_new)
    } else {
-     dir_new_data_U5MR <- file.path(get.IGMEinput.dir(IGME_year_new), filename_new)
+     dir_new_data_U5MR <- file.path(workdir_new, "input", filename_new)
    }
    if(is.null(dir_new_data_U5MR))
      message("If want to highlight new VR series, please add in the global environment
@@ -292,9 +304,9 @@ find.dir.for.VR.comparison <- function(
 
   if(!exists("dir_old_data_U5MR")){
     if(is.null(filename_old)){
-      dir_old_data_U5MR <- get.dir_U5MR(dir_IGME = get.IGMEinput.dir(IGME_year_old))
+      dir_old_data_U5MR <- get.dir_U5MR(workdir = workdir_old)
     } else {
-      dir_old_data_U5MR <- file.path(get.IGMEinput.dir(IGME_year_old), filename_old)
+      dir_old_data_U5MR <- file.path(workdir_old, "input", filename_old)
     }
     if(is.null(dir_old_data_U5MR))
       message("If want to highlight new VR series, please add in the global environment
@@ -315,7 +327,8 @@ find.dir.for.VR.comparison <- function(
 #' environment to overwrite the default selection
 #'
 #' @param count_rounding default to NULL, if supply a value, e.g. 6, it will
-#'   count the difference also using the diff round to 1E-6
+#'   count the difference also using the diff round to 1E-6, if NULL only
+#'   count new country-year
 #'
 #' @return list of dt1 (the comparison dataset for debugging) and iso_newVR (the
 #'   vector of country isos with different WHO VR)

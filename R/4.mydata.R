@@ -22,75 +22,65 @@
 #' @keywords WPP2022
 "dt_wpp_2022"
 
-
-# IHME
-
-# IHME 2017 --------------------------------------------------------------------
-
-#' hme_2017_sex_Q5Q1_noCI: IHME 2017 U5MR and IMR for m,f,both, no CI, used as
-#' source to create sex-specific cqt, and `imr.ihme.cqt.2017` (no CI)
+#' dt_wpp_2024, master data table containing all needed indicator by sex
 #'
 #' @docType data
-#' @keywords IHME
-"ihme_2017_sex_Q5Q1_noCI"
+#' @keywords WPP2024
+"dt_wpp_2024"
 
-#'u5mr.ihme.cqt.2017
+
+# GBD
+
+
+# GBD 2021 ----------------------------------------------------------------
+
+# added 2024.05
+#' dt_gbd_2021: long data by Sex and Shortind, all cqt will be derived directly
+#' from it
 #'
 #' @docType data
-#' @keywords IHME
-"u5mr.ihme.cqt.2017"
+#' @keywords GBD
+"dt_gbd_2021"
 
-#'imr.ihme.cqt.2017
-#'
-#' @docType data
-#' @keywords IHME
-"imr.ihme.cqt.2017"
+# GBD 2019 ------------------------------------------------------------------
 
-#'nmr.ihme.cqt.2017
-#'
-#' @docType data
-#' @keywords IHME
-"nmr.ihme.cqt.2017"
-
-# IHME 2019 ------------------------------------------------------------------
-
-#' ihme_2019: reformatted "GBD2019_Under5_estimates.xlsx" into long by sex and
+#' ihme_2019: reformatted "ihme2019_Under5_estimates.xlsx" into long by sex and
 #' ind
 #'
 #' @docType data
-#' @keywords IHME
+#' @keywords ihme
 "ihme_2019"
 
 #'u5mr.ihme.cqt.2019
 #'
 #' @docType data
-#' @keywords IHME
+#' @keywords ihme
 "u5mr.ihme.cqt.2019"
 
 #'imr.ihme.cqt.2019
 #'
 #' @docType data
-#' @keywords IHME
+#' @keywords ihme
 "imr.ihme.cqt.2019"
 
 
 #'nmr.ihme.cqt.2019
 #'
 #' @docType data
-#' @keywords IHME
+#' @keywords ihme
 "nmr.ihme.cqt.2019"
 
 #'m10q5.ihme.cqt.2019
 #'
 #' @docType data
-#' @keywords IHME
+#' @keywords ihme
 "m10q5.ihme.cqt.2019"
 
 
 #'m10q15.ihme.cqt.2019
 #'
 #' @docType data
-#' @keywords IHME
+#' @keywords ihme
 "m10q15.ihme.cqt.2019"
 
 # isos --------------------------------------------------------------------
@@ -102,7 +92,7 @@
 #' @keywords ISO3Code
 "u5mr.iso.c"
 
-#' IHME_codebook: IHME codebook matching Location_ID to ISO3Code and IGME country
+#' IHME_codebook: ihme codebook matching Location_ID to ISO3Code and IGME country
 #' names
 #'
 #' @docType data

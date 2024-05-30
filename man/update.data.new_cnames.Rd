@@ -5,7 +5,7 @@
 \title{Internal function to update new_cnames.rda (for official names on the plot)}
 \usage{
 \method{update}{data.new_cnames}(
-  IGME_round_input = 2022,
+  IGME_round_input = 2024,
   country.info.file.name = "country.info.CME.csv"
 )
 }

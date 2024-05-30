@@ -120,7 +120,7 @@ get.mcmc.meta.dir <- function(output.dir, gender_ind, gender){
 #' @return e.g. 2022
 #' @export current.year
 current.year <- function(){
-  as.numeric(format(Sys.Date(), "%Y")) 
+  as.numeric(format(Sys.Date(), "%Y"))
 }
 
 #' Check if some rda files exist
@@ -169,10 +169,11 @@ update.name.c <- function(new.cname.df, mcmc.meta){
 #' @importFrom utils read.csv
 #'
 #' @param filename default to "country.info.CME.csv"
-#' @param dir_IGME_input input dir to look for country.info.CME.csv
+#' @param workdir directory for "input" to look for country.info.CME.csv
 #'
 #' @export get.new_cnames
-get.new_cnames <- function(dir_IGME_input, filename = "country.info.CME.csv"){
+get.new_cnames <- function(workdir = get.workdir.sharepoint(), filename = "country.info.CME.csv"){
+  dir_IGME_input <- file.path(workdir, "input")
   if(file.exists(file.path(dir_IGME_input, filename))){
     new_cnames <- utils::read.csv(file.path(dir_IGME_input, filename) ,
                            stringsAsFactors = FALSE, header=TRUE)[,c("ISO3Code", "UNCode", "OfficialName")]
@@ -189,9 +190,9 @@ get.new_cnames <- function(dir_IGME_input, filename = "country.info.CME.csv"){
 #' @param country.info.file.name country.info.CME.csv
 #'
 update.data.new_cnames <- function(
-  IGME_round_input = 2022,
+  IGME_round_input = 2024,
   country.info.file.name = "country.info.CME.csv"){
-  new_cnames <- get.new_cnames(get.IGMEinput.dir(IGME_round_input), country.info.file.name)
+  new_cnames <- get.new_cnames(workdir = get.workdir.sharepoint(), country.info.file.name)
   usethis::use_data(new_cnames, overwrite = TRUE)
   return(invisible())
 }
@@ -249,7 +250,7 @@ obtain.matched.cqt <- function(
   output.dir2 = NULL,
   runname1 = NULL,
   runname2 = NULL,
-  pooling_weight = 0.5
+  pooling_weight = "0.5"
 ){
   if (is.null(output.dir1)) output.dir1 <- file.path(getwd(), "output", runname1)
   if(!dir.exists(output.dir1)) stop("Check if dir exists: ", output.dir1)
@@ -263,7 +264,7 @@ obtain.matched.cqt <- function(
   load(file.path(output.dir1, "year.t.rda"))
   year.t1 <- year.t
   load(file.path(output.dir1, "res.cqt.Lw.rda"))
-  res.cqt1 <- res.cqt.Lw[[pooling_weight]]
+  res.cqt1 <- res.cqt.Lw[[as.character(pooling_weight)]]
 
 
   load(file.path(output.dir2, "iso.c.rda"))
@@ -271,11 +272,11 @@ obtain.matched.cqt <- function(
   load(file.path(output.dir2, "year.t.rda"))
   year.t2 <- year.t
   load(file.path(output.dir2, "res.cqt.Lw.rda"))
-  res.cqt2 <- res.cqt.Lw[[pooling_weight]]
+  res.cqt2 <- res.cqt.Lw[[as.character(pooling_weight)]]
 
   resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
   resfinal.cqt2[, , is.element(year.t1, year.t2)] <-
-    res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1)]
+    res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1), drop = FALSE]
   dimnames(resfinal.cqt2)[[1]] <- iso.c1
   dimnames(resfinal.cqt2)[[3]] <- year.t1
 
@@ -287,9 +288,11 @@ obtain.matched.cqt <- function(
 #' Match the 1st dimension of `res.cqt2` to `iso.c1` and match its 3nd dimension
 #' to `year.t1`
 #'
-#' The core part of `obtain.matched.cqt` does the same thing but
+#' The core functioning part of `obtain.matched.cqt`. does the same thing but
 #' `obtain.matched.cqt` takes `output.dir` as input and `match.cqt.core` takes
-#' res.cqt2 as input.
+#' `res.cqt2` as input. Use `drop = FALSE` to allow `res.cqt` input whose 2nd
+#' dimension is 1 (no UI)
+#'
 #'
 #' @param iso.c1 target iso(s)
 #' @param year.t1 target years
@@ -300,14 +303,28 @@ obtain.matched.cqt <- function(
 match.cqt.core <- function(iso.c1, year.t1, res.cqt2){
   if(is.null(res.cqt2)) return(NULL)
   iso.c2 <- dimnames(res.cqt2)[[1]]
+
   if(is.null(iso.c2)) stop("dimnames(res.cqt2)[[1]] in match.cqt.core is NULL")
   year.t2 <- dimnames(res.cqt2)[[3]]
   year.t2_new <- floor(as.numeric(year.t2))
   year.t1_new <- floor(as.numeric(year.t1))
 
   resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
-  resfinal.cqt2[, , is.element(year.t1_new, year.t2_new)] <-
-    res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2_new, year.t1_new)]
+  #
+  if(dim(res.cqt2)[[2]]==1){
+    # median only case,
+    # YL: as a temp solution, impute the UI the same as median,
+    # as UI-only cqt is not accepted for the general res.cqt plotting process
+    # flow in `PlotDataAndEstimates2020`
+    resfinal.cqt2[, 1, is.element(year.t1_new, year.t2_new)] <- res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2_new, year.t1_new), drop = FALSE]
+    resfinal.cqt2[, 2, is.element(year.t1_new, year.t2_new)] <- res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2_new, year.t1_new), drop = FALSE]
+    resfinal.cqt2[, 3, is.element(year.t1_new, year.t2_new)] <- res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2_new, year.t1_new), drop = FALSE]
+  } else {
+    # normal with UI case
+    resfinal.cqt2[, , is.element(year.t1_new, year.t2_new)] <-
+      res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2_new, year.t1_new), drop = FALSE]
+  }
+
   dimnames(resfinal.cqt2)[[1]] <- iso.c1
   dimnames(resfinal.cqt2)[[3]] <- year.t1
   return(resfinal.cqt2)
@@ -365,6 +382,10 @@ set.cqt.year.limit <- function(
 #' @export fix.entries.dt_gender
 fix.entries.dt_gender <- function(dt_gender){
 
+  # some strange character could occur in series names
+  dt_gender[DataCatalogID==2948, Series.Name := "Nicaraguense de Demografia y Salud (ENDESA)"]
+  dt_gender[DataCatalogID==6033, Series.Name := "Enquete menages pour le suivi et l'evaluation de l'impact de l'appui au systeme de remboursement du Paquet Minimum des Services de sante"]
+
   # MRT keeps "Revised in January 2019 - coding bug in CMRJack input needed correction" (the closer one)
   dt_gender[Country.Code=="MRT"&Visible==1&Series.Name=="Multiple Indicator Cluster Survey"&Series.Year=="2015"&Date.Of.Data.Added=="2018-06", Visible:=0]
   # Edit MAR Morocco PAPFAM, which is a dup of DHS2003-2003 (same values)
@@ -393,8 +414,7 @@ fix.entries.dt_gender <- function(dt_gender){
   dt_gender <- dt_gender[Male<1000 & Female < 1000]
 
   # strange coding in NIC
-  dt_gender[grepl("Demograf\xada", Series.Name) & Country.Code=="NIC", Series.Name := "Nicaraguense de Demografia y Salud (ENDESA)"]
-  
+
   # make sure these numeric columns are numeric
   col_num <- c(
     "Country.ISO"             ,"Start.date.of.Survey" ,   "End.date.of.Survey"     , "Average.date.of.Survey" ,
@@ -408,10 +428,10 @@ fix.entries.dt_gender <- function(dt_gender){
   dt_gender <- dt_gender[, (col_num):= lapply(.SD, function(x)as.numeric(as.character(x))), .SDcols = col_num]
 
   if(!"IGME_Key" %in% colnames(dt_gender))  dt_gender <- create.IGME.key(dt_gender)
-  
+
   # add a checking step on the order of reference.date --- if it's sorted correctly
   dt_gender <- dt_gender[Visible==1] # subset now, which is fine, only need visible ones anyway
-  
+
   #
   df_check <- copy(dt_gender)[Indicator == "Under-five Mortality Rate"]
   df_check$Series.Name <- ifelse(df_check$Series.Category=="SVR", gsub('[0-9]+',"", df_check$Series.Name), df_check$Series.Name)
@@ -420,7 +440,7 @@ fix.entries.dt_gender <- function(dt_gender){
                                   paste(df_check$sourcetype.i, df_check$Data.Collection.Method, sep=" "),
                                   paste(df_check$sourcetype.i, df_check$Series.Type, sep=" ")),
                            "VR")
-  
+
   df_check$seriesnameandyear = ifelse(df_check$Series.Type!="VR",
                                 paste0(df_check$Series.Name, " ", df_check$Series.Year, " (", df_check$sourcetype.i,")"),
                                 df_check$Series.Name)
@@ -435,7 +455,7 @@ fix.entries.dt_gender <- function(dt_gender){
     if(!dir.exists("temp")) dir.create("temp")
     writexl::write_xlsx(df_check[sourcename %in% check_id], paste("temp/check db by sex issues", Sys.Date(), ".xlsx"))
   }
-  
+
   return(dt_gender)
 }
 

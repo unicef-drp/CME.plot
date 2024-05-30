@@ -13,4 +13,4 @@ imr.ihme.cqt.2019
 \description{
 imr.ihme.cqt.2019
 }
-\keyword{IHME}
+\keyword{ihme}

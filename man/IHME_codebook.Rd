@@ -3,7 +3,7 @@
 \docType{data}
 \name{IHME_codebook}
 \alias{IHME_codebook}
-\title{IHME_codebook: IHME codebook matching Location_ID to ISO3Code and IGME country
+\title{IHME_codebook: ihme codebook matching Location_ID to ISO3Code and IGME country
 names}
 \format{
 An object of class \code{data.table} (inherits from \code{data.frame}) with 195 rows and 5 columns.
@@ -12,7 +12,7 @@ An object of class \code{data.table} (inherits from \code{data.frame}) with 195 
 IHME_codebook
 }
 \description{
-IHME_codebook: IHME codebook matching Location_ID to ISO3Code and IGME country
+IHME_codebook: ihme codebook matching Location_ID to ISO3Code and IGME country
 names
 }
 \keyword{codebook}

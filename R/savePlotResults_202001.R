@@ -137,9 +137,9 @@ savePlotResults <- function(
   output.dir4 = NULL,
   fig.dir = NULL,    # directory to store plots. If \code{NULL}, defaults to folder \code{fig} in current working directory. Will create directory if doesn't exist
   year.start = NULL, # start year of estimates to plot. If \code{NULL}, earliest year of estimates available is used.
-  year.end = current.year()-1,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
+  year.end = year.lastestimatepublished,   # end year of estimates to plot. If \code{NULL}, latest year of estimates available is used.
   zoom.year.start = 1990,
-  zoom.year.end = current.year()-1,
+  zoom.year.end = year.lastestimatepublished,
   remove_date_5_24 = 1990, # for 5-24 (total and sex-specific): by default remove series older than 1990 so not on the CC plot
   main.plot = TRUE,  # include main plot?
   zoom = TRUE,       # include zoom plot?
@@ -157,8 +157,8 @@ savePlotResults <- function(
   legend_ex = NULL,# used as a switch for showing expected series: blue dotted line
   wpp.cqt = NULL,  # green line
   ihme.cqt = NULL, # blue line
-  legend_WPP = "WPP 2022",
-  legend_IHME = "IHME GBD 2019",
+  legend_WPP = "WPP 2024",
+  legend_IHME = "GBD 2021",
   ylab = NULL,
   new_entry_date = NULL,
   pdf.or.png = "pdf",  # "pdf" or "png"
@@ -181,6 +181,11 @@ savePlotResults <- function(
 ) {
   if(!is.null(dev.list())) dev.off() # close any open devices
 
+  if(!exists("year.lastestimatepublished")){
+    message('`year.end` default to `as.numeric(format(Sys.Date(), "%Y")) - 1`')
+    message('Please provide `year.lastestimatepublished` if it is not so')
+    year.lastestimatepublished <- as.numeric(format(Sys.Date(), "%Y")) - 1
+  }
   # set directory
   # if runname is NULL, output.dir
   if (is.null(output.dir)) output.dir <- file.path(getwd(), "output", runname)
@@ -262,8 +267,7 @@ savePlotResults <- function(
 
       }
 
-      # dimnames(res.cqt)[[3]] <- year.t #
-      if(is.null(year.t)) year.t <- dimnames(res.cqt)[[3]] # ?? 2021/8
+      if(is.null(year.t)) year.t <- dimnames(res.cqt)[[3]]
       message("year.t: ", paste(range(year.t), collapse = "-"))
 
 
@@ -347,7 +351,7 @@ savePlotResults <- function(
       if(!is.null(legend_ex)) res_ex.cqt <- nmr$res_ex.cqt
       #  allowing sex-specific input in NMR format for no-date indicators like
       #  sex-specific 4q1 (2022.06)
-      if(!is.null(nmr$sex)){ 
+      if(!is.null(nmr$sex)){
         indicator.type <- nmr$indicator_label # e.g. CMR, used in filename, could be different from ylab
         gender_title <- nmr$sex
         gender <- nmr$sex
@@ -471,7 +475,7 @@ savePlotResults <- function(
     dt_cqt <- reshape2::melt(res.cqt)
     colnames(dt_cqt) <- c("ISO.Code", "Quantile", "Year", "Value")
     # indicator.type is not always the correct shortind, it's U5MR/IMR for older children
-    short_ind <- if(is.null(ylab)) indicator.type else ylab 
+    short_ind <- if(is.null(ylab)) indicator.type else ylab
     # some ylab uses full name like CMR, so exceptions:
     if(indicator.type %in% c("MR1t59", "CMR")) short_ind <- indicator.type
     short_ind <- gsub("/", "_", short_ind)
@@ -691,7 +695,7 @@ savePlotResults <- function(
   message("Results saved to ", fig.dir)
 
   time_spent <- round(Sys.time() - time0, 1)
-  
+
   if(any(failed)){
     return(list(filename = filename, fig.dir = fig.dir,
                 C = C, isoc = iso.c,

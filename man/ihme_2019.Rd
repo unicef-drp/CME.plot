@@ -3,7 +3,7 @@
 \docType{data}
 \name{ihme_2019}
 \alias{ihme_2019}
-\title{ihme_2019: reformatted "GBD2019_Under5_estimates.xlsx" into long by sex and
+\title{ihme_2019: reformatted "ihme2019_Under5_estimates.xlsx" into long by sex and
 ind}
 \format{
 An object of class \code{data.table} (inherits from \code{data.frame}) with 136500 rows and 7 columns.
@@ -12,7 +12,7 @@ An object of class \code{data.table} (inherits from \code{data.frame}) with 1365
 ihme_2019
 }
 \description{
-ihme_2019: reformatted "GBD2019_Under5_estimates.xlsx" into long by sex and
+ihme_2019: reformatted "ihme2019_Under5_estimates.xlsx" into long by sex and
 ind
 }
-\keyword{IHME}
+\keyword{ihme}

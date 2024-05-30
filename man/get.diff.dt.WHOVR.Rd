@@ -10,7 +10,8 @@ get.diff.dt.WHOVR(count_rounding = NULL)
 }
 \arguments{
 \item{count_rounding}{default to NULL, if supply a value, e.g. 6, it will
-count the difference also using the diff round to 1E-6}
+count the difference also using the diff round to 1E-6, if NULL only
+count new country-year}
 }
 \value{
 list of dt1 (the comparison dataset for debugging) and iso_newVR (the
