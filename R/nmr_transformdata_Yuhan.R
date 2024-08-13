@@ -717,13 +717,17 @@ GetDataGlobalNMR<- function(file, #data file, must be in form of log ratios
 
   if (length(iso.crisis.to.check) > 0) {
     for (iso in iso.crisis.to.check) {
-      crisis.years.range <- range(crisisfree$year.adj[crisisfree$countrycode.adj == iso &
-                                                        crisisfree$add.adj != 0])
+      #       crisis.years.range <- range(crisisfree$year.adj[crisisfree$countrycode.adj == iso &
+      #                                                         crisisfree$add.adj != 0])
 
-      years.crisis.i <- crisisfree$year.adj[crisisfree$countrycode.adj==iso]
-      for(i in 1:length(years.crisis.i)){
-        select.crisis[df$iso.i == iso & floor(df$year.i) == floor(years.crisis.i[i])] <- TRUE
-      } # edit DJS 2019-05-06 to handle multiple non-seqeuntial crisis, i.e. Japan
+            # years.crisis.i <- crisisfree$year.adj[crisisfree$countrycode.adj==iso]
+            years.crisis.i <- crisisfree$year.adj[crisisfree$countrycode.adj==iso&crisisfree$longterm!=0] #DHS 2024-08-12 change to not exclude data points during longterm crisis; longterm crisis are identified with 'longterm' column of adjustment file where 0 indicates a longterm crisis where points should not be excluded
+            if(iso=="SYR"){years.crisis.i <- years.crisis.i[years.crisis.i!=2017.5]} # DJS 2020-04-17 to keep data point at 2017 included for Syria but still add crisis adjustment
+            # DJS 2024-08-12 change to code to keep data points included for long-term crises
+
+            for(i in 1:length(years.crisis.i)){
+              select.crisis[df$iso.i == iso & floor(df$year.i) == floor(years.crisis.i[i])] <- TRUE
+            } # edit DJS 2019-05-06 to handle multiple non-sequential crisis, i.e. Japan
 
       #cat(paste0(iso,crisis.years.range,'\n'))
       # if any observation year is within range of crisis years, select.crisis is TRUE

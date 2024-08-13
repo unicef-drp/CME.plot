@@ -127,7 +127,7 @@ get.new.series.mark.entry <- function(dt_cme,
   # 2/28: If to highlight part of the WHO Series by comparing values
   if(show_new_WHO_VR){
     dt_cme[grepl("WHO", Series.Name), new_entry := 0]
-    # Highlight new VR options
+    # Highlight new VR --- there are two options:
     # 1. only highlight VR with new country-year
     # iso_newVR <- get.diff.dt.WHOVR(count_rounding = NULL)$iso_newVR
 
@@ -282,20 +282,15 @@ find.dir.for.VR.comparison <- function(
   filename_new = NULL,
   filename_old = NULL # e.g. "data_U5MR_20191018.csv"
 ){
-  if(floor(as.numeric(IGME_year_new)) >= 2024){
-    workdir_new <- get.workdir.sharepoint(IGME_year_new)
-  } else {
-    workdir_new <- get.workdir(IGME_year_new)
-  }
-
-  if(floor(as.numeric(IGME_year_old)) >= 2024){
-    workdir_old <- get.workdir.sharepoint(IGME_year_old)
-  } else {
-    workdir_old <- get.workdir(IGME_year_old)
-  }
 
   # allow global overwriting if these object exist: dir_new_data_U5MR, dir_old_data_U5MR
   if(!exists("dir_new_data_U5MR")){
+    if(floor(as.numeric(IGME_year_new)) >= 2024){
+      workdir_new <- get.workdir.sharepoint(IGME_year_new)
+    } else {
+      workdir_new <- get.workdir(IGME_year_new)
+    }
+
    if(is.null(filename_new)){
      dir_new_data_U5MR  <- get.dir_U5MR(workdir = workdir_new)
    } else {
@@ -308,6 +303,12 @@ find.dir.for.VR.comparison <- function(
   }
 
   if(!exists("dir_old_data_U5MR")){
+    if(floor(as.numeric(IGME_year_old)) >= 2024){
+      workdir_old <- get.workdir.sharepoint(IGME_year_old)
+    } else {
+      workdir_old <- get.workdir(IGME_year_old)
+    }
+
     if(is.null(filename_old)){
       dir_old_data_U5MR <- get.dir_U5MR(workdir = workdir_old)
     } else {

@@ -7,7 +7,7 @@
 #' @param indicator full indicator, use `get.match` to get it
 #' @param indicator_label Short indicator, use `get.match` to get it
 #' @param sex Sex (Female, Male, Sex Ratio)
-#' @param iso country iso in desired order 
+#' @param iso country iso in desired order
 #' @param resultsfile_cqt results file for cqt1
 #' @param expectedresultsfile_cqt results file for cqt expected
 #' @param resultsfile_cqt2 results file for cqt2
@@ -19,6 +19,8 @@
 #' @param mlinfo dir to "MLinfo.csv", used to mark `includedvr.Lcs.j` for IMR
 #'
 #' @return a list of data and res.cqt(s)
+#' @importFrom dplyr left_join
+#' @importFrom dplyr recode
 #' @export transformdataSexSpecific
 #'
 transformdataSexSpecific <- function(
@@ -36,7 +38,7 @@ transformdataSexSpecific <- function(
   resultsiso2 = NULL,  # since ISO order could differ YL 2022.07
   resultsfile_cqt3=NULL,
   resultsiso3 = NULL,
-  
+
   year_range = NULL,
   crisisadjfile = NULL, ##default NULL, exclude data in the crisis year
   mlinfo = NULL
@@ -75,7 +77,7 @@ transformdataSexSpecific <- function(
   d$Female=ifelse(is.na(d$Female) |!is.finite(d$Female) |d$Female<0,NA,d$Female)
   df = d
   # df[Country.Code == "ARE", unique(Series.Name)]
-  
+
   # This is the series type, not the seriesname
   # e.g. "Others Indirect", "Census Direct"
   df$Series.Name <- as.character(df$Series.Name)
@@ -101,7 +103,7 @@ transformdataSexSpecific <- function(
     message("Note: `new_entry_date` default to last Oct.")
   }
   df <- get.new.series.mark.entry(df, new_entry_date)
-  
+
   setorder(df, Country.Name, -End.date.of.Survey, Series.Name, Series.Type, -Reference.Date,  Inclusion.Gender)
   # df[Country.Code=="ARE", unique(Series.Name)]
   # For setting the right dimension of res.cqt
@@ -138,7 +140,7 @@ transformdataSexSpecific <- function(
   #Other estimates to show
   res2.cqt=array(dim=c(length(resultsiso2),3,length(year.u.t)),dimnames = list(resultsiso2,c(0.05,0.5,0.95),year.u.t))
   res3.cqt=array(dim=c(length(resultsiso3),3,length(year.u.t)),dimnames = list(resultsiso3,c(0.05,0.5,0.95),year.u.t))
-  
+
   #u.ct=matrix(NA,ncol=84,nrow=length(iso))
   #t=matrix(NA,ncol=84,nrow=length(iso))
 
@@ -343,7 +345,7 @@ transformdataSexSpecific <- function(
       res.cqt[cn,2,]=res_med
       res.cqt[cn,3,]=res_upper
     }
-    
+
     ####=====estimation 2 ###
     if(!is.null(resultsfile_cqt2)){
       cn2 <- which(resultsiso2 == iso.selected) # position of the iso code in the iso code list
@@ -367,10 +369,10 @@ transformdataSexSpecific <- function(
       res2.cqt[cn2,2,]=res_med
       res2.cqt[cn2,3,]=res_upper
     }
-    
+
     ####=====estimation 3 ###
     if(!is.null(resultsfile_cqt3)){
-      
+
       cn3 <- which(resultsiso3 == iso.selected) # position of the iso code in the iso code list
       if(length(cn3)==1){
         # this means iso.selected has results
@@ -392,7 +394,7 @@ transformdataSexSpecific <- function(
       res3.cqt[cn3,2,]=res_med
       res3.cqt[cn3,3,]=res_upper
     }
-    
+
 
 
     ####=====expectation
@@ -456,7 +458,7 @@ transformdataSexSpecific <- function(
       #### end of construct mcmc.meta
 
       ### add results for no data countries
-      
+
       ####=====estimation 1 ###
       if(!is.null(resultsfile_cqt)){
         cn <- which(resultsiso == iso.selected) # position of the iso code in the iso code list
@@ -480,7 +482,7 @@ transformdataSexSpecific <- function(
         res.cqt[cn,2,]=res_med
         res.cqt[cn,3,]=res_upper
       }
-      
+
       ####=====estimation 2 ###
       if(!is.null(resultsfile_cqt2)){
         cn2 <- which(resultsiso2 == iso.selected) # position of the iso code in the iso code list
@@ -504,10 +506,10 @@ transformdataSexSpecific <- function(
         res2.cqt[cn2,2,]=res_med
         res2.cqt[cn2,3,]=res_upper
       }
-      
+
       ####=====estimation 3 ###
       if(!is.null(resultsfile_cqt3)){
-        
+
         cn3 <- which(resultsiso3 == iso.selected) # position of the iso code in the iso code list
         if(length(cn3)==1){
           # this means iso.selected has results
@@ -529,7 +531,7 @@ transformdataSexSpecific <- function(
         res3.cqt[cn3,2,]=res_med
         res3.cqt[cn3,3,]=res_upper
       }
-      
+
 
       # if(!is.null(expectedresultsfile_cqt)){
       #   res_ex=results_ex[,,iso_selected]

@@ -182,8 +182,8 @@ savePlotResults <- function(
   if(!is.null(dev.list())) dev.off() # close any open devices
 
   if(!exists("year.lastestimatepublished")){
-    message('`year.end` default to `as.numeric(format(Sys.Date(), "%Y")) - 1`')
-    message('Please provide `year.lastestimatepublished` if it is not so')
+    message('On x-axis, `year.end` default to ', as.numeric(format(Sys.Date(), "%Y")) - 1)
+    message('Please define `year.lastestimatepublished = 202x` in the script (in global environment) if this is not the case')
     year.lastestimatepublished <- as.numeric(format(Sys.Date(), "%Y")) - 1
   }
   # set directory

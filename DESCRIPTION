@@ -19,6 +19,7 @@ Depends:
 Imports: 
     RColorBrewer,
     reshape2,
+    dplyr,
     data.table (>= 1.12.0),
     usethis
 Suggests: 
