@@ -53,6 +53,8 @@ dt_wpp0[1,]
 dt_wpp <- melt(dt_wpp0, id.vars = c("ISO3_code", "Sex", "Year"), measure.vars = c("0", "1", "5", "10", "15", "20"),
                variable.name = "AgeGrpStart", value.name = "qx", variable.factor = FALSE)
 
+# next year, keep XKX, still revise to RKS for now
+dt_wpp[ISO3_code == "XKX", ISO3_code := "RKS"]
 
 format.WPP.life.table <- function(dt_wpp){
   message("Range of Year is: ", paste(range(dt_wpp$Year), collapse = "-"))
@@ -90,9 +92,4 @@ usethis::use_data(dt_wpp_2024, overwrite = TRUE)
 
 #
 fwrite(dt_wpp_2024,
-       file.path(dir.wpp, "WPP 2024/WPP2024-LT_extract_0_24_wide_ind_1950-2023.csv"))
-#
-# dt_wpp_2024_all_year <- rbindlist(list(dt_wpp_2024, dt_wpp_2024_proj))
-# setorder(dt_wpp_2024_all_year, ISO3Code)
-# fwrite(dt_wpp_2024_all_year,
-#        file.path(dir.wpp, "WPP 2024/WPP2024-LT_extract_0_24_wide_ind_1950-2100.csv"))
+       file.path(dir.wpp, "WPP 2024/WPP2024-Life Table qx_extract_0_24_wide_ind_1950-2023.csv"))

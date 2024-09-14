@@ -92,7 +92,7 @@ get.gbd.cqt <- function(ind0,
 ){
   stopifnot(gbd_round%in%c(2021))
   stopifnot(sex0%in%c("f", "m", "both"))
-  stopifnot(ind0%in%c("U5MR", "Q5", "IMR", "Q1", "CMR", "Q4", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15"))
+  stopifnot(ind0%in%c("NMR", "U5MR", "Q5", "IMR", "Q1", "CMR", "Q4", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15"))
   dt_gbd <- switch(as.character(gbd_round),
                    "2021" = dt_gbd_2021
   )
