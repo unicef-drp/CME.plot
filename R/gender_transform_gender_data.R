@@ -90,7 +90,7 @@ transformdataSexSpecific <- function(
                            "VR")
   table(df$sourcetype.i)
   # Remove "(Various periods)"
-  df$sourcetype.i = gsub("\\(Various periods\\) ", "", df$sourcetype.i)
+  df$sourcetype.i = gsub("\\(Various periods\\)", "", df$sourcetype.i)
   # trim whitespace
   df$sourcetype.i = trimws(df$sourcetype.i)
   
