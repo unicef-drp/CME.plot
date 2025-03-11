@@ -76,9 +76,7 @@ transformdataSexSpecific <- function(
   d$Male=ifelse(is.na(d$Male) |!is.finite(d$Male) |d$Male<0,NA,d$Male)
   d$Female=ifelse(is.na(d$Female) |!is.finite(d$Female) |d$Female<0,NA,d$Female)
   df = d
-  # df[Country.Code == "ARE", unique(Series.Name)]
-
-  # This is the series type, not the seriesname
+  
   # e.g. "Others Indirect", "Census Direct"
   df$Series.Name <- as.character(df$Series.Name)
   # If want to change legend name, could modify the Series.Name directly
@@ -90,7 +88,12 @@ transformdataSexSpecific <- function(
                                   paste(df$sourcetype.i, df$Data.Collection.Method, sep=" "),
                                   paste(df$sourcetype.i, df$Series.Type, sep=" ")),
                            "VR")
-
+  table(df$sourcetype.i)
+  # Remove "(Various periods)"
+  df$sourcetype.i = gsub("\\(Various periods\\) ", "", df$sourcetype.i)
+  # trim whitespace
+  df$sourcetype.i = trimws(df$sourcetype.i)
+  
   df$seriesnameandyear = ifelse(df$Series.Type!="VR",
                                 paste0(df$Series.Name, " ", df$Series.Year, " (", df$sourcetype.i,")"),
                                 df$Series.Name)
@@ -213,11 +216,15 @@ transformdataSexSpecific <- function(
 
             year.Lcs.j[[c]][[z]]=df.selected$Reference.Date[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Male)]
             #included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Male)]
-            if(indicator=="Infant Mortality Rate"){
-              included.Lcs.j[[c]][[z]]=rep(0,length(df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Male)]))
-            } else {
-              included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Male)]
-            }
+           
+            # YL 2024: we used to set inclusion for IMR to 0, since IMR total now applies B3 we would just follow Inclusion.Gender
+            # if(indicator=="Infant Mortality Rate"){
+            #   included.Lcs.j[[c]][[z]]=rep(0,length(df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Male)]))
+            # } else {
+            #   included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Male)]
+            # }
+            included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Male)]
+            
           }else if(sex=="Female" & all(is.na(df.selected$Female[df.selected$seriesnameandyear==series.selected]))!=TRUE){
             z=z+1
             u.Lcs.j[[c]][[z]]=df.selected$Female[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Female)]
@@ -231,11 +238,15 @@ transformdataSexSpecific <- function(
 
             year.Lcs.j[[c]][[z]]=df.selected$Reference.Date[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Female)]
             #included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Female)]
-            if(indicator=="Infant Mortality Rate"){
-              included.Lcs.j[[c]][[z]]=rep(0,length(df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Female)]))
-            } else {
-              included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Female)]
-            }
+            
+            # YL 2024: we used to set inclusion for IMR to 0, since IMR total now applies B3 we would just follow Inclusion
+            # if(indicator=="Infant Mortality Rate"){
+            #   included.Lcs.j[[c]][[z]]=rep(0,length(df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Female)]))
+            # } else {
+            #   included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Female)]
+            # }
+            included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Female)]
+            
           } else if(sex!="Female" & sex!="Male" & all(is.na(df.selected$Sex.Ratio[df.selected$seriesnameandyear==series.selected]))!=TRUE){
             z=z+1
             u.Lcs.j[[c]][[z]]=df.selected$Sex.Ratio[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Sex.Ratio)]
@@ -249,10 +260,13 @@ transformdataSexSpecific <- function(
             year.Lcs.j[[c]][[z]]=df.selected$Reference.Date[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Sex.Ratio)]
             #included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Sex.Ratio)]
             #kai made changes 04/10/2018 ->
-            if(indicator=="Infant Mortality Rate"){
-              included.Lcs.j[[c]][[z]]=rep(0,length(df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Sex.Ratio)]))
-            } else {
-              included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Sex.Ratio)]}
+            # if(indicator=="Infant Mortality Rate"){
+            #   included.Lcs.j[[c]][[z]]=rep(0,length(df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Sex.Ratio)]))
+            # } else {
+            #   included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Sex.Ratio)]
+            # }
+            included.Lcs.j[[c]][[z]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected & !is.na(df.selected$Sex.Ratio)]
+            
           }
         }
       }

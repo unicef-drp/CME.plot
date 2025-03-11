@@ -36,20 +36,15 @@ get.workdir.dropbox <- function(year = 2023){
 #' @return directory to "Code" folder
 #' @export get.workdir.sharepoint
 get.workdir.sharepoint <- function(year = 2024){
+  stopifnot(nchar(as.numeric(year)) == 4)
   user_name <- Sys.info()[["user"]]
   USERPROFILE <- load_os_leading_dir()
-  #
-  home_dir <- switch(user_name,
-                     "lyhel" = "D:/OneDrive - UNICEF/Documents - Child Mortality/UN IGME data",
-                     "gfell" = "C:/Users/gfell/UNICEF/Child Mortality - Documents/UN IGME data",
-                     "your_user_name" = "your SharePoint home directory",
 
-                     # best guess is:
-                     file.path(USERPROFILE, "OneDrive - UNICEF/Documents - Child Mortality/UN IGME data")
-                     )
-  if(!dir.exists(home_dir)){
-    message("For locating SharePoint directories, please add your SharePoint home directory in this function `get.workdir.sharepoint`")
-  }
+  # defined in this file:
+  source(file.path(USERPROFILE, "Dropbox/UNICEF Work/profile.R"))
+
+  home_dir <- dir_IGME
+  if(!dir.exists(home_dir)) warning ("To find default working directory on SharePoint, please add your SharePoint home directory in this function `get.workdir.sharepoint`")
   work_dir <- file.path(home_dir, paste0(year, " Round Estimation/Code"))
   return(work_dir)
 }

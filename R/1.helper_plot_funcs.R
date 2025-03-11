@@ -383,30 +383,25 @@ set.cqt.year.limit <- function(
 fix.entries.dt_gender <- function(dt_gender){
 
   # some strange character could occur in series names
-  dt_gender[DataCatalogID==2948, Series.Name := "Nicaraguense de Demografia y Salud (ENDESA)"]
-  dt_gender[DataCatalogID==6033, Series.Name := "Enquete menages pour le suivi et l'evaluation de l'impact de l'appui au systeme de remboursement du Paquet Minimum des Services de sante"]
-
+  dt_gender[Country.Code == "NIC" &  Series.Year == 2006, Series.Name := "Nicaraguense de Demografia y Salud (ENDESA)"]
+  if("DataCatalogID" %in% colnames(dt_gender)){
+    dt_gender[DataCatalogID==2948, Series.Name := "Nicaraguense de Demografia y Salud (ENDESA)"]
+    dt_gender[DataCatalogID==6033, Series.Name := "Enquete menages pour le suivi et l'evaluation de l'impact de l'appui au systeme de remboursement du Paquet Minimum des Services de sante"]
+  }
   # MRT keeps "Revised in January 2019 - coding bug in CMRJack input needed correction" (the closer one)
   dt_gender[Country.Code=="MRT"&Visible==1&Series.Name=="Multiple Indicator Cluster Survey"&Series.Year=="2015"&Date.Of.Data.Added=="2018-06", Visible:=0]
   # Edit MAR Morocco PAPFAM, which is a dup of DHS2003-2003 (same values)
   # Duplication: MAR Demographic and Health Survey 2003-2004
   dt_gender[Country.Code=="MAR"&Visible==1&Series.Name=="PAPFAM Family Health Survey"&Series.Year=="2003-2004", Visible:=0]
 
-  dt_gender[Country.Code=="LUX" & Series.Name=="WHO Good Vital Registration Data 2018 version" & Visible ==1,
-            `:=`(Series.Name = "WHO Vital Registration Data 2020 version",
-                 Series.Year = 2020,
-                 End.date.of.Survey = 2020)]
-
   dt_gender[Country.Code=="MCO"& Visible ==1,
             `:=`(
-              # Series.Year = 2020,
               End.date.of.Survey = 2019)]
 
   # Fix India issue, shouldn't have NA `End.date.of.Survey`
   dt_gender[Series.Type=="VR" & Visible ==1 & is.na(End.date.of.Survey), End.date.of.Survey:= as.numeric(Series.Year)]
 
   if(dt_gender[Country.Code=="LUX" & Indicator%like%"Under-five" & Visible == 1,][Series.Name=="WHO Good Vital Registration Data 2018 version",.N]>0) warning("Check LUX")
-
   # some 9999?
   dt_gender <- dt_gender[Male<1000 & Female < 1000]
 
@@ -432,6 +427,8 @@ fix.entries.dt_gender <- function(dt_gender){
   setorder(dt_gender, Country.Name, -End.date.of.Survey, Series.Name, Series.Type, -Reference.Date,  Inclusion.Gender)
 
   #
+  # This check will find out cases that cause the lines on the plot to come back and forth, 
+  # need to fix the data 
   df_check <- copy(dt_gender)[Indicator == "Under-five Mortality Rate"]
   df_check$Series.Name <- ifelse(df_check$Series.Category=="SVR", gsub('[0-9]+',"", df_check$Series.Name), df_check$Series.Name)
   df_check$sourcetype.i = ifelse(df_check$Series.Type!="VR",
@@ -450,7 +447,8 @@ fix.entries.dt_gender <- function(dt_gender){
   df_check[, I.ref := seq_len(.N), by = sourcename]
   check_id <- df_check[I.obs!=I.ref, unique(sourcename)]
   if(length(check_id)>0){
-    warning("Check following series for potential issues, e.g. dup entries, varied Series.Year: ", paste(check_id, collapse = ", "))
+    
+    warning("Check (saved files in _temp_ folder) following series for potential issues, e.g. dup entries or wrong Series.Year: ", paste(check_id, collapse = ", "))
     if(!dir.exists("temp")) dir.create("temp")
     writexl::write_xlsx(df_check[sourcename %in% check_id], paste("temp/check db by sex issues", Sys.Date(), ".xlsx"))
   }
