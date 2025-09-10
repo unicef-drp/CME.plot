@@ -70,6 +70,7 @@ transformdataforNMR = function(
 
   # For setting the right dimension of res.cqt
   year.u.t <- du5$year.u.t
+  year.u.t <- year.u.t[year.u.t>=1932] # YL: avoid going too early like 1924
   # if `year_range` is provided, set the uplimit of year.u.t
   if(!is.null(year_range)) {
     if(round(max(year_range)) == max(year_range)) year_range = year_range + 0.5
@@ -187,7 +188,7 @@ transformdataforNMR = function(
 
     if (iso.selected %in% iso.i){
     has.no.data[[c]] <- NULL
-    df.selected=df[df$iso.i==iso.selected,]
+    df.selected = df[df$iso.i == iso.selected, ]
     name.selected = new.cname.df$OfficialName[new.cname.df$ISO3Code %in% iso.selected]
     #name.c[c]=name.selected
     vr.ind = df.selected$series.i %in%c('VR','SVR')
@@ -278,7 +279,7 @@ transformdataforNMR = function(
    # year series for estimation and expectation
    cn <- which(iso.u.c== iso.selected) # position of the iso code in the iso code list
    # ???
-   minyear <- min(1990.5, min(df$year.i[paste(df$iso.i)==paste(iso.selected)],na.rm = T),na.rm = T) #change 0706 YL:???
+   # minyear <- min(1990.5, min(df$year.i[paste(df$iso.i)==paste(iso.selected)],na.rm = T),na.rm = T) #change 0706 YL:???
    minyear <- min(year_range)
    minyear <- round(minyear)+0.5
    seq.years <- minyear : (round(max(year_range))+0.5) #DJS edited to use max(year_range) instead of to 2030
@@ -291,9 +292,9 @@ transformdataforNMR = function(
    res_upper=apply(res,2,function(x) quantile(x,0.95,na.rm = T))
    res_lower=apply(res,2,function(x) quantile(x,0.05,na.rm = T))
    #names(res_upper)=year.u.t
-   res.cqt[cn,1,] <- res_lower[1:which(names(res_lower)==max(year_range))] # DJS edit to only plot to max of year, so not to 2030 unless specified
-   res.cqt[cn,2,] <- res_med[1:which(names(res_med)==max(year_range))]
-   res.cqt[cn,3,] <- res_upper[1:which(names(res_upper)==max(year_range))]
+   res.cqt[cn,1,] <- res_lower[which(names(res_lower)==min(year_range)) : which(names(res_lower)==max(year_range))] # DJS edit to only plot to max of year, so not to 2030 unless specified
+   res.cqt[cn,2,] <- res_med  [which(names(res_med)==min(year_range)) : which(names(res_med)==max(year_range))]
+   res.cqt[cn,3,] <- res_upper[which(names(res_upper)==min(year_range)) : which(names(res_upper)==max(year_range))]
    }
 
 
@@ -312,9 +313,9 @@ transformdataforNMR = function(
        res2_upper <- rep(NA, length(years_results2)); names(res2_upper) <- years_results2
        res2_lower <- rep(NA, length(years_results2)); names(res2_lower) <- years_results2
      }
-    res2.cqt[cn2,1,]=res2_lower[1:which(names(res2_lower)==max(year_range))]
-    res2.cqt[cn2,2,]=res2_med[1:which(names(res2_med)==max(year_range))]
-    res2.cqt[cn2,3,]=res2_upper[1:which(names(res2_upper)==max(year_range))]
+    res2.cqt[cn2,1,] = res2_lower[which(names(res2_lower)==min(year_range)) : which(names(res2_lower)==max(year_range))]
+    res2.cqt[cn2,2,] = res2_med  [which(names(res2_med)==min(year_range)) : which(names(res2_med)==max(year_range))]
+    res2.cqt[cn2,3,] = res2_upper[which(names(res2_upper)==min(year_range)) : which(names(res2_upper)==max(year_range))]
    }
 
    ####=====estimation 3
@@ -332,26 +333,13 @@ transformdataforNMR = function(
        res3_upper <- rep(NA, length(years_results3)); names(res3_upper) <- years_results3
        res3_lower <- rep(NA, length(years_results3)); names(res3_lower) <- years_results3
      }
-     res3.cqt[cn3,1,] = res3_lower[1:which(names(res3_lower)==max(year_range))]
-     res3.cqt[cn3,2,] = res3_med[1:which(names(res3_med)==max(year_range))]
-     res3.cqt[cn3,3,] = res3_upper[1:which(names(res3_upper)==max(year_range))]
-   }
-
-   if (!is.null(resultsfile3)){
-    res3 = results3[,,cn] #
-    res3_med=apply(res3, 2, function(x) median(x,na.rm=T))
-    res3_upper=apply(res3,2,function(x) quantile(x,0.95,na.rm = T))
-    res3_lower=apply(res3,2,function(x) quantile(x,0.05,na.rm = T))
-    names(res3_upper)=year.u.t
-
-    res3.cqt[c,1,]=res3_lower[1:which(names(res3_lower)==max(year_range))]
-    res3.cqt[c,2,]=res3_med[1:which(names(res3_med)==max(year_range))]
-    res3.cqt[c,3,]=res3_upper[1:which(names(res3_upper)==max(year_range))]
+     res3.cqt[cn3,1,] = res3_lower[which(names(res3_lower)==min(year_range)) : which(names(res3_lower)==max(year_range))]
+     res3.cqt[cn3,2,] = res3_med  [which(names(res3_med)==min(year_range)) : which(names(res3_med)==max(year_range))]
+     res3.cqt[cn3,3,] = res3_upper[which(names(res3_upper)==min(year_range)) : which(names(res3_upper)==max(year_range))]
    }
 
 
    ####=====expectation
-
 
 
    if(!is.null(expectedresultsfile)){
@@ -361,9 +349,9 @@ transformdataforNMR = function(
    res_ex_lower=apply(res_ex,2,function(x) quantile(x,0.05,na.rm = T))
    names(res_ex_upper)=year.u.t
 
-   res_ex.cqt[c,1,]=res_ex_lower[1:which(names(res_ex_lower)==max(year_range))]
-   res_ex.cqt[c,2,]=res_ex_med[1:which(names(res_ex_med)==max(year_range))]
-   res_ex.cqt[c,3,]=res_ex_upper[1:which(names(res_ex_upper)==max(year_range))]
+   res_ex.cqt[c,1,]=res_ex_lower[which(names(res_ex_lower)==min(year_range)) : which(names(res_ex_lower)==max(year_range))]
+   res_ex.cqt[c,2,]=res_ex_med  [which(names(res_ex_med)==min(year_range)) : which(names(res_ex_med)==max(year_range))]
+   res_ex.cqt[c,3,]=res_ex_upper[which(names(res_ex_upper)==min(year_range)) : which(names(res_ex_upper)==max(year_range))]
 
    year.t[[c]]=seq.years
    }
@@ -429,31 +417,16 @@ transformdataforNMR = function(
         res_med=apply(res, 2, function(x) median(x,na.rm=T))
         res_upper=apply(res,2,function(x) quantile(x,0.95,na.rm = T))
         res_lower=apply(res,2,function(x) quantile(x,0.05,na.rm = T))
-        names(res_upper)=year.u.t
+        #names(res_upper)=year.u.t
 
         # res.cqt[c,1,]=res_lower
         # res.cqt[c,2,]=res_med
         # res.cqt[c,3,]=res_upper
-        res.cqt[c,1,]=res_lower[1:which(names(res_lower)==max(year_range))] # DJS edit to only plot to max of year, so not to 2030 unless specified
-        res.cqt[c,2,]=res_med[1:which(names(res_med)==max(year_range))]
-        res.cqt[c,3,]=res_upper[1:which(names(res_upper)==max(year_range))]
+        res.cqt[c,1,]=res_lower[which(names(res_lower)==min(year_range)) : which(names(res_lower)==max(year_range))] # DJS edit to only plot to max of year, so not to 2030 unless specified
+        res.cqt[c,2,]=res_med  [which(names(res_med)==min(year_range)) : which(names(res_med)==max(year_range))]
+        res.cqt[c,3,]=res_upper[which(names(res_upper)==min(year_range)) : which(names(res_upper)==max(year_range))]
       }
 
-      # if(!is.null(expectedresultsfile)){
-      #   res_ex=results_ex[,,iso_selected]
-      #   res_ex_med=apply(res_ex, 2, function(x) median(x,na.rm=T))
-      #   res_ex_upper=apply(res_ex,2,function(x) quantile(x,0.95,na.rm = T))
-      #   res_ex_lower=apply(res_ex,2,function(x) quantile(x,0.05,na.rm = T))
-      #   names(res_ex_upper)=year.u.t
-      #
-      #   res_ex.cqt[c,1,]=res_ex_lower
-      #   res_ex.cqt[c,2,]=res_ex_med
-      #   res_ex.cqt[c,3,]=res_ex_upper
-      #
-      #   year.t[[c]]=seq.years
-      # }
-
-      ############### Kai's change
       if (!is.null(resultsfile2)){
         isos_results2 <- dimnames(results2)[[3]]
         years_results2 <- dimnames(results2)[[2]]
@@ -463,7 +436,7 @@ transformdataforNMR = function(
           res2_upper=apply(res2,2,function(x) quantile(x,0.95,na.rm = T))
           res2_lower=apply(res2,2,function(x) quantile(x,0.05,na.rm = T))
         } else {
-          res2_med <- rep(NA, length(years_results2)); names(res2_med) <- years_results2
+          res2_med   <- rep(NA, length(years_results2)); names(res2_med) <- years_results2
           res2_upper <- rep(NA, length(years_results2)); names(res2_upper) <- years_results2
           res2_lower <- rep(NA, length(years_results2)); names(res2_lower) <- years_results2
         }
@@ -471,9 +444,9 @@ transformdataforNMR = function(
         # res2.cqt[c,1,]=res2_lower
         # res2.cqt[c,2,]=res2_med
         # res2.cqt[c,3,]=res2_upper
-        res2.cqt[c,1,]=res2_lower[1:which(names(res2_lower)==max(year_range))]
-        res2.cqt[c,2,]=res2_med[1:which(names(res2_med)==max(year_range))]
-        res2.cqt[c,3,]=res2_upper[1:which(names(res2_upper)==max(year_range))]
+        res2.cqt[c,1,] = res2_lower[which(names(res2_lower)==min(year_range)) : which(names(res2_lower)==max(year_range))]
+        res2.cqt[c,2,] = res2_med  [which(names(res2_med)==min(year_range)) : which(names(res2_med)==max(year_range))]
+        res2.cqt[c,3,] = res2_upper[which(names(res2_upper)==min(year_range)) : which(names(res2_upper)==max(year_range))]
       }
 
 
@@ -815,7 +788,7 @@ check_ratio_and_logit <- function(file_dir){
   nmr$Estimates<-with(nmr,ifelse(is.na(Estimates) & !is.na(Estimates.check.rates),Estimates.check.rates,Estimates))
   nmr$Estimates<-with(nmr,ifelse(is.na(Estimates) & !is.na(Estimates.check.ratio),Estimates.check.ratio,Estimates))
 
-  nmr$ratio.c<-with(nmr,ifelse(is.na(Ratio) & !is.na(U5MR) & is.na(Neonatal),Neontal/U5MR,Ratio))
+  nmr$ratio.c<-with(nmr,ifelse(is.na(Ratio) & !is.na(U5MR) & is.na(Neonatal),Neonatal/U5MR,Ratio))
   nmr$Ratio<-with(nmr,ifelse(is.na(Ratio) & !is.na(ratio.c), ratio.c,Ratio))
 
   nmr$diffest1<-nmr$Estimates.check.rates-nmr$Estimates

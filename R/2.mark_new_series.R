@@ -341,7 +341,7 @@ find.dir.for.VR.comparison <- function(
 get.diff.dt.WHOVR <- function(
   count_rounding = NULL
 ){
-  default_dir <- find.dir.for.VR.comparison()
+  default_dir <- find.dir.for.VR.comparison(IGME_year_new = 2025, IGME_year_old = 2024)
   dir_new_data_U5MR <- default_dir$dir_new_data_U5MR
   dir_old_data_U5MR <- default_dir$dir_old_data_U5MR
   if(is.null(dir_new_data_U5MR)|is.null(dir_old_data_U5MR)){

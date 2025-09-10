@@ -720,12 +720,23 @@ get.cqt.from.results <- function(
     stop("File doesn't exist: ", file.path(output_dir, "year.t.rda"))
   }
   years <- year.t
-
+  
   if(file.exists(file.path(output_dir, results_filename))){
     dt <- fread(file.path(output_dir, results_filename))
   } else {
     stop("File doesn't exist: ", file.path(output_dir, results_filename))
   }
+  
+  # figure out which year columns are missing in results.csv
+  wanted_year_cols <- paste0("X", years)
+  year.t.not.in.results <- setdiff(wanted_year_cols, names(dt))
+  if(length(year.t.not.in.results) > 0){
+    message("Note that year.t contains more years than results.csv: ",
+            paste(year.t.not.in.results, collapse = ", "))
+    # inject NA columns (numeric) for missing years
+    dt[, (year.t.not.in.results) := NA_real_]
+  }
+  
   vars_wanted <- c("ISO.Code", "Quantile", paste0("X", years))
   dt_long <- melt.data.table(dt[,..vars_wanted], measure.vars = paste0("X", years), variable.factor = FALSE)
   dt_long[, years:=as.numeric(sub("X", "", variable))]

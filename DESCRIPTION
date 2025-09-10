@@ -12,7 +12,7 @@ Description: Plotting functions as an independent package for plotting child mor
   features like highlighting newly added series.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 LazyData: true
 Depends: 
     R (>= 3.0.0),

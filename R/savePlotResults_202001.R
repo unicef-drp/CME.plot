@@ -15,6 +15,7 @@
 #' the output to be named "Results" instead of "Comparison". The function
 #' combined the old `PlotResults` and `PlotComparison` function. If error
 #' occurs, debugging information is returned.
+#' To suppress CI, set `col.CI`, `col.CI2`, `col.CI3`.etc to NULL
 #'
 #' @param runname used to look for `res.cqt`. If `output.dir` is NULL, it will
 #'   make the `output.dir` from runname if `getwd()` can point correctly to the
@@ -247,24 +248,34 @@ savePlotResults <- function(
           res.cqt <- NULL
         }
       }
+      
       # YL 1/29 HIV-removed, can load from a specific `output.dir.for.hivremoved.cqt` if supplied
       if(HIV_removed){
         if(!is.null(output.dir.for.hivremoved.cqt)){
-            if(file.exists(file.path(output.dir.for.hivremoved.cqt,
-                                      "res.hivremoved.cqt.Lw.rda"))){
-              load(file.path(output.dir.for.hivremoved.cqt, "res.hivremoved.cqt.Lw.rda"))
-            } else {
-              warning("Cannot find and load the `res.hivremoved.cqt.Lw.rda`")
-            }
-
-          } else if (file.exists(file.path(output.dir, "res.hivremoved.cqt.Lw.rda"))) {
-            load(file.path(output.dir, "res.hivremoved.cqt.Lw.rda"))
-          } else (
-            stop("Please check if `res.hivremoved.cqt.Lw.rda` is in the output directory.")
-          )
-        res.cqt <- res.hivremoved.cqt.Lw[[as.character(pooling_weight)]]
-        message("res.cqt.Lw file used: res.hivremoved.cqt.Lw.rda")
-
+          if(file.exists(file.path(output.dir.for.hivremoved.cqt,
+                                   "res.hivremoved.cqt.Lw.rda"))){
+            load(file.path(output.dir.for.hivremoved.cqt, "res.hivremoved.cqt.Lw.rda"))
+          } else {
+            warning("Cannot find and load the `res.hivremoved.cqt.Lw.rda`")
+          }
+          
+        } else if (file.exists(file.path(output.dir, "res.hivremoved.cqt.Lw.rda"))) {
+          load(file.path(output.dir, "res.hivremoved.cqt.Lw.rda"))
+        } else (
+          stop("Please check if `res.hivremoved.cqt.Lw.rda` is in the output directory.")
+        )
+        
+        if(!is.null(res.cqt1)){
+          res.cqt <- res.cqt1
+          message("Since res.cqt1 is supplied, it is used instead of the default `res.hivremoved.cqt.Lw`")
+        } else if (exists("res.hivremoved.cqt.Lw")) {
+          res.cqt <- res.hivremoved.cqt.Lw[[as.character(pooling_weight)]]
+          message("res.cqt.Lw file used: res.hivremoved.cqt.Lw.rda")
+        } else {
+          stop("Please check if `res.hivremoved.cqt.Lw.rda` is in the output directory.")
+        }      
+        
+        
       }
 
       if(is.null(year.t)) year.t <- dimnames(res.cqt)[[3]]
