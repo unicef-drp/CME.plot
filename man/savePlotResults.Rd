@@ -223,4 +223,5 @@ depending on how many series will be plot. Set `AfterCC` to `TRUE` will force
 the output to be named "Results" instead of "Comparison". The function
 combined the old `PlotResults` and `PlotComparison` function. If error
 occurs, debugging information is returned.
+To suppress CI, set `col.CI`, `col.CI2`, `col.CI3`.etc to NULL
 }

@@ -44,6 +44,7 @@ transformdataSexSpecific <- function(
   mlinfo = NULL
 ){
   # ddata=read.csv(dir_dataset, stringsAsFactors = F)
+  table(dt_gender$Indicator)
   d = subset(dt_gender, Indicator==indicator & Visible==1)
   # filerate <- file.path("C:/Users",username,"Dropbox/CMEgender2015/Database/dataset_forplotting_2019-08-04_new_ID.csv")
   # dt_gender <- fread(filerate)
@@ -306,8 +307,10 @@ transformdataSexSpecific <- function(
           yearvr.Lcs.j[[c]][[n]]=df.selected$Reference.Date[df.selected$seriesnameandyear==series.selected]
           if(indicator=="Infant Mortality Rate" & includeornot==1){
             includedvr.Lcs.j[[c]][[n]]=df.selected$Inclusion.U5MR[df.selected$seriesnameandyear==series.selected]
-          } else if(indicator=="Infant Mortality Rate" & includeornot==0){includedvr.Lcs.j[[c]][[n]]=rep(0,length(df.selected$Inclusion.U5MR[df.selected$seriesnameandyear==series.selected]))
-          } else {includedvr.Lcs.j[[c]][[n]]=df.selected$Inclusion.U5MR[df.selected$seriesnameandyear==series.selected]}
+          } else if(indicator=="Infant Mortality Rate" & includeornot==0){
+            includedvr.Lcs.j[[c]][[n]]=rep(0,length(df.selected$Inclusion.U5MR[df.selected$seriesnameandyear==series.selected]))
+          } else {
+            includedvr.Lcs.j[[c]][[n]]=df.selected$Inclusion.U5MR[df.selected$seriesnameandyear==series.selected]}
 
           #includedvr.Lcs.j[[c]][[n]]=df.selected$Inclusion.Gender[df.selected$seriesnameandyear==series.selected]
           isincompletevr.Lcs.j[[c]][[n]]=(rep(0,sum(df.selected$seriesnameandyear==series.selected)))

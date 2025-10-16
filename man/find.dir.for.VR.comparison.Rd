@@ -8,8 +8,8 @@ highlighting new series, by default will pick the latest file from this and
 last year's IGME Input folders}
 \usage{
 find.dir.for.VR.comparison(
-  IGME_year_new = 2024,
-  IGME_year_old = 2023,
+  IGME_year_new,
+  IGME_year_old,
   filename_new = NULL,
   filename_old = NULL
 )
