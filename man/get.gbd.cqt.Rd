@@ -4,7 +4,7 @@
 \alias{get.gbd.cqt}
 \title{Get GBD cqt by indicator and sex (2024 version)}
 \usage{
-get.gbd.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c, gbd_round = 2021)
+get.gbd.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c)
 }
 \arguments{
 \item{ind0}{indicator, choose from "U5MR", "IMR", "CMR", "5q5", "5q10",
@@ -13,8 +13,6 @@ get.gbd.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c, gbd_round = 2021)
 \item{sex0}{"f" or "m" or "both"}
 
 \item{iso_order}{the order of isos in the cqt file}
-
-\item{gbd_round}{default to 2022}
 }
 \value{
 a gbd.cqt file

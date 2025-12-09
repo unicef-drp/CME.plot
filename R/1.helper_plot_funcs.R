@@ -380,6 +380,8 @@ set.cqt.year.limit <- function(
 #' @param dt_gender the dataset for plotting
 #' @return revised dt_gender
 #' @export fix.entries.dt_gender
+#' @importFrom writexl write_xlsx
+#'
 fix.entries.dt_gender <- function(dt_gender){
 
   # some strange character could occur in series names
@@ -427,8 +429,8 @@ fix.entries.dt_gender <- function(dt_gender){
   setorder(dt_gender, Country.Name, -End.date.of.Survey, Series.Name, Series.Type, -Reference.Date,  Inclusion.Gender)
 
   #
-  # This check will find out cases that cause the lines on the plot to come back and forth, 
-  # need to fix the data 
+  # This check will find out cases that cause the lines on the plot to come back and forth,
+  # need to fix the data
   df_check <- copy(dt_gender)[Indicator == "Under-five Mortality Rate"]
   df_check$Series.Name <- ifelse(df_check$Series.Category=="SVR", gsub('[0-9]+',"", df_check$Series.Name), df_check$Series.Name)
   df_check$sourcetype.i = ifelse(df_check$Series.Type!="VR",
@@ -447,7 +449,7 @@ fix.entries.dt_gender <- function(dt_gender){
   df_check[, I.ref := seq_len(.N), by = sourcename]
   check_id <- df_check[I.obs!=I.ref, unique(sourcename)]
   if(length(check_id)>0){
-    
+
     warning("Check (saved files in _temp_ folder) following series for potential issues, e.g. dup entries or wrong Series.Year: ", paste(check_id, collapse = ", "))
     if(!dir.exists("temp")) dir.create("temp")
     writexl::write_xlsx(df_check[sourcename %in% check_id], paste("temp/check db by sex issues", Sys.Date(), ".xlsx"))
@@ -720,13 +722,13 @@ get.cqt.from.results <- function(
     stop("File doesn't exist: ", file.path(output_dir, "year.t.rda"))
   }
   years <- year.t
-  
+
   if(file.exists(file.path(output_dir, results_filename))){
     dt <- fread(file.path(output_dir, results_filename))
   } else {
     stop("File doesn't exist: ", file.path(output_dir, results_filename))
   }
-  
+
   # figure out which year columns are missing in results.csv
   wanted_year_cols <- paste0("X", years)
   year.t.not.in.results <- setdiff(wanted_year_cols, names(dt))
@@ -736,7 +738,7 @@ get.cqt.from.results <- function(
     # inject NA columns (numeric) for missing years
     dt[, (year.t.not.in.results) := NA_real_]
   }
-  
+
   vars_wanted <- c("ISO.Code", "Quantile", paste0("X", years))
   dt_long <- melt.data.table(dt[,..vars_wanted], measure.vars = paste0("X", years), variable.factor = FALSE)
   dt_long[, years:=as.numeric(sub("X", "", variable))]

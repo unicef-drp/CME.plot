@@ -35,6 +35,13 @@
 # GBD 2021 ----------------------------------------------------------------
 
 # added 2024.05
+#' dt_gbd_output: long data by Sex and Shortind, all cqt will be derived directly
+#' from it
+#'
+#' @docType data
+#' @keywords GBD
+"dt_gbd_output"
+
 #' dt_gbd_2021: long data by Sex and Shortind, all cqt will be derived directly
 #' from it
 #'
@@ -42,46 +49,6 @@
 #' @keywords GBD
 "dt_gbd_2021"
 
-# GBD 2019 ------------------------------------------------------------------
-
-#' ihme_2019: reformatted "ihme2019_Under5_estimates.xlsx" into long by sex and
-#' ind
-#'
-#' @docType data
-#' @keywords ihme
-"ihme_2019"
-
-#'u5mr.ihme.cqt.2019
-#'
-#' @docType data
-#' @keywords ihme
-"u5mr.ihme.cqt.2019"
-
-#'imr.ihme.cqt.2019
-#'
-#' @docType data
-#' @keywords ihme
-"imr.ihme.cqt.2019"
-
-
-#'nmr.ihme.cqt.2019
-#'
-#' @docType data
-#' @keywords ihme
-"nmr.ihme.cqt.2019"
-
-#'m10q5.ihme.cqt.2019
-#'
-#' @docType data
-#' @keywords ihme
-"m10q5.ihme.cqt.2019"
-
-
-#'m10q15.ihme.cqt.2019
-#'
-#' @docType data
-#' @keywords ihme
-"m10q15.ihme.cqt.2019"
 
 # isos --------------------------------------------------------------------
 

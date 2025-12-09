@@ -80,22 +80,17 @@ get.wpp.cqt <- function(ind0,
 #'  "5q15", "5q20", "10q5", "10q15"
 #'@param sex0 "f" or "m" or "both"
 #'@param iso_order the order of isos in the cqt file
-#'@param gbd_round default to 2022
 #'
 #'@return a gbd.cqt file
 #'@export get.gbd.cqt
 #'
 get.gbd.cqt <- function(ind0,
                         sex0 = "both",
-                        iso_order = u5mr.iso.c,
-                        gbd_round = 2021
+                        iso_order = u5mr.iso.c
 ){
-  stopifnot(gbd_round%in%c(2021))
   stopifnot(sex0%in%c("f", "m", "both"))
   stopifnot(ind0%in%c("NMR", "U5MR", "Q5", "IMR", "Q1", "CMR", "Q4", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15"))
-  dt_gbd <- switch(as.character(gbd_round),
-                   "2021" = dt_gbd_2021
-  )
+  dt_gbd <- dt_gbd_output
   new_list <- list("Q5" = "U5MR", "Q1" = "IMR", "Q4" = "CMR")
   ind0 <- get.match(ind0, new_list = new_list)
   dt_gbd_sub <- dt_gbd[ISO3Code %in% iso_order & Sex==sex0 & Shortind == ind0, .(ISO3Code, Year, Median, Lower, Upper)]
