@@ -6,7 +6,7 @@
 \title{dt_gbd_output: long data by Sex and Shortind, all cqt will be derived directly
 from it}
 \format{
-An object of class \code{data.table} (inherits from \code{data.frame}) with 157916 rows and 9 columns.
+An object of class \code{data.table} (inherits from \code{data.frame}) with 519480 rows and 9 columns.
 }
 \usage{
 dt_gbd_output

@@ -159,7 +159,7 @@ savePlotResults <- function(
   wpp.cqt = NULL,  # green line
   ihme.cqt = NULL, # blue line
   legend_WPP = "WPP 2024",
-  legend_IHME = "GBD 2021",
+  legend_IHME = "GBD 2023",
   ylab = NULL,
   new_entry_date = NULL,
   pdf.or.png = "pdf",  # "pdf" or "png"

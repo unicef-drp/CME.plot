@@ -38,7 +38,7 @@ savePlotResults(
   wpp.cqt = NULL,
   ihme.cqt = NULL,
   legend_WPP = "WPP 2024",
-  legend_IHME = "GBD 2021",
+  legend_IHME = "GBD 2023",
   ylab = NULL,
   new_entry_date = NULL,
   pdf.or.png = "pdf",

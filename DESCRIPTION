@@ -1,6 +1,6 @@
 Package: CME.plot
 Title: Make Plots for Child Mortality Estimates
-Version: 1.2.6
+Version: 1.3.0
 Authors@R: 
     person(given = "Yang",
            family = "Liu",
@@ -21,9 +21,7 @@ Imports:
     reshape2,
     dplyr,
     data.table (>= 1.12.0),
-    usethis
+    usethis,
+    writexl
 Suggests: 
-    readxl,
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
+    readxl

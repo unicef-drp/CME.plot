@@ -41,10 +41,24 @@ get.workdir.sharepoint <- function(year = 2024){
   USERPROFILE <- load_os_leading_dir()
 
   # defined in this file:
-  source(file.path(USERPROFILE, "Dropbox/UNICEF Work/profile.R"))
+  profile_path <- file.path(USERPROFILE, "Dropbox/UNICEF Work/profile.R")
 
-  home_dir <- dir_IGME
-  if(!dir.exists(home_dir)) warning ("To find default working directory on SharePoint, please add your SharePoint home directory in this function `get.workdir.sharepoint`")
+  # Try to source the profile file, handle error if it doesn't exist (e.g., on server)
+  home_dir <- tryCatch({
+    suppressWarnings(source(profile_path))
+    dir_IGME
+  }, error = function(e) {
+    message("On server, please provide directory paths directly for VR comparison.")
+    return(NULL)
+  })
+
+  if(is.null(home_dir)) return(NULL)
+
+  if(!dir.exists(home_dir)) {
+    message("On server, please provide directory paths directly for VR comparison.")
+    return(NULL)
+  }
+
   work_dir <- file.path(home_dir, paste0(year, " Round Estimation/Code"))
   return(work_dir)
 }
@@ -432,7 +446,7 @@ search.for.file <- function(target.dir, file_name_string, full_path = FALSE){
 load_os_leading_dir <- function(){
   user_name <- Sys.info()[["user"]]
   os <- get_os()
-  if(!os %in% c("windows", "osx")) warning ("For now only defined for Windows and Mac OSX")
+  if(!os %in% c("windows", "osx")) message ("Note that USERPROFILE is only defined for Windows and Mac OSX")
   leading_path <- if(os == "osx") file.path("/Users", user_name) else Sys.getenv("USERPROFILE")
   return(leading_path)
 }

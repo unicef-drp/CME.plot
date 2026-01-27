@@ -47,7 +47,11 @@ transformdataSexSpecific(
 
 \item{resultsfile_cqt2}{results file for cqt2}
 
+\item{resultsiso2}{the iso order for the results}
+
 \item{resultsfile_cqt3}{results file for cqt3}
+
+\item{resultsiso3}{the iso order for the results}
 
 \item{year_range}{year range, default to `1950.5:2030.5` if not specified}
 

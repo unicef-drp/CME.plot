@@ -89,7 +89,7 @@ get.gbd.cqt <- function(ind0,
                         iso_order = u5mr.iso.c
 ){
   stopifnot(sex0%in%c("f", "m", "both"))
-  stopifnot(ind0%in%c("NMR", "U5MR", "Q5", "IMR", "Q1", "CMR", "Q4", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15"))
+  stopifnot(ind0%in%c("NMR", "U5MR", "Q5", "IMR", "Q1", "CMR", "Q4", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15", "Ratio"))
   dt_gbd <- dt_gbd_output
   new_list <- list("Q5" = "U5MR", "Q1" = "IMR", "Q4" = "CMR")
   ind0 <- get.match(ind0, new_list = new_list)
