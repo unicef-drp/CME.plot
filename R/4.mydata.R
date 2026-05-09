@@ -34,7 +34,7 @@
 
 # GBD 2021 ----------------------------------------------------------------
 
-# added 2024.05
+# added 2025.05
 #' dt_gbd_output: long data by Sex and Shortind, all cqt will be derived directly
 #' from it
 #'

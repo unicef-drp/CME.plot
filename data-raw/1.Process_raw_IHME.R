@@ -2,7 +2,7 @@
 # IHME 2021
 # collect all estimates into one file with 5 indicators: U5MR, NMR, IMR, CMR, NMR/U5MR Ratio
 
-# updated 2024.05
+# updated 2025.05
 # https://vizhub.healthdata.org/gbd-results/
 # GBD Results
 # Search and download GBD 2021 estimates with the GBD Results tool.

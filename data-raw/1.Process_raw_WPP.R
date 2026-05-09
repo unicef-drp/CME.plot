@@ -1,5 +1,5 @@
-# prepare WPP 2024 for plotting
-# updated 2024.05
+# prepare WPP 2025 for plotting
+# updated 2025.05
 
 # data downloaded from https://population.un.org/wpp/Download/Standard/CSV/
 # Extract the nqx directly from the abridged life table
@@ -30,9 +30,9 @@ dir.wpp <- file.path(USERPROFILE, "Dropbox/UNICEF Work/WPP/")
 # If use the qx table:
 
 
-dir_wpp_files.t <- file.path(dir.wpp, "WPP 2024/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Total.xlsx")
-dir_wpp_files.f <- file.path(dir.wpp, "WPP 2024/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Female.xlsx")
-dir_wpp_files.m <- file.path(dir.wpp, "WPP 2024/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Male.xlsx")
+dir_wpp_files.t <- file.path(dir.wpp, "WPP 2025/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Total.xlsx")
+dir_wpp_files.f <- file.path(dir.wpp, "WPP 2025/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Female.xlsx")
+dir_wpp_files.m <- file.path(dir.wpp, "WPP 2025/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Male.xlsx")
 
 dt0 <- readxl::read_xlsx(dir_wpp_files.t, sheet = "Estimates")
 str(dt0)
@@ -58,7 +58,7 @@ dt_wpp[ISO3_code == "XKX", ISO3_code := "RKS"]
 
 format.WPP.life.table <- function(dt_wpp){
   message("Range of Year is: ", paste(range(dt_wpp$Year), collapse = "-"))
-  # dc <- CME.assistant::get.country.info.CME(2024)
+  # dc <- CME.assistant::get.country.info.CME(2025)
   # dc$ISO3Code[!dc$ISO3Code %in% dt_wpp$ISO3_code]
   stopifnot("ISO3_code" %in% colnames(dt_wpp))
   dt_wpp <- dt_wpp[!is.na(ISO3_code) & ISO3_code!=""]
@@ -92,4 +92,4 @@ usethis::use_data(dt_wpp_2024, overwrite = TRUE)
 
 #
 fwrite(dt_wpp_2024,
-       file.path(dir.wpp, "WPP 2024/WPP2024-Life Table qx_extract_0_24_wide_ind_1950-2023.csv"))
+       file.path(dir.wpp, "WPP 2025/WPP2024-Life Table qx_extract_0_24_wide_ind_1950-2023.csv"))

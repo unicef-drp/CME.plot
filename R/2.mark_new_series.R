@@ -105,10 +105,13 @@ IsDate <- function(mydate, date.format = "%Y-%m-%d") {
 #' @param show_new_WHO_VR default to TRUE: mark `new_entry = 1` for WHO VR
 #'   series that have new country-year data, obtained by
 #'   \code{\link{get.diff.dt.WHOVR}}
+#' @param vr_count_rounding default to 1: the digit in `round`, e.g. round(diff,
+#'   6)
 #'
 get.new.series.mark.entry <- function(dt_cme,
                                       new_entry_date,
-                                      show_new_WHO_VR = TRUE
+                                      show_new_WHO_VR = TRUE,
+                                      vr_count_rounding = 1
                                       ){
   # Check if the input date is valid: "YYYY-MM" is also allowed
   if(nchar(new_entry_date) == 7) new_entry_date <- as.Date(paste0(sub("-", "", new_entry_date), "01"), format = "%Y%m%d")
@@ -129,11 +132,11 @@ get.new.series.mark.entry <- function(dt_cme,
     dt_cme[grepl("WHO", Series.Name), new_entry := 0]
     # Highlight new VR --- there are two options:
     # 1. only highlight VR with new country-year
-    # iso_newVR <- get.diff.dt.WHOVR(count_rounding = NULL)$iso_newVR
+    # iso_newVR <- get.diff.dt.WHOVR(vr_count_rounding = NULL)$iso_newVR
 
     # 2. any VR got updated with diff > 0.1 will be marked as new VR:
-    # count_rounding is the digit in `round`, e.g. round(diff, 6)
-    iso_newVR <- get.diff.dt.WHOVR(count_rounding = 1)$iso_newVR
+    # vr_count_rounding is the digit in `round`, e.g. round(diff, 6)
+    iso_newVR <- get.diff.dt.WHOVR(vr_count_rounding = vr_count_rounding)$iso_newVR
     if(is.null(iso_newVR)) {
       message("New WHO VR series won't be highlighted, run `find.dir.for.VR.comparison()` to check the chosen databases.")
     } else {
@@ -285,7 +288,7 @@ find.dir.for.VR.comparison <- function(
 
   # allow global overwriting if these object exist: dir_new_data_U5MR, dir_old_data_U5MR
   if(!exists("dir_new_data_U5MR")){
-    if(floor(as.numeric(IGME_year_new)) >= 2024){
+    if(floor(as.numeric(IGME_year_new)) >= 2025){
       workdir_new <- get.workdir.sharepoint(IGME_year_new)
     } else {
       workdir_new <- get.workdir(IGME_year_new)
@@ -303,7 +306,7 @@ find.dir.for.VR.comparison <- function(
   }
 
   if(!exists("dir_old_data_U5MR")){
-    if(floor(as.numeric(IGME_year_old)) >= 2024){
+    if(floor(as.numeric(IGME_year_old)) >= 2025){
       workdir_old <- get.workdir.sharepoint(IGME_year_old)
     } else {
       workdir_old <- get.workdir(IGME_year_old)
@@ -332,16 +335,16 @@ find.dir.for.VR.comparison <- function(
 #' Supply `dir_new_data_U5MR` or/and `dir_old_data_U5MR` in the global
 #' environment to overwrite the default selection
 #'
-#' @param count_rounding default to NULL, if supply a value, e.g. 6, it will
+#' @param vr_count_rounding default to NULL, if supply a value, e.g. 6, it will
 #'   count the difference also using the diff round to 1E-6, if NULL only
 #'   count new country-year
 #'
 #' @return list of dt1 (the comparison dataset for debugging) and iso_newVR (the
 #'   vector of country isos with different WHO VR)
 get.diff.dt.WHOVR <- function(
-  count_rounding = NULL
+  vr_count_rounding = NULL
 ){
-  default_dir <- find.dir.for.VR.comparison(IGME_year_new = 2025, IGME_year_old = 2024)
+  default_dir <- find.dir.for.VR.comparison(IGME_year_new = 2026, IGME_year_old = 2025)
   dir_new_data_U5MR <- default_dir$dir_new_data_U5MR
   dir_old_data_U5MR <- default_dir$dir_old_data_U5MR
   if(is.null(dir_new_data_U5MR)|is.null(dir_old_data_U5MR)){
@@ -376,10 +379,10 @@ get.diff.dt.WHOVR <- function(
   setnames(dt_new_2, "Estimates", "Estimates_WHO_new")
   dt1 <- dt_old_2[dt_new_2]
 
-  if(!is.null(count_rounding)){
-    if(count_rounding<1) message("count_rounding is the rounding digits")
-    count_rounding <- as.integer(count_rounding)
-    dt1[, diff:= abs(round(Estimates_WHO_new - Estimates_WHO_old, count_rounding))]
+  if(!is.null(vr_count_rounding)){
+    if(vr_count_rounding<1) message("vr_count_rounding is the rounding digits")
+    vr_count_rounding <- as.integer(vr_count_rounding)
+    dt1[, diff:= abs(round(Estimates_WHO_new - Estimates_WHO_old, vr_count_rounding))]
     dt_new <- dt1[ diff >0 | is.na(Estimates_WHO_old),]
   } else {
     dt_new <- dt1[is.na(Estimates_WHO_old),] # only count new year

@@ -53,4 +53,4 @@ To overwrite when auto searching fails, supply `dir_new_data_U5MR` and `dir_old_
 2022-07: add data of WPP2022\
 2023-12:\
 In `fix.entries.dt_gender` add a checking step that gives warning on series that won't be properly plotted (wrong order of data points caused by reference.date not properly sorted) In `get.new.series.mark.entry` set `iso_newVR <- get.diff.dt.WHOVR(count_rounding = 1)$iso_newVR`: any VR got updated with diff \> 0.1 will be marked as new VR In `PlotDataAndEstimates2020` no longer show different shape for VR points incomplete\
-2024-05: cleaned up functions, update data of WPP2024 and GBD2021
+2025-05: cleaned up functions, update data of WPP2024 and GBD2021
