@@ -190,7 +190,7 @@ get.new_cnames <- function(workdir = get.workdir.sharepoint(), filename = "count
 #' @param country.info.file.name country.info.CME.csv
 #'
 update.data.new_cnames <- function(
-  IGME_round_input = 2024,
+  IGME_round_input = 2025,
   country.info.file.name = "country.info.CME.csv"){
   new_cnames <- get.new_cnames(workdir = get.workdir.sharepoint(), country.info.file.name)
   usethis::use_data(new_cnames, overwrite = TRUE)
@@ -223,6 +223,12 @@ get.res.cqt.rda.diffname <- function(output.dir, name_only = FALSE){
     res.cqt.Lw <- NULL
   }
   return(if(name_only) cqt.names else res.cqt.Lw)
+}
+
+get.cqt.qnames <- function(res.cqt, n = 3){
+  qnames <- dimnames(res.cqt)[[2]]
+  if(length(qnames) == n) return(qnames)
+  c("0.05", "0.5", "0.95")
 }
 
 
@@ -274,11 +280,20 @@ obtain.matched.cqt <- function(
   load(file.path(output.dir2, "res.cqt.Lw.rda"))
   res.cqt2 <- res.cqt.Lw[[as.character(pooling_weight)]]
 
-  resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
-  resfinal.cqt2[, , is.element(year.t1, year.t2)] <-
-    res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1), drop = FALSE]
-  dimnames(resfinal.cqt2)[[1]] <- iso.c1
-  dimnames(resfinal.cqt2)[[3]] <- year.t1
+  resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)),
+                         dimnames = list(iso.c1, get.cqt.qnames(res.cqt2),
+                                         as.character(year.t1)))
+  if(dim(res.cqt2)[[2]] == 1){
+    resfinal.cqt2[, 1, is.element(year.t1, year.t2)] <-
+      res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1), drop = FALSE]
+    resfinal.cqt2[, 2, is.element(year.t1, year.t2)] <-
+      res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1), drop = FALSE]
+    resfinal.cqt2[, 3, is.element(year.t1, year.t2)] <-
+      res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1), drop = FALSE]
+  } else {
+    resfinal.cqt2[, , is.element(year.t1, year.t2)] <-
+      res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2, year.t1), drop = FALSE]
+  }
 
   return(resfinal.cqt2)
 }
@@ -309,7 +324,9 @@ match.cqt.core <- function(iso.c1, year.t1, res.cqt2){
   year.t2_new <- floor(as.numeric(year.t2))
   year.t1_new <- floor(as.numeric(year.t1))
 
-  resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)))
+  resfinal.cqt2 <- array(NA, c(length(iso.c1), 3, length(year.t1)),
+                         dimnames = list(iso.c1, get.cqt.qnames(res.cqt2),
+                                         as.character(year.t1)))
   #
   if(dim(res.cqt2)[[2]]==1){
     # median only case,
@@ -325,8 +342,6 @@ match.cqt.core <- function(iso.c1, year.t1, res.cqt2){
       res.cqt2[match(iso.c1, iso.c2), , is.element(year.t2_new, year.t1_new), drop = FALSE]
   }
 
-  dimnames(resfinal.cqt2)[[1]] <- iso.c1
-  dimnames(resfinal.cqt2)[[3]] <- year.t1
   return(resfinal.cqt2)
 }
 
@@ -341,6 +356,30 @@ match.cqt.iso <- function(iso.c1, res.cqt2){
   iso.c2 <- dimnames(res.cqt2)[[1]]
   resfinal.cqt2 <- res.cqt2[match(iso.c1, iso.c2), , , drop = FALSE]
   return(resfinal.cqt2)
+}
+
+get.plot.country.indices <- function(
+  iso.c,
+  n.countries = NULL,
+  iso.subset.c = NULL,
+  sort_the_isos = TRUE,
+  candidate_iso.c = iso.c
+){
+  total_num_c <- length(candidate_iso.c)
+  if(is.numeric(n.countries)){
+    numeric.c <- n.countries[n.countries %in% 1:total_num_c]
+  } else {
+    numeric.c <- 1:total_num_c
+  }
+  iso.c.1 <- candidate_iso.c[numeric.c]
+  if(!is.null(iso.subset.c) & sum(iso.c.1 %in% iso.subset.c) > 0){
+    if(sort_the_isos){
+      iso.c.1 <- iso.c.1[iso.c.1 %in% iso.subset.c]
+    } else {
+      iso.c.1 <- iso.subset.c[iso.subset.c %in% iso.c.1]
+    }
+  }
+  if(sort_the_isos) which(iso.c %in% iso.c.1) else match(iso.c.1, iso.c)
 }
 
 #' Limit the 3rd dimension (year) of NMR cqt
@@ -431,7 +470,7 @@ fix.entries.dt_gender <- function(dt_gender){
   #
   # This check will find out cases that cause the lines on the plot to come back and forth,
   # need to fix the data
-  df_check <- copy(dt_gender)[Indicator == "Under-five Mortality Rate"]
+  df_check <- data.table::copy(dt_gender)[Indicator == "Under-five Mortality Rate"]
   df_check$Series.Name <- ifelse(df_check$Series.Category=="SVR", gsub('[0-9]+',"", df_check$Series.Name), df_check$Series.Name)
   df_check$sourcetype.i = ifelse(df_check$Series.Type!="VR",
                            ifelse(grepl("Household Deaths", df_check$Data.Collection.Method, ignore.case = TRUE) ,
@@ -794,8 +833,10 @@ check.cqt.vs.results.csv <- function(
   if(!file.exists(file.path(dir_results.csv_file, "Results.csv"))) stop("Results.csv doesn't exist")
   dt1 <- fread(file.path(dir_results.csv_file, "Results.csv"))
   vars_wanted <- c("ISO.Code", "Quantile", paste0("X", years))
-  dt_long <- melt(dt1[,..vars_wanted], measure.vars = paste0("X", years),
-                  variable.factor = FALSE, value.name = "csv_value")
+  dt_long <- data.table::melt.data.table(dt1[,..vars_wanted],
+                                         measure.vars = paste0("X", years),
+                                         variable.factor = FALSE,
+                                         value.name = "csv_value")
   dt_long[, Year:=as.numeric(sub("X", "", variable))]
   dt_long <- na.omit(dt_long)
   dt_long[, variable := NULL]
@@ -815,11 +856,12 @@ check.cqt.vs.results.csv <- function(
   }
 
   dt2[, diff := roundoff(Value, 1) - roundoff(csv_value,1)]
-  if(mean(dt2$diff)==0) {
+  dt_diff <- dt2[is.na(diff) | diff != 0]
+  if(nrow(dt_diff) == 0) {
     message("All the data passed check")
   } else {
-    message("Check following ", dt2[diff>0, uniqueN(ISO.Code)]," isos: ", paste(dt2[diff>0, unique(ISO.Code)], collapse = ", "))
-    return(dt_diff = dt2[diff>0, ])
+    message("Check following ", dt_diff[, uniqueN(ISO.Code)]," isos: ", paste(dt_diff[, unique(ISO.Code)], collapse = ", "))
+    return(dt_diff)
   }
 }
 

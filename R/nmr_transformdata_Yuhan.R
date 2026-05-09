@@ -313,16 +313,16 @@ transformdataforNMR = function(
        res2_upper <- rep(NA, length(years_results2)); names(res2_upper) <- years_results2
        res2_lower <- rep(NA, length(years_results2)); names(res2_lower) <- years_results2
      }
-    res2.cqt[cn2,1,] = res2_lower[which(names(res2_lower)==min(year_range)) : which(names(res2_lower)==max(year_range))]
-    res2.cqt[cn2,2,] = res2_med  [which(names(res2_med)==min(year_range)) : which(names(res2_med)==max(year_range))]
-    res2.cqt[cn2,3,] = res2_upper[which(names(res2_upper)==min(year_range)) : which(names(res2_upper)==max(year_range))]
+    res2.cqt[c,1,] = res2_lower[which(names(res2_lower)==min(year_range)) : which(names(res2_lower)==max(year_range))]
+    res2.cqt[c,2,] = res2_med  [which(names(res2_med)==min(year_range)) : which(names(res2_med)==max(year_range))]
+    res2.cqt[c,3,] = res2_upper[which(names(res2_upper)==min(year_range)) : which(names(res2_upper)==max(year_range))]
    }
 
    ####=====estimation 3
    if (!is.null(resultsfile3)){
      isos_results3 <- dimnames(results3)[[3]]
      years_results3 <- dimnames(results3)[[2]]
-     if(iso.selected %in% isos_results2){
+     if(iso.selected %in% isos_results3){
        cn3 = which(isos_results3 == iso.selected)
        res3 = results3[,,cn3] #
        res3_med = apply(res3, 2, function(x) median(x,na.rm=T))
@@ -333,9 +333,9 @@ transformdataforNMR = function(
        res3_upper <- rep(NA, length(years_results3)); names(res3_upper) <- years_results3
        res3_lower <- rep(NA, length(years_results3)); names(res3_lower) <- years_results3
      }
-     res3.cqt[cn3,1,] = res3_lower[which(names(res3_lower)==min(year_range)) : which(names(res3_lower)==max(year_range))]
-     res3.cqt[cn3,2,] = res3_med  [which(names(res3_med)==min(year_range)) : which(names(res3_med)==max(year_range))]
-     res3.cqt[cn3,3,] = res3_upper[which(names(res3_upper)==min(year_range)) : which(names(res3_upper)==max(year_range))]
+     res3.cqt[c,1,] = res3_lower[which(names(res3_lower)==min(year_range)) : which(names(res3_lower)==max(year_range))]
+     res3.cqt[c,2,] = res3_med  [which(names(res3_med)==min(year_range)) : which(names(res3_med)==max(year_range))]
+     res3.cqt[c,3,] = res3_upper[which(names(res3_upper)==min(year_range)) : which(names(res3_upper)==max(year_range))]
    }
 
 
@@ -431,7 +431,8 @@ transformdataforNMR = function(
         isos_results2 <- dimnames(results2)[[3]]
         years_results2 <- dimnames(results2)[[2]]
         if(iso.selected %in% isos_results2){
-          res2 = results2[,,cn] #
+          cn2 <- which(isos_results2 == iso.selected)
+          res2 = results2[,,cn2] #
           res2_med=apply(res2, 2, function(x) median(x,na.rm=T))
           res2_upper=apply(res2,2,function(x) quantile(x,0.95,na.rm = T))
           res2_lower=apply(res2,2,function(x) quantile(x,0.05,na.rm = T))
@@ -694,9 +695,9 @@ GetDataGlobalNMR<- function(file, #data file, must be in form of log ratios
       #                                                         crisisfree$add.adj != 0])
 
             # years.crisis.i <- crisisfree$year.adj[crisisfree$countrycode.adj==iso]
-            years.crisis.i <- crisisfree$year.adj[crisisfree$countrycode.adj==iso&crisisfree$longterm!=0] #DHS 2024-08-12 change to not exclude data points during longterm crisis; longterm crisis are identified with 'longterm' column of adjustment file where 0 indicates a longterm crisis where points should not be excluded
+            years.crisis.i <- crisisfree$year.adj[crisisfree$countrycode.adj==iso&crisisfree$longterm!=0] #DHS 2025-08-12 change to not exclude data points during longterm crisis; longterm crisis are identified with 'longterm' column of adjustment file where 0 indicates a longterm crisis where points should not be excluded
             if(iso=="SYR"){years.crisis.i <- years.crisis.i[years.crisis.i!=2017.5]} # DJS 2020-04-17 to keep data point at 2017 included for Syria but still add crisis adjustment
-            # DJS 2024-08-12 change to code to keep data points included for long-term crises
+            # DJS 2025-08-12 change to code to keep data points included for long-term crises
 
             for(i in 1:length(years.crisis.i)){
               select.crisis[df$iso.i == iso & floor(df$year.i) == floor(years.crisis.i[i])] <- TRUE

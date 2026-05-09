@@ -2,9 +2,9 @@
 % Please edit documentation in R/get_wpp_and_ihme_cqt.R
 \name{get.wpp.cqt}
 \alias{get.wpp.cqt}
-\title{Get WPP cqt by indicator and sex (2024 version)}
+\title{Get WPP cqt by indicator and sex (2025 version)}
 \usage{
-get.wpp.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c, wpp_round = 2024)
+get.wpp.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c, wpp_round = 2025)
 }
 \arguments{
 \item{ind0}{indicator, choose from "U5MR", "IMR", "CMR", "5q5", "5q10",
@@ -14,7 +14,7 @@ get.wpp.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c, wpp_round = 2024)
 
 \item{iso_order}{the order of isos in the cqt file}
 
-\item{wpp_round}{default to 2022}
+\item{wpp_round}{default to 2025}
 }
 \value{
 a wpp_cqt file

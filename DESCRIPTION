@@ -7,6 +7,8 @@ Authors@R:
            role = c("aut", "cre"),
            email = "lyhello@gmail.com",
            comment = c(ORCID = "0000-0001-6557-6439"))
+Author: Yang Liu [aut, cre] (ORCID: <https://orcid.org/0000-0001-6557-6439>)
+Maintainer: Yang Liu <lyhello@gmail.com>
 Description: Plotting functions as an independent package for plotting child mortality estimates 
   in base plot. It has included more checking steps, embedded necessary data, and added more 
   features like highlighting newly added series.
@@ -14,6 +16,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 LazyData: true
+LazyDataCompression: xz
 Depends: 
     R (>= 3.5)
 Imports: 

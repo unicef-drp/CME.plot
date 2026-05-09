@@ -3,13 +3,13 @@
 # script to process raw WPP and GBD data are saved in "R/CME.plot/data-raw"
 
 # Yang Liu
-# 2024/06
+# 2025/06
 
 
 # Read WPP -------------------------------------------------------------
 
 
-#'Get WPP cqt by indicator and sex (2024 version)
+#'Get WPP cqt by indicator and sex (2025 version)
 #'
 #'Note that the iso order of the WPP cqt doesn't matter, (it only needs to have
 #'named dimensions). In `savePlotResults` we will rematch iso order, by default
@@ -20,20 +20,20 @@
 #'  "5q15", "5q20", "10q5", "10q15"
 #'@param sex0 "f" or "m" or "both"
 #'@param iso_order the order of isos in the cqt file
-#'@param wpp_round default to 2022
+#'@param wpp_round default to 2025
 #'
 #'@return a wpp_cqt file
 #'@export get.wpp.cqt
 get.wpp.cqt <- function(ind0,
                         sex0 = "both",
                         iso_order = u5mr.iso.c,
-                        wpp_round = 2024
+                        wpp_round = 2025
   ){
-  stopifnot(wpp_round%in%c(2019, 2022, 2024))
+  stopifnot(wpp_round%in%c(2019, 2022, 2025))
   stopifnot(sex0%in%c("f", "m", "both"))
   stopifnot(ind0%in%c("U5MR", "Q5", "IMR", "Q1", "CMR", "Q4", "5q5", "5q10", "5q15", "5q20", "10q5", "10q15"))
   dt_wpp <- switch(as.character(wpp_round),
-    "2024" = dt_wpp_2024,
+    "2025" = dt_wpp_2024,
     "2022" = dt_wpp_2022,
     "2019" = dt_wpp_2019
   )
@@ -62,14 +62,14 @@ get.wpp.cqt <- function(ind0,
   return(wpp.cqt)
 }
 # e.g.
-# get.wpp.cqt("U5MR", "f", u5mr.iso.c, wpp_round = 2024)[1,,]
+# get.wpp.cqt("U5MR", "f", u5mr.iso.c, wpp_round = 2025)[1,,]
 
 
 
 # Read IHME GBD---------------------------------------------------------------
 
 
-#'Get GBD cqt by indicator and sex (2024 version)
+#'Get GBD cqt by indicator and sex (2025 version)
 #'
 #'Note that the iso order of the gbd cqt doesn't matter, (it only needs to have
 #'named dimensions). In `savePlotResults` we will rematch iso order, by default

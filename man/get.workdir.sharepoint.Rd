@@ -4,7 +4,7 @@
 \alias{get.workdir.sharepoint}
 \title{Get IGME "Code" dir for a given year from SharePoint}
 \usage{
-get.workdir.sharepoint(year = 2024)
+get.workdir.sharepoint(year = 2025)
 }
 \arguments{
 \item{year}{YYYY}
@@ -13,6 +13,6 @@ get.workdir.sharepoint(year = 2024)
 directory to "Code" folder
 }
 \description{
-If `year` is 2020, returns the directory to Code folder in the 2020 Round
-Estimation Dropbox folder
+Returns the directory to Code folder in the requested SharePoint Round
+Estimation folder
 }

@@ -2,13 +2,13 @@
 
 #' Get IGME "Code" dir for a given year
 #'
-#' If `year` is 2024, returns the directory to SharePoint folder, otherwise to
+#' If `year` is 2025, returns the directory to SharePoint folder, otherwise to
 #' the old Dropbox folder
 #' @param year YYYY
 #' @return directory to folder
 #' @export get.workdir
 get.workdir <- function(year){
-  if(floor(as.numeric(year)) >= 2024){
+  if(floor(as.numeric(year)) >= 2025){
     workdir_new <- get.workdir.sharepoint(year)
   } else {
     workdir_new <- get.workdir.dropbox(year)
@@ -30,12 +30,12 @@ get.workdir.dropbox <- function(year = 2023){
 
 #' Get IGME "Code" dir for a given year from SharePoint
 #'
-#' If `year` is 2020, returns the directory to Code folder in the 2020 Round
-#' Estimation Dropbox folder
+#' Returns the directory to Code folder in the requested SharePoint Round
+#' Estimation folder
 #' @param year YYYY
 #' @return directory to "Code" folder
 #' @export get.workdir.sharepoint
-get.workdir.sharepoint <- function(year = 2024){
+get.workdir.sharepoint <- function(year = 2025){
   stopifnot(nchar(as.numeric(year)) == 4)
   user_name <- Sys.info()[["user"]]
   USERPROFILE <- load_os_leading_dir()
@@ -296,7 +296,7 @@ get.dir_NMR <- function(
     message(paste("NMR master dataset chosen: \n", file_selected))
     return(file_selected)
   } else {
-    message("No corresponding dataset found in: \n ", workdir)
+    message("No corresponding dataset found in: \n ", dir_IGME_NMR)
     return(NULL)
   }
 }
@@ -336,7 +336,7 @@ get.dir_gender <- function(
     message(paste("Sex-specific master dataset chosen: \n", file_selected))
     return(file_selected)
   } else {
-    message("No corresponding dataset found in: \n ", workdir)
+    message("No corresponding dataset found in: \n ", dir_IGME_gender)
     return(NULL)
   }
 }
@@ -395,7 +395,8 @@ get.raw.dir <- function(cname, surveytype = "DHS", year = NULL){
 #' @export revise.path
 revise.path <- function(dir0){
   # if there is backslack, replace it
-  if(grep("\\\\", dir0)) dir <- gsub("\\\\", "\\/", dir0)
+  dir <- dir0
+  if(grepl("\\\\", dir0)) dir <- gsub("\\\\", "\\/", dir0)
   # replace username if it is not right
   if(!grepl(Sys.getenv("USERNAME"), dir)) dir <- file.path(load_os_leading_dir(),"Dropbox", sub("^.*Dropbox", "", dir))
   if(!file.exists(dir)) stop("check if dir exists: ", dir)
@@ -450,4 +451,3 @@ load_os_leading_dir <- function(){
   leading_path <- if(os == "osx") file.path("/Users", user_name) else Sys.getenv("USERPROFILE")
   return(leading_path)
 }
-

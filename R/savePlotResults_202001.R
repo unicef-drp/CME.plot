@@ -158,7 +158,7 @@ savePlotResults <- function(
   legend_ex = NULL,# used as a switch for showing expected series: blue dotted line
   wpp.cqt = NULL,  # green line
   ihme.cqt = NULL, # blue line
-  legend_WPP = "WPP 2024",
+  legend_WPP = "WPP 2025",
   legend_IHME = "GBD 2023",
   ylab = NULL,
   new_entry_date = NULL,
@@ -454,21 +454,13 @@ savePlotResults <- function(
 
   # YL: Optional to save several specific countries
   subset.iso <- function(){
-    total_num_c <- mcmc.meta$data.all$C
-    if(HIV_removed) total_num_c <- length(iso.c.hiv)
-    if(is.numeric(n.countries)){
-      numeric.c <- n.countries[n.countries %in% 1:total_num_c] # e.g. 2,3,4, limit to within the range of 1:total_C
-    } else {
-        numeric.c <- 1:total_num_c # otherwise, plot all available
-    }
-    iso.c.1 <- if(HIV_removed) iso.c.hiv[numeric.c] else iso.c[numeric.c] # 1st subset of iso
-    # further subsetting by iso:
-    if(!is.null(iso.subset.c) & sum(iso.c.1%in%iso.subset.c)>0){
-      iso.c.1 <- iso.c.1[iso.c.1%in%iso.subset.c]
-    }
-    # if sort_the_isos, will follow the order, otherwise use the given order of the isos
-    C <- if(sort_the_isos) which(iso.c%in%iso.c.1) else match(iso.subset.c, iso.c)
-    return(C) # since required by `PlotDataAndEstimates2020`
+    get.plot.country.indices(
+      iso.c = iso.c,
+      n.countries = n.countries,
+      iso.subset.c = iso.subset.c,
+      sort_the_isos = sort_the_isos,
+      candidate_iso.c = if(HIV_removed) iso.c.hiv else iso.c
+    )
   }
   C <- subset.iso() # this object `capital C` is a vector of numbers e.g. c(1,10,150)
   message("C is ", paste(C, collapse = ","))

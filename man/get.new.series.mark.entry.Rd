@@ -5,7 +5,12 @@
 \title{Create `new_entry` column in the dataset `dt_cme` only mark by date in this
 step}
 \usage{
-get.new.series.mark.entry(dt_cme, new_entry_date, show_new_WHO_VR = TRUE)
+get.new.series.mark.entry(
+  dt_cme,
+  new_entry_date,
+  show_new_WHO_VR = TRUE,
+  vr_count_rounding = 1
+)
 }
 \arguments{
 \item{dt_cme}{cme dt object}
@@ -16,6 +21,9 @@ yyyy-mm-dd and yyyy-mm}
 \item{show_new_WHO_VR}{default to TRUE: mark `new_entry = 1` for WHO VR
 series that have new country-year data, obtained by
 \code{\link{get.diff.dt.WHOVR}}}
+
+\item{vr_count_rounding}{default to 1: the digit in `round`, e.g. round(diff,
+6)}
 }
 \description{
 Create `new_entry` column in the dataset `dt_cme` only mark by date in this

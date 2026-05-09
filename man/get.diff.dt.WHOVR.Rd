@@ -6,10 +6,10 @@
 of data because if we calculate the value differences, the differences could
 be very small and it will depend on the rounding of the difference}
 \usage{
-get.diff.dt.WHOVR(count_rounding = NULL)
+get.diff.dt.WHOVR(vr_count_rounding = NULL)
 }
 \arguments{
-\item{count_rounding}{default to NULL, if supply a value, e.g. 6, it will
+\item{vr_count_rounding}{default to NULL, if supply a value, e.g. 6, it will
 count the difference also using the diff round to 1E-6, if NULL only
 count new country-year}
 }

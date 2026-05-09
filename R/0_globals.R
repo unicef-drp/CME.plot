@@ -1,0 +1,22 @@
+utils::globalVariables(c(
+  ".I",
+  "Data.Collection.Method",
+  "DataCatalogID",
+  "Estimates_WHO_new",
+  "Estimates_WHO_old",
+  "Female",
+  "I.obs",
+  "I.ref",
+  "Lower",
+  "Male",
+  "Median",
+  "Sex",
+  "Shortind",
+  "Upper",
+  "dt_gbd_output",
+  "dt_wpp_2019",
+  "dt_wpp_2022",
+  "dt_wpp_2024",
+  "quintile",
+  "sourcename"
+))
