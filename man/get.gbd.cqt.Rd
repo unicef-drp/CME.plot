@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_wpp_and_ihme_cqt.R
 \name{get.gbd.cqt}
 \alias{get.gbd.cqt}
-\title{Get GBD cqt by indicator and sex (2024 version)}
+\title{Get GBD cqt by indicator and sex (2025 version)}
 \usage{
 get.gbd.cqt(ind0, sex0 = "both", iso_order = u5mr.iso.c)
 }

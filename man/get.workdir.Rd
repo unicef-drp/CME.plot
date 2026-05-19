@@ -13,6 +13,6 @@ get.workdir(year)
 directory to folder
 }
 \description{
-If `year` is 2024, returns the directory to SharePoint folder, otherwise to
+If `year` is 2025, returns the directory to SharePoint folder, otherwise to
 the old Dropbox folder
 }

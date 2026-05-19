@@ -1,4 +1,4 @@
-# prepare WPP 2025 for plotting
+# prepare WPP 2024 for plotting
 # updated 2025.05
 
 # data downloaded from https://population.un.org/wpp/Download/Standard/CSV/
@@ -15,6 +15,7 @@
 library("data.table")
 USERPROFILE <- Sys.getenv("USERPROFILE")
 dir.wpp <- file.path(USERPROFILE, "Dropbox/UNICEF Work/WPP/")
+wpp.folder <- "WPP 2024"
 
 # If use LT:
 
@@ -30,31 +31,25 @@ dir.wpp <- file.path(USERPROFILE, "Dropbox/UNICEF Work/WPP/")
 # If use the qx table:
 
 
-dir_wpp_files.t <- file.path(dir.wpp, "WPP 2025/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Total.xlsx")
-dir_wpp_files.f <- file.path(dir.wpp, "WPP 2025/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Female.xlsx")
-dir_wpp_files.m <- file.path(dir.wpp, "WPP 2025/WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Male.xlsx")
+dir_wpp_files.t <- file.path(dir.wpp, wpp.folder, "WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Total.xlsx")
+dir_wpp_files.f <- file.path(dir.wpp, wpp.folder, "WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Female.xlsx")
+dir_wpp_files.m <- file.path(dir.wpp, wpp.folder, "WPP2024_Probability_of_dying_by_age_(qx)_Abridged_Ages_Male.xlsx")
 
-dt0 <- readxl::read_xlsx(dir_wpp_files.t, sheet = "Estimates")
-str(dt0)
-ncol <- ncol(dt0)
-ncol_year <- which(colnames(dt0) == "Year")
-dt0 <- readxl::read_xlsx(dir_wpp_files.t, sheet = "Estimates",
-                         col_types = c(rep("text", (ncol_year-1)), rep("numeric", (ncol-ncol_year+1))))
-str(dt0)
+dt0_header <- readxl::read_xlsx(dir_wpp_files.t, sheet = "Estimates", n_max = 0)
+ncol <- ncol(dt0_header)
+ncol_year <- which(colnames(dt0_header) == "Year")
 
 # load all life tables
 f1 <- function(x) setDT(readxl::read_xlsx(x, sheet = "Estimates",
                                           col_types = c(rep("text", (ncol_year-1)), rep("numeric", (ncol-ncol_year+1)))))
 dt1 <- f1(dir_wpp_files.t)
 dt_wpp0 <- rbindlist(lapply(list(dir_wpp_files.t, dir_wpp_files.m, dir_wpp_files.f), f1))
-dt_wpp0[1,]
 
 # we want a long format LT variable.name = AgeGrpStart, value.name = qx
 dt_wpp <- melt(dt_wpp0, id.vars = c("ISO3_code", "Sex", "Year"), measure.vars = c("0", "1", "5", "10", "15", "20"),
                variable.name = "AgeGrpStart", value.name = "qx", variable.factor = FALSE)
 
-# next year, keep XKX, still revise to RKS for now
-dt_wpp[ISO3_code == "XKX", ISO3_code := "RKS"]
+# Keep Kosovo's WPP code as XKX.
 
 format.WPP.life.table <- function(dt_wpp){
   message("Range of Year is: ", paste(range(dt_wpp$Year), collapse = "-"))
@@ -92,4 +87,4 @@ usethis::use_data(dt_wpp_2024, overwrite = TRUE)
 
 #
 fwrite(dt_wpp_2024,
-       file.path(dir.wpp, "WPP 2025/WPP2024-Life Table qx_extract_0_24_wide_ind_1950-2023.csv"))
+       file.path(dir.wpp, wpp.folder, "WPP2024-Life Table qx_extract_0_24_wide_ind_1950-2023.csv"))

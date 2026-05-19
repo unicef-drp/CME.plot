@@ -2,7 +2,8 @@
 % Please edit documentation in R/1.helper_plot_funcs.R
 \name{update.data.new_cnames}
 \alias{update.data.new_cnames}
-\title{Internal function to update new_cnames.rda (for official names on the plot)}
+\title{Internal function to update new_cnames.rda and u5mr.iso.c.rda
+(for official names and ISO order on the plot)}
 \usage{
 \method{update}{data.new_cnames}(
   IGME_round_input = 2025,
@@ -15,5 +16,6 @@
 \item{country.info.file.name}{country.info.CME.csv}
 }
 \description{
-Internal function to update new_cnames.rda (for official names on the plot)
+Internal function to update new_cnames.rda and u5mr.iso.c.rda
+(for official names and ISO order on the plot)
 }
