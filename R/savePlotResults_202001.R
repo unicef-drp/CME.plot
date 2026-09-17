@@ -158,7 +158,7 @@ savePlotResults <- function(
   legend_ex = NULL,# used as a switch for showing expected series: blue dotted line
   wpp.cqt = NULL,  # green line
   ihme.cqt = NULL, # blue line
-  legend_WPP = "WPP 2025",
+  legend_WPP = "WPP 2024",
   legend_IHME = "GBD 2023",
   ylab = NULL,
   new_entry_date = NULL,

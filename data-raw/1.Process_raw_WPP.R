@@ -40,14 +40,20 @@ ncol <- ncol(dt0_header)
 ncol_year <- which(colnames(dt0_header) == "Year")
 
 # load all life tables
-f1 <- function(x) setDT(readxl::read_xlsx(x, sheet = "Estimates",
+read_wpp_table <- function(x, sheet_name = "Estimates") setDT(readxl::read_xlsx(x, sheet = sheet_name,
                                           col_types = c(rep("text", (ncol_year-1)), rep("numeric", (ncol-ncol_year+1)))))
-dt1 <- f1(dir_wpp_files.t)
-dt_wpp0 <- rbindlist(lapply(list(dir_wpp_files.t, dir_wpp_files.m, dir_wpp_files.f), f1))
+dt1 <- read_wpp_table(dir_wpp_files.t, sheet_name = "Estimates")
+dt1_proj <- read_wpp_table(dir_wpp_files.t, sheet_name = "Medium")
+
+dt_wpp0 <- rbindlist(lapply(list(dir_wpp_files.t, dir_wpp_files.m, dir_wpp_files.f), read_wpp_table, sheet_name = "Estimates"))
+dt_wpp0_proj <- rbindlist(lapply(list(dir_wpp_files.t, dir_wpp_files.m, dir_wpp_files.f), read_wpp_table, sheet_name = "Medium"))
 
 # we want a long format LT variable.name = AgeGrpStart, value.name = qx
 dt_wpp <- melt(dt_wpp0, id.vars = c("ISO3_code", "Sex", "Year"), measure.vars = c("0", "1", "5", "10", "15", "20"),
                variable.name = "AgeGrpStart", value.name = "qx", variable.factor = FALSE)
+dt_wpp_proj <- melt(dt_wpp0_proj, id.vars = c("ISO3_code", "Sex", "Year"), measure.vars = c("0", "1", "5", "10", "15", "20"),
+                    variable.name = "AgeGrpStart", value.name = "qx", variable.factor = FALSE)
+
 
 # Keep Kosovo's WPP code as XKX.
 
@@ -73,8 +79,10 @@ format.WPP.life.table <- function(dt_wpp){
   return(dt_wpp_2024)
 }
 dt_wpp_2024 <- format.WPP.life.table(dt_wpp)
+dt_wpp_2024_proj <- format.WPP.life.table(dt_wpp_proj)
 usethis::use_data(dt_wpp_2024, overwrite = TRUE)
 
+dt_wpp_2024_all_years <- rbind(dt_wpp_2024, dt_wpp_2024_proj)
 # dt_wpp_2024_proj <- format.WPP.life.table(dt_wpp_proj)
 
 # dt_ws <- dcast(dt_wpp, ISO3Code + Year + AgeGrpStart ~ Sex, value.var = "qx")
@@ -88,3 +96,5 @@ usethis::use_data(dt_wpp_2024, overwrite = TRUE)
 #
 fwrite(dt_wpp_2024,
        file.path(dir.wpp, wpp.folder, "WPP2024-Life Table qx_extract_0_24_wide_ind_1950-2023.csv"))
+fwrite(dt_wpp_2024_all_years,
+       file.path(dir.wpp, wpp.folder, "WPP2024-Life Table qx_extract_0_24_wide_ind_1950-2100.csv"))

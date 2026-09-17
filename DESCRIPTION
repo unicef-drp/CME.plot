@@ -14,7 +14,6 @@ Description: Plotting functions as an independent package for plotting child mor
   features like highlighting newly added series.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.3
 LazyData: true
 LazyDataCompression: xz
 Depends: 
@@ -28,3 +27,4 @@ Imports:
     writexl
 Suggests: 
     readxl
+Config/roxygen2/version: 8.0.0
