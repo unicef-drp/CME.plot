@@ -962,7 +962,7 @@ AddVRData <- function(# Add VR data and/or sampling errors to the plot
     legendtext.si <- paste0(ifelse(grepl("SVR", vr_name), "", "VR "),
                             if(grepl("WHO", vr_name)){
                               paste0(
-                                if(grepl("WHO/UNPD", vr_name)) "UNPD" else "WHO",
+                                "WHO",
                                 if(grepl("adjusted for incompleteness", vr_name)){
                                   " (Adjusted)"
                                 } else if (grepl("Recalculated", vr_name)){
