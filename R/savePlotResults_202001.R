@@ -600,10 +600,17 @@ savePlotResults <- function(
     if(gender == "Total") title1.sex <- NULL # don't add "Total" in the title, only Male, Female + Country Name
   }
 
+  # Keep the indicator code for data handling; append the ratio suffix only for display.
+  plot.ylab <- if(is.null(ylab)) indicator.type else ylab
+  if(identical(gender, "ratio") &&
+     plot.ylab %in% c("10q5", "5q5", "5q10", "10q15", "5q15", "5q20")) {
+    plot.ylab <- paste(plot.ylab, "Sex Ratio")
+  }
+
   plot.by.c <- function(c){suppressMessages(
     PlotDataAndEstimates2020(data = NULL, # YL: doesn't really need mcmc.meta$data
                          data.all = if(!HIV_removed) mcmc.meta$data.all else mcmc.meta$data.hivremoved.all,
-                         ylab = if(is.null(ylab)) indicator.type else ylab,
+                         ylab = plot.ylab,
                          title1 = title1.sex, # add Male/Female in title
                          est.years = as.numeric(year.t),
 
