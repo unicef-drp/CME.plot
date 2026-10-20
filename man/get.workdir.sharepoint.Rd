@@ -4,10 +4,10 @@
 \alias{get.workdir.sharepoint}
 \title{Get IGME "Code" dir for a given year from SharePoint}
 \usage{
-get.workdir.sharepoint(year = 2025)
+get.workdir.sharepoint(year = current.year())
 }
 \arguments{
-\item{year}{YYYY}
+\item{year}{YYYY; defaults to the current calendar year.}
 }
 \value{
 directory to "Code" folder

@@ -4,15 +4,15 @@
 \alias{get.IGMEinput.dir}
 \title{Get "input" dir for a given year}
 \usage{
-get.IGMEinput.dir(year)
+get.IGMEinput.dir(year = current.year())
 }
 \arguments{
-\item{year}{YYYY}
+\item{year}{YYYY; defaults to the current calendar year.}
 }
 \value{
 directory to input folder
 }
 \description{
-If `year` is 2020, returns the directory to input folder in the 2020 Round
-Estimation Dropbox folder
+Returns the input folder for the requested IGME round, using SharePoint
+for 2025 or later and Dropbox for earlier rounds.
 }

@@ -338,13 +338,20 @@ find.dir.for.VR.comparison <- function(
 #' @param vr_count_rounding default to NULL, if supply a value, e.g. 6, it will
 #'   count the difference also using the diff round to 1E-6, if NULL only
 #'   count new country-year
+#' @param IGME_year_new IGME round to compare; defaults to the current calendar year.
+#' @param IGME_year_old Previous IGME round; defaults to \code{IGME_year_new - 1}.
 #'
 #' @return list of dt1 (the comparison dataset for debugging) and iso_newVR (the
 #'   vector of country isos with different WHO VR)
 get.diff.dt.WHOVR <- function(
-  vr_count_rounding = NULL
+  vr_count_rounding = NULL,
+  IGME_year_new = current.year(),
+  IGME_year_old = IGME_year_new - 1
 ){
-  default_dir <- find.dir.for.VR.comparison(IGME_year_new = 2026, IGME_year_old = 2025)
+  default_dir <- find.dir.for.VR.comparison(
+    IGME_year_new = IGME_year_new,
+    IGME_year_old = IGME_year_old
+  )
   dir_new_data_U5MR <- default_dir$dir_new_data_U5MR
   dir_old_data_U5MR <- default_dir$dir_old_data_U5MR
   if(is.null(dir_new_data_U5MR)|is.null(dir_old_data_U5MR)){

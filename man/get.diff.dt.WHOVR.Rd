@@ -6,12 +6,20 @@
 of data because if we calculate the value differences, the differences could
 be very small and it will depend on the rounding of the difference}
 \usage{
-get.diff.dt.WHOVR(vr_count_rounding = NULL)
+get.diff.dt.WHOVR(
+  vr_count_rounding = NULL,
+  IGME_year_new = current.year(),
+  IGME_year_old = IGME_year_new - 1
+)
 }
 \arguments{
 \item{vr_count_rounding}{default to NULL, if supply a value, e.g. 6, it will
 count the difference also using the diff round to 1E-6, if NULL only
 count new country-year}
+
+\item{IGME_year_new}{IGME round to compare; defaults to the current calendar year.}
+
+\item{IGME_year_old}{Previous IGME round; defaults to \code{IGME_year_new - 1}.}
 }
 \value{
 list of dt1 (the comparison dataset for debugging) and iso_newVR (the

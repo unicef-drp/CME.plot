@@ -6,12 +6,13 @@
 (for official names and ISO order on the plot)}
 \usage{
 \method{update}{data.new_cnames}(
-  IGME_round_input = 2025,
+  IGME_round_input = current.year(),
   country.info.file.name = "country.info.CME.csv"
 )
 }
 \arguments{
-\item{IGME_round_input}{which IGME round of country.info.CME.csv to use}
+\item{IGME_round_input}{which IGME round of country.info.CME.csv to use;
+defaults to the current calendar year.}
 
 \item{country.info.file.name}{country.info.CME.csv}
 }

@@ -4,15 +4,15 @@
 \alias{get.workdir}
 \title{Get IGME "Code" dir for a given year}
 \usage{
-get.workdir(year)
+get.workdir(year = current.year())
 }
 \arguments{
-\item{year}{YYYY}
+\item{year}{YYYY; defaults to the current calendar year.}
 }
 \value{
 directory to folder
 }
 \description{
-If `year` is 2025, returns the directory to SharePoint folder, otherwise to
+If `year` is 2025 or later, returns the directory to SharePoint folder, otherwise to
 the old Dropbox folder
 }

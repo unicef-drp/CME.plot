@@ -187,13 +187,14 @@ get.new_cnames <- function(workdir = get.workdir.sharepoint(), filename = "count
 #' Internal function to update new_cnames.rda and u5mr.iso.c.rda
 #' (for official names and ISO order on the plot)
 #' @importFrom usethis use_data
-#' @param IGME_round_input which IGME round of country.info.CME.csv to use
+#' @param IGME_round_input which IGME round of country.info.CME.csv to use;
+#'   defaults to the current calendar year.
 #' @param country.info.file.name country.info.CME.csv
 #'
 update.data.new_cnames <- function(
-  IGME_round_input = 2025,
+  IGME_round_input = current.year(),
   country.info.file.name = "country.info.CME.csv"){
-  new_cnames <- get.new_cnames(workdir = get.workdir.sharepoint(IGME_round_input), country.info.file.name)
+  new_cnames <- get.new_cnames(workdir = get.workdir(IGME_round_input), country.info.file.name)
   usethis::use_data(new_cnames, overwrite = TRUE)
 
   u5mr.iso.c <- new_cnames$ISO3Code

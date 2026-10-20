@@ -2,12 +2,12 @@
 
 #' Get IGME "Code" dir for a given year
 #'
-#' If `year` is 2025, returns the directory to SharePoint folder, otherwise to
+#' If `year` is 2025 or later, returns the directory to SharePoint folder, otherwise to
 #' the old Dropbox folder
-#' @param year YYYY
+#' @param year YYYY; defaults to the current calendar year.
 #' @return directory to folder
 #' @export get.workdir
-get.workdir <- function(year){
+get.workdir <- function(year = current.year()){
   if(floor(as.numeric(year)) >= 2025){
     workdir_new <- get.workdir.sharepoint(year)
   } else {
@@ -32,10 +32,10 @@ get.workdir.dropbox <- function(year = 2023){
 #'
 #' Returns the directory to Code folder in the requested SharePoint Round
 #' Estimation folder
-#' @param year YYYY
+#' @param year YYYY; defaults to the current calendar year.
 #' @return directory to "Code" folder
 #' @export get.workdir.sharepoint
-get.workdir.sharepoint <- function(year = 2025){
+get.workdir.sharepoint <- function(year = current.year()){
   stopifnot(nchar(as.numeric(year)) == 4)
   user_name <- Sys.info()[["user"]]
   USERPROFILE <- load_os_leading_dir()
@@ -66,13 +66,13 @@ get.workdir.sharepoint <- function(year = 2025){
 
 #' Get "output" dir for a given year
 #'
-#' If `year` is 2020, returns the directory to output folder in the 2020 Round
-#' Estimation Dropbox folder
+#' Returns the output folder for the requested IGME round, using SharePoint
+#' for 2025 or later and Dropbox for earlier rounds.
 #'
-#' @param year YYYY
+#' @param year YYYY; defaults to the current calendar year.
 #' @return directory to output folder
 #' @export get.IGMEoutput.dir
-get.IGMEoutput.dir <- function(year){
+get.IGMEoutput.dir <- function(year = current.year()){
   work_dir <- get.workdir(year)
   return(file.path(work_dir, "output"))
 }
@@ -80,12 +80,12 @@ get.IGMEoutput.dir <- function(year){
 
 #' Get "input" dir for a given year
 #'
-#' If `year` is 2020, returns the directory to input folder in the 2020 Round
-#' Estimation Dropbox folder
-#' @param year YYYY
+#' Returns the input folder for the requested IGME round, using SharePoint
+#' for 2025 or later and Dropbox for earlier rounds.
+#' @param year YYYY; defaults to the current calendar year.
 #' @return directory to input folder
 #' @export get.IGMEinput.dir
-get.IGMEinput.dir <- function(year){
+get.IGMEinput.dir <- function(year = current.year()){
   work_dir <- get.workdir(year)
   return(file.path(work_dir, "input"))
 }

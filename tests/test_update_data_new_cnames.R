@@ -19,11 +19,11 @@ writeLines(
 )
 
 env$captured_year <- NULL
-env$get.workdir.sharepoint <- function(year) {
+env$get.workdir <- function(year) {
   captured_year <<- year
   "unused"
 }
-environment(env$get.workdir.sharepoint) <- env
+environment(env$get.workdir) <- env
 env$get.new_cnames <- function(workdir, filename) {
   data.frame(
     ISO3Code = c("AAA", "XKX"),
